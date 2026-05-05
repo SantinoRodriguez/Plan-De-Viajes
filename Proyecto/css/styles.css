@@ -1,0 +1,36 @@
+:root {
+    --ColorFondoPrincipal: #FAF6EF;
+    --ColorFondoSecundario: #EDE2DO;
+    --ColorSuperficie: #D8CBB8;
+    --ColorSubsuperficie: #EDE2DO;
+    --ColorTextoPrincipal: #9F3D56;
+    --ColorTextoSecundario: #5A6670;
+    --ColorTextoDesactivado: rgba(90, 102, 112, 0.6);
+    --ColorBotonPrincipal: #C28A52;
+    --ColorBotonHover: #A8743F;
+    --ColorBotonSecundario: transparent;
+    --ColorBotonSecundarioBorde: #C28A52;
+    --ColorBotonSecundarioHover: #C28A52;
+    --ColorAcento: #B76E4D;
+    --ColorDivisor: #D8CBB8;
+    --ColorInputFondo: #FAF6EF;
+    --ColorInputBorde: #D8CBB8;
+    --ColorInputFocus: #C28A52;
+    --ColorCardFondo: #D8CBB8;
+    --ColorCardHoverBorde: #C28A52;
+    --ColorSubcardFondo: #EDE2DO;
+    --ColorSubcardBorde: #D8CBB8;
+    --ColorTagFondo: #B76E4D;
+    --ColorTagTexto: #FAF6EF;
+    --ColorTitulo: #9F3D56;
+    --ColorSubtitulo: #A8743F;
+    --ColorTextoBase: #5A6670;
+    --SombraBaja: 0px 2px 6px rgba(0, 0, 0, 0.05);
+    --SombraMedia: 0px 4px 12px rgba(0, 0, 0, 0.08);
+    --SombraAlta: 0px 8px 20px rgba(0, 0, 0, 0.12);
+    --BordeRadiusPequeno: 8px;
+    --BordeRadiusMedio: 12px;
+    --BordeRadiusGrande: 16px;
+    --TransicionRapida: 0.2s ease;
+    --TransicionMedia: 0.3s ease;
+}
