@@ -1,15 +1,481 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="css/styles.css">
-    <link href="https://jsdelivr.net" rel="stylesheet" 
-    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
+
 <body>
-    
+    <header>
+        <nav class="navbar navbar-expand-lg mt-2">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Plan de Viajes</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-end " id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Explorar</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Mis Viajes</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Precio</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#"><i class="fa fa-user-circle"></i> Iniciar Sesión</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <section class="container-fluid mt-3">
+        <div class="row tittles">
+            <div class="col-md-6 mx-auto">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h1>Planificá tu próximo viaje sin el caos de siempre</h1>
+                        <p class="pt-3">Explora destinos, crea itinerarios y gestiona tus aventuras.</p>
+                        <div class="buttons-tittles">
+                            <input class="form-control" type="text" placeholder="Elegí una ciudad u hotel">
+
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button"
+                                    data-bs-toggle="dropdown">
+                                    <i class="fa fa-calendar"></i> mié. 22/4 - jue. 23/4
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#">Elegir otra fecha</a></li>
+                                    <li><a class="dropdown-item" href="#">Ver calendario</a></li>
+                                </ul>
+                            </div>
+
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button"
+                                    data-bs-toggle="dropdown">
+                                    <i class="fa fa-user"></i> 1 habitación, 2 huéspedes
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#">Añadir habitación</a></li>
+                                    <li><a class="dropdown-item" href="#">1 adulto</a></li>
+                                    <li><a class="dropdown-item" href="#">2 adultos</a></li>
+                                    <li><a class="dropdown-item" href="#">3 adultos</a></li>
+                                    <li><a class="dropdown-item" href="#">4 adultos</a></li>
+                                </ul>
+                            </div>
+
+                            <button class="btn btn-primary border-1">Buscar</button>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="row">
+                            <div class="col-md-6 image-decoration">
+                                <img src="Imagenes/colombia.webp" class="img-fluid object-fit-cover rounded-4"
+                                    alt="Descripción">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="container mt-5">
+            <h2 class="text-center">Departamentos con las mejores calificaciones en Buenos Aires</h2>
+            <p class="mb-4 text-center">Los huéspedes están de acuerdo: estos departamentos tienen excelentes
+                calificaciones por su ubicación y limpieza, entre otros aspectos.</p>
+            <div class="d-flex justify-content-center align-items-center gap-3">
+                <button class="btn-arrow" aria-label="Anterior"><img src="Imagenes/Flaticon/l-arrow.png" class="arrows"
+                        alt=""></button>
+                <p class="text-center mb-0 fw-bold">1/5</p>
+                <button class="btn-arrow" aria-label="Siguiente"><img src="Imagenes/Flaticon/r-arrow.png" class="arrows"
+                        alt=""></button>
+            </div>
+            <div class="row g-4 mt-3">
+                <div class="col-md-3">
+                    <a href="">
+                        <div class="ratio ratio-1x1 mb-4">
+                            <img src="Imagenes/Apts/Palermo.jpeg" class="card-img-top object-fit-cover rounded-4"
+                                alt="Departamento Moderno en Palermo">
+                        </div>
+                        <h3 class="text-center">Departamento Moderno en Palermo</h3>
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="">
+                        <div class="ratio ratio-1x1 mb-4">
+                            <img src="Imagenes/Apts/Recoleta.avif" class="card-img-top object-fit-cover rounded-4"
+                                alt="Loft Luminoso en Recoleta">
+                        </div>
+                        <h3 class="text-center">Loft Luminoso en Recoleta</h3>
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="">
+                        <div class="ratio ratio-1x1 mb-4">
+                            <img src="Imagenes/Apts/San-Telmo.jpg" class="card-img-top object-fit-cover rounded-4"
+                                alt="Estudio Céntrico en San Telmo">
+                        </div>
+                        <h3 class="text-center">Estudio Céntrico en San Telmo</h3>
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="">
+                        <div class="ratio ratio-1x1 mb-4">
+                            <img src="Imagenes/Apts/Puerto-Madero.jpeg" class="card-img-top object-fit-cover rounded-4"
+                                alt="Departamento Boutique en Puerto Madero">
+                        </div>
+                        <h3 class="text-center">Departamento Boutique en Puerto Madero</h3>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="container mt-3 mb-5">
+            <h2 class="text-center mt-5">Prestaciones populares de los departamentos en Buenos Aires</h2>
+            <div class="row justify-content-center mt-5 text-center">
+                <div class="col-md-2 prestaciones-populares">
+                    <a href="">
+                        <img src="Imagenes/Flaticon/coock.png" class="img-fluid m-2" alt="">
+                        <h3 class="mt-1">Cocina</h3>
+                    </a>
+                </div>
+                <div class="col-md-2 prestaciones-populares">
+                    <a href="">
+                        <img src="Imagenes/Flaticon/wifi.png" class="img-fluid m-2" alt="">
+                        <h3 class="mt-1">Wi-Fi</h3>
+                    </a>
+                </div>
+                <div class="col-md-2 prestaciones-populares">
+                    <a href="">
+                        <img src="Imagenes/Flaticon/pool.png" class="img-fluid m-2" alt="">
+                        <h3 class="mt-1">Pileta</h3>
+                    </a>
+                </div>
+                <div class="col-md-2 prestaciones-populares">
+                    <a href="">
+                        <img src="Imagenes/Flaticon/parking.png" class="img-fluid m-2" alt="">
+                        <h3 class="mt-1">Estacionamiento</h3>
+                    </a>
+                </div>
+                <div class="col-md-2 prestaciones-populares">
+                    <a href="">
+                        <img src="Imagenes/Flaticon/air.png" class="img-fluid m-2" alt="">
+                        <h3 class="mt-1">Aire acondicionado</h3>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="container mt-5">
+            <h2 class="text-center">Departamentos con las mejores calificaciones en Buenos Aires</h2>
+            <p class="mb-4 text-center">Los huéspedes están de acuerdo: estos departamentos tienen excelentes
+                calificaciones por su ubicación y limpieza, entre otros aspectos.</p>
+            <div class="row g-4 mt-3">
+                <div class="col-md-3">
+                    <a href="">
+                        <div class="ratio ratio-1x1 mb-4">
+                            <img src="Imagenes/Apts/Belgrano.jpg" class="card-img-top object-fit-cover rounded-4"
+                                alt="Amplio Piso en Belgrano">
+                        </div>
+                        <h3 class="text-center">Amplio Piso en Belgrano</h3>
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="">
+                        <div class="ratio ratio-1x1 mb-4">
+                            <img src="Imagenes/Apts/Caballito.jpg" class="card-img-top object-fit-cover rounded-4"
+                                alt="Monoambiente de Diseño en Caballito">
+                        </div>
+                        <h3 class="text-center">Monoambiente de Diseño en Caballito</h3>
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="">
+                        <div class="ratio ratio-1x1 mb-4">
+                            <img src="Imagenes/Apts/Nuñez.jpg" class="card-img-top object-fit-cover rounded-4"
+                                alt="Departamento con Balcón en Nuñez">
+                        </div>
+                        <h3 class="text-center">Departamento con Balcón en Nuñez</h3>
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="">
+                        <div class="ratio ratio-1x1 mb-4">
+                            <img src="Imagenes/Apts/Villa-Urquiza.jpeg" class="card-img-top object-fit-cover rounded-4"
+                                alt="Dúplex Exclusivo en Villa Urquiza">
+                        </div>
+                        <h3 class="text-center">Dúplex Exclusivo en Villa Urquiza</h3>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="container mt-5">
+            <h2 class="text-center">Departamentos con las mejores calificaciones en Buenos Aires</h2>
+            <p class="mb-4 text-center">Los huéspedes están de acuerdo: estos departamentos tienen excelentes
+                calificaciones por su ubicación y limpieza, entre otros aspectos.</p>
+            <div class="row g-4 mt-3">
+                <div class="col-md-3">
+                    <a href="">
+                        <div class="ratio ratio-1x1 mb-4">
+                            <img src="Imagenes/Apts/Almagro.jpg" class="card-img-top object-fit-cover rounded-4"
+                                alt="Departamento Vintage en Almagro">
+                        </div>
+                        <h3 class="text-center">Departamento Vintage en Almagro</h3>
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="">
+                        <div class="ratio ratio-1x1 mb-4">
+                            <img src="Imagenes/Apts/Retiro.avif" class="card-img-top object-fit-cover rounded-4"
+                                alt="Penthouse con Vistas en Retiro">
+                        </div>
+                        <h3 class="text-center">Penthouse con Vistas en Retiro</h3>
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="">
+                        <div class="ratio ratio-1x1 mb-4">
+                            <img src="Imagenes/Apts/Colegiales.jpeg" class="card-img-top object-fit-cover rounded-4"
+                                alt="Departamento Acogedor en Colegiales">
+                        </div>
+                        <h3 class="text-center">Departamento Acogedor en Colegiales</h3>
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="">
+                        <div class="ratio ratio-1x1 mb-4">
+                            <img src="Imagenes/Apts/Microcentro.jpg" class="card-img-top object-fit-cover rounded-4"
+                                alt="Suite de Lujo en Microcentro">
+                        </div>
+                        <h3 class="text-center">Suite de Lujo en Microcentro</h3>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="container mt-5 mb-5">
+            <div class="row justify-content-center">
+                <h2 class="text-center">Experiencias más Buscadas</h2>
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="experiences d-flex flex-row w-100 border rounded-4 p-2 mb-3">
+                            <a href="">
+                                <img src="Imagenes/Activities/La-Plata.jpeg"
+                                    class="img-fluid object-fit-cover rounded-4 ratio ratio-1x1 m-3"
+                                    alt="Trekking en La Plata">
+                            </a>
+                            <div class="ms-3 d-flex flex-column justify-content-between flex-grow-1">
+                                <div class="mt-3">
+                                    <h3 class="card-text">Trekking en La Plata</h3>
+                                    <p class="mb-1">8 Dias - Aventura</p>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between gap-1">
+                                        <div>
+                                            <img src="Imagenes/Flaticon/full-star.png" class="star" style="width:16px;"
+                                                alt="">
+                                            <img src="Imagenes/Flaticon/full-star.png" class="star" style="width:16px;"
+                                                alt="">
+                                            <img src="Imagenes/Flaticon/full-star.png" class="star" style="width:16px;"
+                                                alt="">
+                                            <img src="Imagenes/Flaticon/full-star.png" class="star" style="width:16px;"
+                                                alt="">
+                                            <img src="Imagenes/Flaticon/full-star.png" class="star" style="width:16px;"
+                                                alt="">
+                                        </div>
+                                        <span class="me-4 my-auto qualifications">5.0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="experiences d-flex flex-row w-100 border rounded-4 p-2 mb-3">
+                            <a href="">
+                                <img src="Imagenes/Activities/Mendoza.jpg"
+                                    class="img-fluid object-fit-cover rounded-4 ratio ratio-1x1 m-3"
+                                    alt="Ruta del vino, Mendoza">
+                            </a>
+                            <div class="ms-3 d-flex flex-column justify-content-between flex-grow-1">
+                                <div class="mt-3">
+                                    <h3 class="card-text">Ruta del vino, Mendoza</h3>
+                                    <p class="mb-1">3 Dias - Gastronomia</p>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between gap-1">
+                                        <div>
+                                            <img src="Imagenes/Flaticon/full-star.png" class="star" style="width:16px;"
+                                                alt="">
+                                            <img src="Imagenes/Flaticon/full-star.png" class="star" style="width:16px;"
+                                                alt="">
+                                            <img src="Imagenes/Flaticon/full-star.png" class="star" style="width:16px;"
+                                                alt="">
+                                            <img src="Imagenes/Flaticon/full-star.png" class="star" style="width:16px;"
+                                                alt="">
+                                            <img src="Imagenes/Flaticon/full-star.png" class="star" style="width:16px;"
+                                                alt="">
+                                        </div>
+                                        <span class="me-4 my-auto qualifications">5.0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="experiences d-flex flex-row w-100 border rounded-4 p-2 mb-3">
+                            <a href="">
+                                <img src="Imagenes/Activities/Glaciares.jpeg"
+                                    class="img-fluid object-fit-cover rounded-4 ratio ratio-1x1 m-3"
+                                    alt="Glaciares del Sur">
+                            </a>
+                            <div class="ms-3 d-flex flex-column justify-content-between flex-grow-1">
+                                <div class="mt-3">
+                                    <h3 class="card-text">Glaciares del Sur</h3>
+                                    <p class="mb-1">6 Dias - Naturaleza</p>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between gap-1">
+                                        <div>
+                                            <img src="Imagenes/Flaticon/full-star.png" class="star" style="width:16px;"
+                                                alt="">
+                                            <img src="Imagenes/Flaticon/full-star.png" class="star" style="width:16px;"
+                                                alt="">
+                                            <img src="Imagenes/Flaticon/full-star.png" class="star" style="width:16px;"
+                                                alt="">
+                                            <img src="Imagenes/Flaticon/full-star.png" class="star" style="width:16px;"
+                                                alt="">
+                                            <img src="Imagenes/Flaticon/full-star.png" class="star" style="width:16px;"
+                                                alt="">
+                                        </div>
+                                        <span class="me-4 my-auto qualifications">5.0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="experiences d-flex flex-row w-100 border rounded-4 p-2 mb-3">
+                            <a href="">
+                                <img src="Imagenes/Activities/La-Boca.jpg"
+                                    class="img-fluid object-fit-cover rounded-4 ratio ratio-1x1 m-3"
+                                    alt="Buenos Aires Cultural">
+                            </a>
+                            <div class="ms-3 d-flex flex-column justify-content-between flex-grow-1">
+                                <div class="mt-3">
+                                    <h3 class="card-text">Buenos Aires Cultural</h3>
+                                    <p class="mb-1">3 Dias - Artes y Museos</p>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between gap-1">
+                                        <div>
+                                            <img src="Imagenes/Flaticon/full-star.png" class="star" style="width:16px;"
+                                                alt="">
+                                            <img src="Imagenes/Flaticon/full-star.png" class="star" style="width:16px;"
+                                                alt="">
+                                            <img src="Imagenes/Flaticon/full-star.png" class="star" style="width:16px;"
+                                                alt="">
+                                            <img src="Imagenes/Flaticon/full-star.png" class="star" style="width:16px;"
+                                                alt="">
+                                            <img src="Imagenes/Flaticon/full-star.png" class="star" style="width:16px;"
+                                                alt="">
+                                        </div>
+                                        <span class="me-4 my-auto qualifications">5.0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="experiences d-flex flex-row w-100 border rounded-4 p-2 mb-3">
+                            <a href="">
+                                <img src="Imagenes/Activities/Humahuaca.jpg"
+                                    class="img-fluid object-fit-cover rounded-4 ratio ratio-1x1 m-3"
+                                    alt="Quebrada del Humahuaca">
+                            </a>
+                            <div class="ms-3 d-flex flex-column justify-content-between flex-grow-1">
+                                <div class="mt-3">
+                                    <h3 class="card-text">Quebrada del Humahuaca</h3>
+                                    <p class="mb-1">4 Dias - Cultura</p>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between gap-1">
+                                        <div>
+                                            <img src="Imagenes/Flaticon/full-star.png" class="star" style="width:16px;"
+                                                alt="">
+                                            <img src="Imagenes/Flaticon/full-star.png" class="star" style="width:16px;"
+                                                alt="">
+                                            <img src="Imagenes/Flaticon/full-star.png" class="star" style="width:16px;"
+                                                alt="">
+                                            <img src="Imagenes/Flaticon/full-star.png" class="star" style="width:16px;"
+                                                alt="">
+                                            <img src="Imagenes/Flaticon/full-star.png" class="star" style="width:16px;"
+                                                alt="">
+                                        </div>
+                                        <span class="me-4 my-auto qualifications">5.0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="experiences d-flex flex-row w-100 border rounded-4 p-2 mb-3">
+                            <a href="">
+                                <img src="Imagenes/Activities/Iguazu.jpeg"
+                                    class="img-fluid object-fit-cover rounded-4 ratio ratio-1x1 m-3"
+                                    alt="Iguazú y Catamarca">
+                            </a>
+                            <div class="ms-3 d-flex flex-column justify-content-between flex-grow-1">
+                                <div class="mt-3">
+                                    <h3 class="card-text">Iguazú y Catamarca</h3>
+                                    <p class="mb-1">3 Dias - Naturaleza</p>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between gap-1">
+                                        <div>
+                                            <img src="Imagenes/Flaticon/full-star.png" class="star" style="width:16px;"
+                                                alt="">
+                                            <img src="Imagenes/Flaticon/full-star.png" class="star" style="width:16px;"
+                                                alt="">
+                                            <img src="Imagenes/Flaticon/full-star.png" class="star" style="width:16px;"
+                                                alt="">
+                                            <img src="Imagenes/Flaticon/full-star.png" class="star" style="width:16px;"
+                                                alt="">
+                                            <img src="Imagenes/Flaticon/full-star.png" class="star" style="width:16px;"
+                                                alt="">
+                                        </div>
+                                        <span class="me-4 my-auto qualifications">5.0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <footer>
+        <p>&copy; 2026 Plan de Viajes. Todos los derechos reservados.</p>
+    </footer>
 </body>
-    <script src="https://jsdelivr.net" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+
 </html>

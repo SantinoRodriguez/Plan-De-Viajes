@@ -1,30 +1,30 @@
 :root {
-    --ColorFondoPrincipal: #FAF6EF;
-    --ColorFondoSecundario: #EDE2DO;
-    --ColorSuperficie: #D8CBB8;
-    --ColorSubsuperficie: #EDE2DO;
-    --ColorTextoPrincipal: #9F3D56;
-    --ColorTextoSecundario: #5A6670;
-    --ColorTextoDesactivado: rgba(90, 102, 112, 0.6);
-    --ColorBotonPrincipal: #C28A52;
-    --ColorBotonHover: #A8743F;
-    --ColorBotonSecundario: transparent;
-    --ColorBotonSecundarioBorde: #C28A52;
-    --ColorBotonSecundarioHover: #C28A52;
-    --ColorAcento: #B76E4D;
-    --ColorDivisor: #D8CBB8;
-    --ColorInputFondo: #FAF6EF;
-    --ColorInputBorde: #D8CBB8;
-    --ColorInputFocus: #C28A52;
-    --ColorCardFondo: #D8CBB8;
-    --ColorCardHoverBorde: #C28A52;
-    --ColorSubcardFondo: #EDE2DO;
-    --ColorSubcardBorde: #D8CBB8;
-    --ColorTagFondo: #B76E4D;
-    --ColorTagTexto: #FAF6EF;
-    --ColorTitulo: #9F3D56;
-    --ColorSubtitulo: #A8743F;
-    --ColorTextoBase: #5A6670;
+    --FondoPrincipal: #FAF6EF;
+    --FondoSecundario: #EDE2D0;
+    --Superficie: #D8CBB8;
+    --Subsuperficie: #EDE2D0;
+    --TextoPrincipal: #0F3D56;
+    --TextoSecundario: #5A6670;
+    --TextoDesactivado: rgba(90, 102, 112, 0.6);
+    --BotonPrincipal: #C28A52;
+    --BotonHover: #A8743F;
+    --BotonSecundario: transparent;
+    --BotonSecundarioBorde: #C28A52;
+    --BotonSecundarioHover: #C28A52;
+    --Acento: #B76E4D;
+    --Divisor: #D8CBB8;
+    --InputFondo: #FAF6EF;
+    --InputBorde: #D8CBB8;
+    --InputFocus: #C28A52;
+    --CardFondo: #D8CBB8;
+    --CardHoverBorde: #C28A52;
+    --SubcardFondo: #EDE2D0;
+    --SubcardBorde: #D8CBB8;
+    --TagFondo: #B76E4D;
+    --TagTexto: #FAF6EF;
+    --Titulo: #9F3D56;
+    --Subtitulo: #A8743F;
+    --TextoBase: #5A6670;
     --SombraBaja: 0px 2px 6px rgba(0, 0, 0, 0.05);
     --SombraMedia: 0px 4px 12px rgba(0, 0, 0, 0.08);
     --SombraAlta: 0px 8px 20px rgba(0, 0, 0, 0.12);
@@ -33,4 +33,150 @@
     --BordeRadiusGrande: 16px;
     --TransicionRapida: 0.2s ease;
     --TransicionMedia: 0.3s ease;
+}
+
+body {
+    background-color: var(--FondoPrincipal);
+}
+
+h1 {
+    color: var(--TextoPrincipal);
+    font-weight: bold;
+}
+
+h2 {
+    color: var(--TextoPrincipal);
+    font-weight: bold;
+}
+
+h3 {
+    color: var(--TextoPrincipal);
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+p {
+    color: var(--TextoPrincipal);
+    font-size: 1.1rem;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+a:hover,
+a:focus,
+a:visited,
+a:active {
+    text-decoration: none;
+    color: inherit;
+}
+
+
+.navbar {
+    background-color: var(--FondoPrincipal);
+}
+
+.navbar-brand {
+    color: var(--TextoPrincipal);
+}
+
+.navbar-link {
+    color: var(--TextoPrincipal);
+}
+
+.navbar-link:hover {
+    color: var(--BotonHover);
+}
+
+.navbar-brand:hover {
+    color: var(--BotonHover);
+}
+
+.tittles {
+    border: 1px solid #000000;
+    padding: 2rem;
+    background-color: var(--FondoSecundario);
+    border-radius: var(--BordeRadiusGrande);
+}
+
+.buttons-tittles {
+    display: flex;
+    gap: 1rem;
+    border: 1px solid #000000;
+    border-radius: var(--BordeRadiusGrande);
+    padding: 1rem;
+}
+
+.btn-arrow {
+    background-color: var(--BotonPrincipal);
+    border: 1px solid var(--Divisor);
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--TransicionRapida);
+    box-shadow: var(--SombraBaja);
+}
+
+.btn-arrow:hover {
+    background-color: var(--FondoSecundario);
+    transform: translateY(-2px);
+    box-shadow: var(--SombraMedia);
+    border-color: var(--BotonPrincipal);
+}
+
+.arrows {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+}
+
+.prestaciones-populares {
+    background-color: var(--CardFondo);
+    border: 2px solid var(--Divisor);
+    border-radius: var(--BordeRadiusMedio);
+    padding: 1rem;
+    margin: 0 1rem;
+}
+
+.prestaciones-populares img {
+    width: 64px;
+    height: 64px;
+}
+
+.experiences {
+    background-color: var(--SubcardFondo);
+    border: 2px solid var(--SubcardBorde);
+    border-radius: var(--BordeRadiusMedio);
+}
+
+.experiences img {
+    width: 150px;
+    height: 150px;
+}
+
+.card-text {
+    font-size: 1.4rem;
+}
+
+.star {
+    width: 35px !important;
+    height: 35px !important;
+}
+
+.qualifications {
+    color: var(--TextoPrincipal);
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.image-decoration img {
+    width: 125px;
+    height: 125px;
+    border: 1px solid #000000;
 }
