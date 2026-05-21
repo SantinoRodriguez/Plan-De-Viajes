@@ -67,6 +67,14 @@ span {
     font-size: clamp(0.95rem, 2vw, 1.1rem);
 }
 
+hr {
+    border: 0cap;
+    height: 0.3rem;
+    opacity: 100%;
+    background-color: var(--Acento);
+}
+
+
 a {
     text-decoration: none;
     color: inherit;
@@ -332,10 +340,33 @@ a:active {
     grid-template-columns: repeat(7, 1fr);
 }
 
+/* Soporte explícito para 7 columnas */
+.row-cols-7 > * {
+    flex: 0 0 auto;
+    width: 14.28571429% !important;
+}
+
 .calendar-day {
     border: 1px solid rgba(0, 0, 0, 0.3);
-    padding: 1rem;
+    padding: 0.4rem 0.2rem;
+    font-size: 0.85rem;
     background-color: var(--FondoPrincipal);
+    user-select: none;
+    position: relative;
+}
+
+@media (min-width: 576px) {
+    .calendar-day {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.95rem;
+    }
+}
+
+@media (min-width: 992px) {
+    .calendar-day {
+        padding: 1rem;
+        font-size: 1rem;
+    }
 }
 
 .calendar-day.active {
@@ -346,4 +377,44 @@ a:active {
 .calendar-day.empty {
     border: none;
     background-color: transparent;
+}
+
+/* Estilos interactivos para días clickeables */
+.calendar-day:not(.empty) {
+    cursor: pointer;
+    transition: background-color var(--TransicionRapida), color var(--TransicionRapida), transform var(--TransicionRapida), box-shadow var(--TransicionRapida);
+}
+
+.calendar-day:not(.empty):hover {
+    background-color: var(--Superficie);
+    color: var(--TextoPrincipal);
+    transform: scale(1.08);
+    z-index: 10;
+    box-shadow: var(--SombraMedia);
+}
+
+.calendar-day.active:not(.empty):hover {
+    background-color: var(--BotonHover);
+    color: #ffffff;
+}
+
+/* Tarjetas de recuerdos (Grilla 4x4) */
+.memory-card {
+    overflow: hidden;
+    border-radius: var(--BordeRadiusMedio);
+    transition: var(--TransicionMedia);
+    box-shadow: var(--SombraBaja);
+}
+
+.memory-card img {
+    transition: transform var(--TransicionMedia);
+}
+
+.memory-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--SombraMedia);
+}
+
+.memory-card:hover img {
+    transform: scale(1.08);
 }
