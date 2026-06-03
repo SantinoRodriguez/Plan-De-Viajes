@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Viaje - Plan de Viajes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: var(--FondoPrincipal);
+            display: flex;
+            height: 100vh;
+            font-family: inherit;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 200px;
+            background-color: var(--FondoPrincipal);
+            border-right: 2px solid #000;
+            display: flex;
+            flex-direction: column;
+            padding: 1rem 0.5rem;
+            flex-shrink: 0;
+            height: 100%;
+        }
+
+        .sidebar-btn {
+            background-color: var(--BotonPrincipal);
+            border: 1px solid #000;
+            border-radius: var(--BordeRadiusMedio);
+            color: #000;
+            font-weight: bold;
+            padding: 0.4rem 1rem;
+            margin-bottom: 0.6rem;
+            text-align: center;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            font-size: 0.9rem;
+        }
+
+        .sidebar-btn:hover {
+            background-color: var(--BotonHover);
+            color: #000;
+        }
+
+        .sidebar-logo {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            padding: 0.5rem;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+        }
+
+        /* Middle Content Styles */
+        .middle-content {
+            width: 380px;
+            background-color: var(--FondoPrincipal);
+            border-right: 2px solid #000;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            height: 100%;
+        }
+        
+        .middle-scrollable {
+            overflow-y: auto;
+            flex-grow: 1;
+            /* Hide scrollbar for cleaner look like wireframe */
+            scrollbar-width: none; /* Firefox */
+        }
+        .middle-scrollable::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
+        }
+
+        /* Header Image Area */
+        .trip-header-area {
+            position: relative;
+            border-bottom: 2px solid #000;
+        }
+
+        .trip-header-img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+
+        .trip-header-top-btns {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.4rem;
+        }
+
+        .top-btn {
+            background-color: var(--BotonPrincipal);
+            border: 1px solid #000;
+            border-radius: var(--BordeRadiusPequeno);
+            padding: 0.2rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .trip-info-card {
+            background-color: var(--Superficie);
+            border: 1px solid #000;
+            border-radius: var(--BordeRadiusMedio);
+            padding: 0.8rem 1rem;
+            margin: -30px 1rem 1rem 1rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Sections inside middle content */
+        .content-section {
+            padding: 1rem;
+            border-bottom: 2px solid #000;
+        }
+        .content-section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.8rem;
+            cursor: pointer;
+        }
+
+        /* Skeleton Box */
+        .skeleton-box {
+            background-color: var(--Superficie);
+            border: 1px solid #000;
+            border-radius: var(--BordeRadiusPequeno);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .skeleton-box.crossed::before, .skeleton-box.crossed::after {
+            content: '';
+            position: absolute;
+            background-color: #000;
+            height: 1px;
+            width: 141.4%; /* sqrt(2)*100 */
+            top: 50%;
+            left: 50%;
+        }
+        .skeleton-box.crossed::before {
+            transform: translate(-50%, -50%) rotate(45deg);
+        }
+        .skeleton-box.crossed::after {
+            transform: translate(-50%, -50%) rotate(-45deg);
+        }
+
+        .explore-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .explore-skeleton-img {
+            aspect-ratio: 1;
+        }
+        .explore-skeleton-txt {
+            height: 30px;
+        }
+
+        .btn-explorar-todo {
+            background-color: var(--BotonPrincipal);
+            border: 1px solid #000;
+            border-radius: var(--BordeRadiusPequeno);
+            font-size: 0.75rem;
+            padding: 0.2rem 0.5rem;
+            font-weight: bold;
+        }
+
+        .note-input {
+            width: 100%;
+            border: 1px solid #000;
+            border-radius: var(--BordeRadiusPequeno);
+            background-color: var(--FondoPrincipal);
+            padding: 0.5rem;
+            height: 35px;
+        }
+
+        /* List Items */
+        .list-item-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            align-items: center;
+        }
+
+        .item-img {
+            width: 60px;
+            height: 60px;
+            flex-shrink: 0;
+        }
+
+        .item-content {
+            flex-grow: 1;
+            height: 60px;
+        }
+        
+        .add-btn-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .add-input {
+            flex-grow: 1;
+            background-color: #e0e0e0;
+            border: 1px solid #000;
+            border-radius: var(--BordeRadiusPequeno);
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+        }
+        
+        .add-icon-btn {
+            width: 35px;
+            height: 35px;
+            background-color: var(--BotonPrincipal);
+            border: 1px solid #000;
+            border-radius: var(--BordeRadiusPequeno);
+            cursor: pointer;
+        }
+
+        /* Budget Section */
+        .budget-card {
+            background-color: var(--Superficie);
+            border: 1px solid #000;
+            border-radius: var(--BordeRadiusMedio);
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        /* Map Section */
+        .map-container {
+            flex-grow: 1;
+            height: 100%;
+            position: relative;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Modal custom styles */
+        .custom-modal-content {
+            background-color: var(--FondoPrincipal);
+            border: 2px solid #000;
+            border-radius: var(--BordeRadiusMedio);
+            padding: 2rem;
+            max-width: 450px;
+            margin: 0 auto;
+        }
+        
+        .modal-budget-box {
+            background-color: var(--Superficie);
+            border: 1px solid #000;
+            border-radius: var(--BordeRadiusMedio);
+            padding: 2.5rem 2rem;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <a href="../index.html" class="sidebar-btn sidebar-logo" style="border-radius: 20px;">Logo</a>
+        
+        <a href="#" class="sidebar-btn">Resumen</a>
+        <a href="explore.html" class="sidebar-btn">Explorar</a>
+        <a href="#" class="sidebar-btn">Notas</a>
+        <a href="#" class="sidebar-btn" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Lugares para visitar</a>
+        <a href="itinerario.html" class="sidebar-btn">Itinerario</a>
+        <a href="#" class="sidebar-btn">Fechas del viaje</a>
+        <a href="presupuesto.html" class="sidebar-btn">Presupuesto</a>
+        <a href="travels.html" class="sidebar-btn">Ver</a>
+        
+        <div class="sidebar-bottom">
+            <a href="#" class="sidebar-btn" style="border-radius: 20px;"><i class="fa fa-angle-double-left me-2"></i> Ocultar barra</a>
+        </div>
+    </div>
+
+    <!-- Middle Content -->
+    <div class="middle-content">
+        <div class="middle-scrollable">
+            <!-- Header Image Area -->
+            <div class="trip-header-area">
+                <img src="../Imagenes/Cities/paris.jpeg" alt="Paris" class="trip-header-img">
+                <div class="trip-header-top-btns">
+                    <div class="top-btn" style="background-color: var(--FondoSecundario);">Plan de Viaje</div>
+                    <div class="top-btn" style="background-color: var(--FondoSecundario);">Compartir</div>
+                    <div class="top-btn"><i class="fa fa-image"></i></div>
+                    <div class="top-btn"><i class="fa fa-list"></i></div>
+                    <div class="top-btn"><i class="fa fa-ellipsis-h"></i></div>
+                </div>
+                
+                <div class="trip-info-card shadow-sm">
+                    <h4 class="mb-1">Viaje a Paris</h4>
+                    <p class="mb-0 text-muted" style="font-size: 0.8rem;"><i class="fa fa-calendar-alt me-1"></i> 8/4 - 17/4</p>
+                </div>
+            </div>
+
+            <!-- Explora Section -->
+            <div class="content-section">
+                <div class="section-title">
+                    <span><i class="fa fa-chevron-down me-2" style="font-size: 0.7rem;"></i> Explora</span>
+                    <button class="btn-explorar-todo"><i class="fa fa-search me-1"></i> Explorar todo</button>
+                </div>
+                <div class="explore-grid">
+                    <div class="skeleton-box crossed explore-skeleton-img"></div>
+                    <div class="skeleton-box crossed explore-skeleton-img"></div>
+                    <div class="skeleton-box crossed explore-skeleton-img"></div>
+                    <div class="skeleton-box explore-skeleton-txt"></div>
+                    <div class="skeleton-box explore-skeleton-txt"></div>
+                    <div class="skeleton-box explore-skeleton-txt"></div>
+                </div>
+            </div>
+
+            <!-- Notas Section -->
+            <div class="content-section">
+                <div class="section-title">
+                    <span><i class="fa fa-chevron-down me-2" style="font-size: 0.7rem;"></i> Notas</span>
+                    <i class="fa fa-ellipsis-h"></i>
+                </div>
+                <input type="text" class="note-input" placeholder="">
+            </div>
+
+            <!-- Lugares para visitar Section -->
+            <div class="content-section">
+                <div class="section-title">
+                    <span><i class="fa fa-chevron-down me-2" style="font-size: 0.7rem;"></i> Lugares para visitar</span>
+                    <i class="fa fa-ellipsis-h"></i>
+                </div>
+                
+                <!-- Items -->
+                <div class="list-item-row">
+                    <div class="skeleton-box crossed item-img"></div>
+                    <div class="skeleton-box item-content"></div>
+                </div>
+                <div class="list-item-row">
+                    <div class="skeleton-box crossed item-img"></div>
+                    <div class="skeleton-box item-content"></div>
+                </div>
+                <div class="list-item-row">
+                    <div class="skeleton-box crossed item-img"></div>
+                    <div class="skeleton-box item-content"></div>
+                </div>
+                <div class="list-item-row">
+                    <div class="skeleton-box crossed item-img"></div>
+                    <div class="skeleton-box item-content"></div>
+                </div>
+                
+                <div class="add-btn-row mt-3">
+                    <input type="text" class="add-input" placeholder="Añadir lugar">
+                    <button class="add-icon-btn"></button>
+                    <button class="add-icon-btn"></button>
+                </div>
+            </div>
+
+            <!-- Itinerario Section -->
+            <div class="content-section">
+                <div class="section-title">
+                    <span class="fs-6 fw-bold">Itinerario</span>
+                    <div class="top-btn" style="background-color: var(--Acento); color: #fff; font-size: 0.75rem;"><i class="fa fa-calendar-alt me-1"></i> 8/4 - 17/4</div>
+                </div>
+                
+                <!-- Dia 1 -->
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 0.8rem;">
+                        <span><i class="fa fa-chevron-down me-2"></i> Viernes 8 de Abril</span>
+                        <i class="fa fa-ellipsis-h"></i>
+                    </div>
+                    
+                    <div class="list-item-row">
+                        <div class="skeleton-box crossed item-img"></div>
+                        <div class="skeleton-box item-content"></div>
+                    </div>
+                    <div class="list-item-row">
+                        <div class="skeleton-box crossed item-img"></div>
+                        <div class="skeleton-box item-content"></div>
+                    </div>
+                    
+                    <div class="add-btn-row mt-2">
+                        <input type="text" class="add-input" placeholder="Añadir lugar">
+                        <button class="add-icon-btn"></button>
+                        <button class="add-icon-btn"></button>
+                    </div>
+                </div>
+
+                <!-- Dia 2 -->
+                <div>
+                    <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 0.8rem;">
+                        <span><i class="fa fa-chevron-down me-2"></i> Sábado 9 de Abril</span>
+                        <i class="fa fa-ellipsis-h"></i>
+                    </div>
+                    
+                    <div class="add-btn-row mt-2">
+                        <input type="text" class="add-input" placeholder="Añadir lugar">
+                        <button class="add-icon-btn"></button>
+                        <button class="add-icon-btn"></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Presupuesto Section -->
+            <div class="content-section" style="background-color: var(--FondoPrincipal); padding-top: 1.5rem; padding-bottom: 2rem;">
+                <div class="section-title mb-3">
+                    <span class="fs-6 fw-bold">Presupuesto</span>
+                </div>
+                
+                <div class="budget-card">
+                    <h4 class="mb-0">0,00 ARS</h4>
+                </div>
+                
+                <button class="btn btns w-100 border border-dark fw-bold mb-2 py-2" data-bs-toggle="modal" data-bs-target="#budgetModal">Establecer un presupuesto</button>
+                <a href="final_settings.html" class="btn btns w-100 border border-dark fw-bold py-2 d-block text-decoration-none">Continuar</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Map Area -->
+    <div class="map-container">
+        <div id="map"></div>
+    </div>
+
+    <!-- Budget Modal -->
+    <div class="modal fade" id="budgetModal" tabindex="-1" aria-labelledby="budgetModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content custom-modal-content">
+                <div class="modal-body text-center p-0">
+                    <div class="modal-budget-box">
+                        <h3 class="mb-0">0,00 ARS</h3>
+                    </div>
+                    
+                    <div class="d-flex justify-content-center gap-3">
+                        <button class="btn btns border border-dark fw-bold px-4 py-2"><i class="fa fa-dollar-sign"></i></button>
+                        <button class="btn btns border border-dark fw-bold px-4 py-2 flex-grow-1" data-bs-dismiss="modal">Establecer un presupuesto</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <script src="../js/script.js"></script>
+    <!-- Incluir API de Maps llamando a initMap -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=&callback=initMap" async defer></script>
+</body>
+</html>

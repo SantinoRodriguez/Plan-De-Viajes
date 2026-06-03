@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajustes Finales - Viaje a París</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        .page-header-card {
+            background-color: var(--FondoSecundario);
+            border-bottom: 2px solid #000;
+            border-left: 2px solid #000;
+            border-right: 2px solid #000;
+            border-radius: 0 0 var(--BordeRadiusMedio) var(--BordeRadiusMedio);
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .section-card {
+            background-color: var(--Superficie);
+            border: 2px solid #000;
+            border-radius: var(--BordeRadiusMedio);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .settings-btn {
+            background-color: var(--BotonPrincipal);
+            border: 2px solid #000;
+            border-radius: var(--BordeRadiusPequeno);
+            color: #000;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            flex: 1;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .settings-btn:hover, .settings-btn.active {
+            background-color: var(--BotonHover);
+        }
+
+        .settings-btn-group {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* custom range slider */
+        .flex-slider-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .custom-range {
+            flex-grow: 1;
+            -webkit-appearance: none;
+            width: 100%;
+            height: 14px;
+            background: var(--Acento);
+            border: 2px solid #000;
+            border-radius: 8px;
+            outline: none;
+        }
+        
+        .custom-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--Acento);
+            border: 2px solid #000;
+            cursor: pointer;
+        }
+
+        .accordion-item {
+            border: 2px solid #000 !important;
+            border-radius: var(--BordeRadiusPequeno) !important;
+            margin-bottom: 1.2rem;
+            overflow: hidden;
+            background-color: var(--FondoPrincipal);
+        }
+
+        .accordion-button {
+            border-radius: var(--BordeRadiusPequeno) !important;
+            box-shadow: none !important;
+            padding: 1.2rem 1.5rem;
+            background-color: var(--FondoPrincipal) !important;
+            color: #000 !important;
+        }
+        
+        .accordion-button:not(.collapsed) {
+            background-color: var(--FondoPrincipal) !important;
+            color: #000;
+        }
+
+        .day-circle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background-color: var(--Acento);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-right: 1.5rem;
+            border: 2px solid #000;
+        }
+
+        .textarea-custom {
+            width: 100%;
+            border: 2px solid #000;
+            border-radius: var(--BordeRadiusPequeno);
+            background-color: var(--FondoPrincipal);
+            padding: 1rem;
+            resize: none;
+        }
+    </style>
+</head>
+
+<body>
+    <header style="border-bottom: 2px solid #000;">
+        <nav class="navbar navbar-expand-lg mt-2 mb-2">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="../index.html">Plan de Viajes</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-end " id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="explore.html" style="background-color: var(--BotonPrincipal); color: white; padding: 0.5rem 1rem;">Explorar</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="travels.html">Mis viajes</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="prices.html">Precio</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="log_in.html"><span class="login-link"><i
+                                        class="fa fa-user-circle"></i> Iniciar Sesion</span></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container col-lg-7">
+        <!-- Header Card -->
+        <div class="page-header-card shadow-sm mx-auto">
+            <div class="d-flex justify-content-between align-items-start mb-4">
+                <div>
+                    <h2 class="mb-2" style="font-weight: 500;">Ajustes Finales del Viaje</h2>
+                    <p class="mb-0 fw-semibold text-dark">Viaje a París &nbsp;&nbsp;<span class="fw-normal">8/4 - 17/4</span></p>
+                </div>
+                <a href="itinerario.html" class="btn btns border border-dark fw-bold px-4 py-2" style="border-width: 2px !important;">Finalizar Viaje</a>
+            </div>
+
+            <div class="card rounded-3 border border-dark mt-4" style="background-color: var(--Superficie); border-width: 2px !important;">
+                <div class="card-body p-4">
+                    <h5 class="mb-3" style="font-size: 1.1rem; font-weight: 500;">Notas Generales del Viaje</h5>
+                    <textarea class="textarea-custom mb-2" rows="4"></textarea>
+                    <small class="text-dark d-block mt-2" style="font-size: 0.75rem;">Estas notas nos ayudaran a preparar un viaje unico e inolvidable</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preferencias -->
+        <div class="section-card shadow-sm mx-auto">
+            <h4 class="mb-4" style="font-weight: 500;">Preferencias del Viaje</h4>
+            
+            <p class="mb-2" style="font-size: 0.9rem;">Nivel de esfuerzo esperado</p>
+            <div class="settings-btn-group">
+                <button class="settings-btn">Relajado</button>
+                <button class="settings-btn active" style="background-color: var(--BotonHover);">Moderado</button>
+                <button class="settings-btn">Intenso</button>
+            </div>
+
+            <p class="mb-2" style="font-size: 0.9rem;">Tipo de Experiencia</p>
+            <div class="settings-btn-group">
+                <button class="settings-btn active" style="background-color: var(--BotonHover);">Exploración</button>
+                <button class="settings-btn">Descanso</button>
+                <button class="settings-btn">Mixto</button>
+            </div>
+
+            <p class="mb-2" style="font-size: 0.9rem;">Flexibilidad del itinerario</p>
+            <div class="flex-slider-container">
+                <span style="font-size: 0.85rem;">Rigido</span>
+                <input type="range" class="custom-range" min="1" max="100" value="70">
+                <span style="font-size: 0.85rem;">Flexible</span>
+            </div>
+        </div>
+
+        <!-- Ajuste por Dia -->
+        <div class="section-card shadow-sm mx-auto mb-5">
+            <h4 class="mb-4" style="font-weight: 500;">Ajuste por Día</h4>
+
+            <div class="accordion" id="daysAccordion">
+                <!-- Dia 1 -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            <div class="d-flex align-items-center">
+                                <div class="day-circle">1</div>
+                                <div>
+                                    <h5 class="mb-0" style="font-weight: 500; font-size: 1.1rem;">Día 1</h5>
+                                    <small class="text-dark" style="font-size: 0.8rem;">15 de Junio</small>
+                                </div>
+                            </div>
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#daysAccordion">
+                        <div class="accordion-body pt-0 pb-4 px-4">
+                            <p class="mb-2 mt-2" style="font-size: 0.9rem;">Notas específicas del día</p>
+                            <textarea class="textarea-custom mb-4" rows="3"></textarea>
+
+                            <p class="mb-2" style="font-size: 0.9rem;">Prioridad del Día</p>
+                            <div class="settings-btn-group mb-4">
+                                <button class="settings-btn">Baja</button>
+                                <button class="settings-btn active" style="background-color: var(--BotonHover);">Media</button>
+                                <button class="settings-btn">Alta</button>
+                            </div>
+
+                            <p class="mb-2" style="font-size: 0.9rem;">Nivel de esfuerzo esperado</p>
+                            <div class="settings-btn-group mb-0">
+                                <button class="settings-btn active" style="background-color: var(--BotonHover);">Relajado</button>
+                                <button class="settings-btn">Moderado</button>
+                                <button class="settings-btn">Intenso</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dia 2 -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            <div class="d-flex align-items-center">
+                                <div class="day-circle">2</div>
+                                <div>
+                                    <h5 class="mb-0" style="font-weight: 500; font-size: 1.1rem;">Día 2</h5>
+                                    <small class="text-dark" style="font-size: 0.8rem;">16 de Junio</small>
+                                </div>
+                            </div>
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#daysAccordion">
+                        <div class="accordion-body pt-0 pb-4 px-4">
+                            <p class="mb-2 mt-2" style="font-size: 0.9rem;">Notas específicas del día</p>
+                            <textarea class="textarea-custom mb-4" rows="3"></textarea>
+
+                            <p class="mb-2" style="font-size: 0.9rem;">Prioridad del Día</p>
+                            <div class="settings-btn-group mb-4">
+                                <button class="settings-btn">Baja</button>
+                                <button class="settings-btn active" style="background-color: var(--BotonHover);">Media</button>
+                                <button class="settings-btn">Alta</button>
+                            </div>
+
+                            <p class="mb-2" style="font-size: 0.9rem;">Nivel de esfuerzo esperado</p>
+                            <div class="settings-btn-group mb-0">
+                                <button class="settings-btn active" style="background-color: var(--BotonHover);">Relajado</button>
+                                <button class="settings-btn">Moderado</button>
+                                <button class="settings-btn">Intenso</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dia 3 -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            <div class="d-flex align-items-center">
+                                <div class="day-circle">3</div>
+                                <div>
+                                    <h5 class="mb-0" style="font-weight: 500; font-size: 1.1rem;">Día 3</h5>
+                                    <small class="text-dark" style="font-size: 0.8rem;">17 de Junio</small>
+                                </div>
+                            </div>
+                        </button>
+                    </h2>
+                    <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#daysAccordion">
+                        <div class="accordion-body pt-0 pb-4 px-4">
+                            <p class="mb-2 mt-2" style="font-size: 0.9rem;">Notas específicas del día</p>
+                            <textarea class="textarea-custom mb-4" rows="3"></textarea>
+
+                            <p class="mb-2" style="font-size: 0.9rem;">Prioridad del Día</p>
+                            <div class="settings-btn-group mb-4">
+                                <button class="settings-btn">Baja</button>
+                                <button class="settings-btn active" style="background-color: var(--BotonHover);">Media</button>
+                                <button class="settings-btn">Alta</button>
+                            </div>
+
+                            <p class="mb-2" style="font-size: 0.9rem;">Nivel de esfuerzo esperado</p>
+                            <div class="settings-btn-group mb-0">
+                                <button class="settings-btn active" style="background-color: var(--BotonHover);">Relajado</button>
+                                <button class="settings-btn">Moderado</button>
+                                <button class="settings-btn">Intenso</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

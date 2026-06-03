@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planes y Precios - Plan de Viajes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        .page-header-card {
+            background-color: var(--FondoSecundario);
+            border-bottom: 2px solid #000;
+            border-left: 2px solid #000;
+            border-right: 2px solid #000;
+            border-radius: 0 0 var(--BordeRadiusMedio) var(--BordeRadiusMedio);
+            padding: 4rem 2rem;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .pricing-card {
+            background-color: var(--Superficie);
+            border: 2px solid #000;
+            border-radius: var(--BordeRadiusMedio);
+            padding: 2rem 1.5rem;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pricing-btn {
+            background-color: var(--BotonPrincipal);
+            border: 2px solid #000;
+            border-radius: var(--BordeRadiusPequeno);
+            color: #000;
+            font-weight: bold;
+            padding: 0.6rem 1rem;
+            width: 100%;
+            text-align: center;
+            cursor: pointer;
+            margin-top: 1rem;
+            margin-bottom: 1.5rem;
+            transition: var(--TransicionRapida);
+        }
+
+        .pricing-btn:hover {
+            background-color: var(--BotonHover);
+            color: #000;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex-grow: 1;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.8rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .icon-check {
+            background-color: #000;
+            color: var(--Superficie); /* Match card bg */
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            flex-shrink: 0;
+        }
+
+        .icon-cross {
+            border: 1.5px solid #000;
+            color: #000;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            flex-shrink: 0;
+            background-color: transparent;
+        }
+
+        .feature-item.disabled {
+            opacity: 0.5;
+        }
+
+        .comparison-card {
+            background-color: var(--Superficie);
+            border: 2px solid #000;
+            border-radius: var(--BordeRadiusMedio);
+            padding: 2rem;
+            margin-bottom: 3rem;
+            overflow-x: auto;
+        }
+
+        .comparison-table {
+            width: 100%;
+            min-width: 600px;
+            border-collapse: collapse;
+        }
+
+        .comparison-table th, .comparison-table td {
+            padding: 1rem 0.5rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(0,0,0,0.2);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .comparison-table th {
+            text-align: left;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+        
+        .comparison-table td:first-child {
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .comparison-table tr:last-child th,
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .faq-card {
+            background-color: var(--Superficie);
+            border: 2px solid #000;
+            border-radius: var(--BordeRadiusMedio);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .accordion-item {
+            border: none !important;
+            border-radius: var(--BordeRadiusPequeno) !important;
+            margin-bottom: 1rem;
+            background-color: var(--FondoPrincipal) !important;
+        }
+
+        .accordion-button {
+            border-radius: var(--BordeRadiusPequeno) !important;
+            box-shadow: none !important;
+            padding: 1.2rem 1.5rem;
+            background-color: var(--FondoPrincipal) !important;
+            color: #000 !important;
+            font-weight: 600;
+        }
+
+        .accordion-button:not(.collapsed) {
+            background-color: var(--FondoPrincipal) !important;
+            color: #000;
+        }
+
+        .cta-card {
+            background-color: var(--Superficie);
+            border: 2px solid #000;
+            border-radius: var(--BordeRadiusMedio);
+            padding: 3rem 2rem;
+            margin-bottom: 4rem;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <header style="border-bottom: 2px solid #000;">
+        <nav class="navbar navbar-expand-lg mt-2 mb-2">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="../index.html">Plan de Viajes</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-end " id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="explore.html">Explorar</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="travels.html">Mis viajes</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="prices.html" style="background-color: var(--BotonPrincipal); color: white; padding: 0.5rem 1rem;">Precio</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="log_in.html"><span class="login-link"><i
+                                        class="fa fa-user-circle"></i> Iniciar Sesion</span></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container col-lg-8">
+        <!-- Header Banner -->
+        <div class="page-header-card shadow-sm mx-auto">
+            <h2 class="mb-3" style="font-weight: 500; font-size: 2.2rem;">Planes flexibles para cada viajero</h2>
+            <p class="mb-0 text-dark mx-auto" style="font-size: 1.1rem; max-width: 600px; line-height: 1.6;">Paga solo por los viajes que planificas. Sin suscripciones mensuales, sin compromisos a largo plazo.</p>
+        </div>
+
+        <!-- Pricing Cards -->
+        <div class="row g-4 mb-5">
+            <!-- Básico -->
+            <div class="col-md-4">
+                <div class="pricing-card shadow-sm">
+                    <p class="mb-1" style="font-size: 0.85rem; font-weight: 600;">Básico</p>
+                    <p class="text-muted mb-3" style="font-size: 0.75rem;">Para probar la plataforma</p>
+                    
+                    <h2 class="mb-1 fw-bold">Gratis</h2>
+                    <p class="text-muted mb-3" style="font-size: 0.75rem;">Siempre gratis</p>
+                    
+                    <a href="make_travel.html" class="pricing-btn text-decoration-none">Comenzar gratis</a>
+                    
+                    <ul class="feature-list">
+                        <li class="feature-item"><span class="icon-check"><i class="fa fa-check"></i></span> Hasta 3 viajes</li>
+                        <li class="feature-item"><span class="icon-check"><i class="fa fa-check"></i></span> Itinerario básico</li>
+                        <li class="feature-item"><span class="icon-check"><i class="fa fa-check"></i></span> Presupuesto simple</li>
+                        <li class="feature-item disabled"><span class="icon-cross"><i class="fa fa-times"></i></span> Compartir viajes</li>
+                        <li class="feature-item disabled"><span class="icon-cross"><i class="fa fa-times"></i></span> Colaboradores</li>
+                        <li class="feature-item disabled"><span class="icon-cross"><i class="fa fa-times"></i></span> Recuerdos ilimitados</li>
+                        <li class="feature-item disabled"><span class="icon-cross"><i class="fa fa-times"></i></span> Exportar PDF</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Avanzado -->
+            <div class="col-md-4">
+                <div class="pricing-card shadow-sm">
+                    <p class="mb-1" style="font-size: 0.85rem; font-weight: 600;">Avanzado</p>
+                    <p class="text-muted mb-3" style="font-size: 0.75rem;">Para viajeros frecuentes</p>
+                    
+                    <h2 class="mb-1 fw-bold">9€</h2>
+                    <p class="text-muted mb-3" style="font-size: 0.75rem;">por viaje</p>
+                    
+                    <a href="make_travel.html" class="pricing-btn text-decoration-none">Comenzar ahora</a>
+                    
+                    <ul class="feature-list">
+                        <li class="feature-item"><span class="icon-check"><i class="fa fa-check"></i></span> Viajes ilimitados</li>
+                        <li class="feature-item"><span class="icon-check"><i class="fa fa-check"></i></span> Itinerario completo</li>
+                        <li class="feature-item"><span class="icon-check"><i class="fa fa-check"></i></span> Presupuesto inteligente</li>
+                        <li class="feature-item"><span class="icon-check"><i class="fa fa-check"></i></span> Compartir viajes</li>
+                        <li class="feature-item"><span class="icon-check"><i class="fa fa-check"></i></span> Hasta 5 colaboradores</li>
+                        <li class="feature-item"><span class="icon-check"><i class="fa fa-check"></i></span> Recuerdos ilimitados</li>
+                        <li class="feature-item disabled"><span class="icon-cross"><i class="fa fa-times"></i></span> Exportar Excel</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Premium -->
+            <div class="col-md-4">
+                <div class="pricing-card shadow-sm">
+                    <p class="mb-1" style="font-size: 0.85rem; font-weight: 600;">Premium</p>
+                    <p class="text-muted mb-3" style="font-size: 0.75rem;">Para planificadores expertos</p>
+                    
+                    <h2 class="mb-1 fw-bold">15€</h2>
+                    <p class="text-muted mb-3" style="font-size: 0.75rem;">por viaje</p>
+                    
+                    <a href="make_travel.html" class="pricing-btn text-decoration-none">Comenzar ahora</a>
+                    
+                    <ul class="feature-list">
+                        <li class="feature-item"><span class="icon-check"><i class="fa fa-check"></i></span> Todo de Avanzado</li>
+                        <li class="feature-item"><span class="icon-check"><i class="fa fa-check"></i></span> Colaboradores ilimitados</li>
+                        <li class="feature-item"><span class="icon-check"><i class="fa fa-check"></i></span> Adaptación dinámica</li>
+                        <li class="feature-item"><span class="icon-check"><i class="fa fa-check"></i></span> Sugerencias IA</li>
+                        <li class="feature-item"><span class="icon-check"><i class="fa fa-check"></i></span> Exportar PDF y Excel</li>
+                        <li class="feature-item"><span class="icon-check"><i class="fa fa-check"></i></span> Soporte prioritario</li>
+                        <li class="feature-item"><span class="icon-check"><i class="fa fa-check"></i></span> Plantillas premium</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparacion detallada -->
+        <div class="comparison-card shadow-sm">
+            <h5 class="mb-1" style="font-weight: 600;">Comparación detallada</h5>
+            <p class="text-muted mb-4" style="font-size: 0.85rem;">Encuentra el plan perfecto para tus necesidades</p>
+            
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th style="width: 40%;">Característica</th>
+                        <th style="width: 20%;">Básico</th>
+                        <th style="width: 20%;">Avanzado</th>
+                        <th style="width: 20%;">Premium</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Número de viajes</td>
+                        <td>3</td>
+                        <td>Ilimitados</td>
+                        <td>Ilimitados</td>
+                    </tr>
+                    <tr>
+                        <td>Personalización</td>
+                        <td>Básica</td>
+                        <td>Completa</td>
+                        <td>Avanzada + IA</td>
+                    </tr>
+                    <tr>
+                        <td>Presupuesto</td>
+                        <td>Simple</td>
+                        <td>Inteligente</td>
+                        <td>Predictivo</td>
+                    </tr>
+                    <tr>
+                        <td>Compartir</td>
+                        <td><span class="icon-cross mx-auto" style="opacity:0.6;"><i class="fa fa-times"></i></span></td>
+                        <td><span class="icon-check mx-auto" style="background-color: transparent; border: 1.5px solid #000; color: #000;"><i class="fa fa-check"></i></span></td>
+                        <td><span class="icon-check mx-auto" style="background-color: transparent; border: 1.5px solid #000; color: #000;"><i class="fa fa-check"></i></span></td>
+                    </tr>
+                    <tr>
+                        <td>Colaboradores</td>
+                        <td><span class="icon-cross mx-auto" style="opacity:0.6;"><i class="fa fa-times"></i></span></td>
+                        <td>5</td>
+                        <td>Ilimitados</td>
+                    </tr>
+                    <tr>
+                        <td>Recuerdos</td>
+                        <td>Ilimitados</td>
+                        <td>Ilimitados</td>
+                        <td>Ilimitados</td>
+                    </tr>
+                    <tr>
+                        <td>Exportaciones</td>
+                        <td><span class="icon-cross mx-auto" style="opacity:0.6;"><i class="fa fa-times"></i></span></td>
+                        <td>PDF</td>
+                        <td>PDF + Excel</td>
+                    </tr>
+                    <tr>
+                        <td>Soporte</td>
+                        <td>Email</td>
+                        <td>Email</td>
+                        <td>Prioritario</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- FAQ / Preguntas Frecuentes -->
+        <div class="faq-card shadow-sm">
+            <h4 class="mb-4" style="font-weight: 500;">Preguntas Frecuentes</h4>
+
+            <div class="accordion" id="faqAccordion">
+                <!-- FAQ 1 -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faqOne" aria-expanded="true" aria-controls="faqOne">
+                            ¿Como funciona el pago por viaje?
+                        </button>
+                    </h2>
+                    <div id="faqOne" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body pt-0 pb-4 px-4 text-muted" style="font-size: 0.95rem;">
+                            Solo pagas cuando creas un nuevo viaje. No hay suscripciones mensuales. Una vez pagado, tienes acceso completo a todas las funcionalidades del plan para ese viaje especifico.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 2 -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqTwo" aria-expanded="false" aria-controls="faqTwo">
+                            ¿Cuál es la diferencia entre los planes?
+                        </button>
+                    </h2>
+                    <div id="faqTwo" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body pt-0 pb-4 px-4 text-muted" style="font-size: 0.95rem;">
+                            El plan Básico es ideal para organizar escapadas cortas y sencillas de forma gratuita. El plan Avanzado te ofrece herramientas de colaboración y presupuestos inteligentes, y el plan Premium cuenta con integración de Inteligencia Artificial para recomendaciones dinámicas e ilimitadas opciones de exportación.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 3 -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqThree" aria-expanded="false" aria-controls="faqThree">
+                            ¿Puedo cambiar de plan después?
+                        </button>
+                    </h2>
+                    <div id="faqThree" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body pt-0 pb-4 px-4 text-muted" style="font-size: 0.95rem;">
+                            ¡Sí! Puedes iniciar con un plan básico o avanzado y mejorarlo a Premium en cualquier momento desde los ajustes de tu viaje, pagando únicamente la diferencia.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 4 -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqFour" aria-expanded="false" aria-controls="faqFour">
+                            ¿Hay política de cancelación?
+                        </button>
+                    </h2>
+                    <div id="faqFour" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body pt-0 pb-4 px-4 text-muted" style="font-size: 0.95rem;">
+                            Dado que pagas por viaje y mantienes acceso permanente al mismo, no existe una cancelación en el sentido tradicional. Puedes borrar el viaje en cualquier momento si ya no lo necesitas.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA Section -->
+        <div class="cta-card shadow-sm">
+            <h4 class="mb-2" style="font-weight: 600;">¿Listo para planificar tu próximo viaje?</h4>
+            <p class="text-muted mx-auto mb-4" style="max-width: 500px; font-size: 0.95rem;">Únete a miles de viajeros que ya organizan sus aventuras con Plan de Viajes.</p>
+            <a href="make_travel.html" class="btn btns border border-dark fw-bold px-4 py-2 text-decoration-none">Comenzar a planificar</a>
+        </div>
+    </div>
+
+    <footer>
+        <p class="text-center mt-3 mb-5">&copy; 2026 Plan de Viajes. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
