@@ -181,3 +181,32 @@ window.initMap = function() {
         console.log("Coordenadas arrastradas:", position.lat(), position.lng());
     });
 };
+
+// Functions to hide/show sidebar in make_travel.html
+window.hideSidebar = function() {
+    document.querySelector('.sidebar').style.display = 'none';
+    document.querySelector('.middle-content').style.display = 'none';
+    document.getElementById('show-sidebar-btn').style.display = 'flex';
+};
+
+window.showSidebar = function() {
+    document.querySelector('.sidebar').style.display = 'flex';
+    document.querySelector('.middle-content').style.display = 'flex';
+    document.getElementById('show-sidebar-btn').style.display = 'none';
+};
+
+// Image Carousel Function for info.html
+window.changeImage = function(src, element) {
+    document.getElementById('mainImage').src = src;
+    
+    // Remove active class from all thumbnails
+    let thumbnails = document.querySelectorAll('.thumbnail-img');
+    thumbnails.forEach(thumb => {
+        thumb.classList.remove('active');
+    });
+    
+    // Add active class to clicked thumbnail
+    if(element) {
+        element.classList.add('active');
+    }
+};

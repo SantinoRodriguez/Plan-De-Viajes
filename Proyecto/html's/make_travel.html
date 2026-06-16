@@ -15,156 +15,178 @@
 <body class="make-travel-layout">
     <!-- Sidebar -->
     <div class="sidebar">
-        <a href="../index.html" class="sidebar-btn sidebar-logo" style="border-radius: 20px;">Logo</a>
+        <a href="../index.html" class="sidebar-logo">
+            <i class="fa-solid fa-plane-departure"></i>
+            <span>Plan de Viajes</span>
+        </a>
         
-        <a href="#" class="sidebar-btn">Resumen</a>
-        <a href="explore.html" class="sidebar-btn">Explorar</a>
-        <a href="#" class="sidebar-btn">Notas</a>
-        <a href="#" class="sidebar-btn" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Lugares para visitar</a>
-        <a href="itinerario.html" class="sidebar-btn">Itinerario</a>
-        <a href="#" class="sidebar-btn">Fechas del viaje</a>
-        <a href="presupuesto.html" class="sidebar-btn">Presupuesto</a>
-        <a href="travels.html" class="sidebar-btn">Ver</a>
+        <a href="#resumen" class="sidebar-btn"><i class="fa-solid fa-chart-pie"></i> Resumen</a>
+        <a href="#explora" class="sidebar-btn"><i class="fa-solid fa-compass"></i> Explorar</a>
+        <a href="#notas" class="sidebar-btn"><i class="fa-solid fa-file-signature"></i> Notas</a>
+        <a href="#lugares" class="sidebar-btn"><i class="fa-solid fa-map-pin"></i> Lugares</a>
+        <a href="#itinerario" class="sidebar-btn active"><i class="fa-solid fa-route"></i> Itinerario</a>
+        <a href="#fechas" class="sidebar-btn"><i class="fa-solid fa-calendar-day"></i> Fechas del viaje</a>
+        <a href="#presupuesto" class="sidebar-btn"><i class="fa-solid fa-wallet"></i> Presupuesto</a>
+        <a href="travels.html" class="sidebar-btn"><i class="fa-solid fa-eye"></i> Ver viajes</a>
         
         <div class="sidebar-bottom">
-            <a href="#" class="sidebar-btn" style="border-radius: 20px;"><i class="fa fa-angle-double-left me-2"></i> Ocultar barra</a>
+            <a href="#" class="sidebar-btn" onclick="hideSidebar(); return false;"><i class="fa fa-angle-double-left"></i> Ocultar barra</a>
         </div>
     </div>
 
     <!-- Middle Content -->
-    <div class="middle-content">
+    <div class="middle-content col-3">
         <div class="middle-scrollable">
             <!-- Header Image Area -->
-            <div class="trip-header-area">
+            <div class="trip-header-area position-relative" id="resumen">
                 <img src="../Imagenes/Cities/paris.jpeg" alt="Paris" class="trip-header-img">
                 <div class="trip-header-top-btns">
-                    <div class="top-btn" style="background-color: var(--FondoSecundario);">Plan de Viaje</div>
-                    <div class="top-btn" style="background-color: var(--FondoSecundario);">Compartir</div>
-                    <div class="top-btn"><i class="fa fa-image"></i></div>
-                    <div class="top-btn"><i class="fa fa-list"></i></div>
-                    <div class="top-btn"><i class="fa fa-ellipsis-h"></i></div>
+                    <div class="top-btn secondary shadow-sm"><i class="fa fa-map-marked-alt me-1"></i> Plan</div>
+                    <a href="share.html" class="top-btn secondary shadow-sm text-decoration-none"><i class="fa fa-share-alt me-1"></i> Compartir</a>
+                    <div class="top-btn shadow-sm"><i class="fa fa-image"></i></div>
+                    <div class="top-btn shadow-sm"><i class="fa fa-list"></i></div>
+                    <div class="top-btn shadow-sm"><i class="fa fa-ellipsis-h"></i></div>
                 </div>
                 
                 <div class="trip-info-card shadow-sm">
-                    <h4 class="mb-1">Viaje a Paris</h4>
-                    <p class="mb-0 text-muted" style="font-size: 0.8rem;"><i class="fa fa-calendar-alt me-1"></i> 8/4 - 17/4</p>
+                    <h4 class="mb-1 fw-bold">Viaje a Paris</h4>
+                    <p class="mb-0 text-muted d-flex align-items-center">
+                        <i class="fa fa-calendar-alt me-2"></i> 8/4 - 17/4
+                        <span class="mx-2">•</span>
+                        <i class="fa fa-user-friends me-2"></i> 2 viajeros
+                    </p>
                 </div>
             </div>
 
             <!-- Explora Section -->
-            <div class="content-section">
-                <div class="section-title">
-                    <span><i class="fa fa-chevron-down me-2" style="font-size: 0.7rem;"></i> Explora</span>
-                    <button class="btn-explorar-todo"><i class="fa fa-search me-1"></i> Explorar todo</button>
+            <div class="content-section" id="explora">
+                <div class="section-title mb-3">
+                    <span class="fw-bold"><i class="fa fa-compass me-2"></i> Explora</span>
+                    <button class="btn-explorar-todo shadow-sm"><i class="fa fa-search me-1"></i> Explorar todo</button>
                 </div>
                 <div class="explore-grid">
-                    <div class="skeleton-box crossed explore-skeleton-img"></div>
-                    <div class="skeleton-box crossed explore-skeleton-img"></div>
-                    <div class="skeleton-box crossed explore-skeleton-img"></div>
-                    <div class="skeleton-box explore-skeleton-txt"></div>
-                    <div class="skeleton-box explore-skeleton-txt"></div>
-                    <div class="skeleton-box explore-skeleton-txt"></div>
+                    <div class="explore-item">
+                        <img src="../Imagenes/Sites/bar.jpeg" alt="Cafe">
+                    </div>
+                    <div class="explore-item">
+                        <img src="../Imagenes/Sites/arte.jpeg" alt="Louvre">
+                    </div>
+                    <div class="explore-item">
+                        <img src="../Imagenes/Food/comida.jpeg" alt="Food">
+                    </div>
+                    <div class="explore-label">Cafés</div>
+                    <div class="explore-label">Museos</div>
+                    <div class="explore-label">Gastronomía</div>
                 </div>
             </div>
 
             <!-- Notas Section -->
-            <div class="content-section">
-                <div class="section-title">
-                    <span><i class="fa fa-chevron-down me-2" style="font-size: 0.7rem;"></i> Notas</span>
+            <div class="content-section" id="notas">
+                <div class="section-title mb-2">
+                    <span class="fw-bold"><i class="fa fa-sticky-note me-2"></i> Notas</span>
                     <i class="fa fa-ellipsis-h"></i>
                 </div>
-                <input type="text" class="note-input" placeholder="">
+                <div class="position-relative">
+                    <textarea class="note-input shadow-sm w-100" placeholder="Escribe ideas, recordatorios..."></textarea>
+                </div>
             </div>
 
             <!-- Lugares para visitar Section -->
-            <div class="content-section">
-                <div class="section-title">
-                    <span><i class="fa fa-chevron-down me-2" style="font-size: 0.7rem;"></i> Lugares para visitar</span>
+            <div class="content-section" id="lugares">
+                <div class="section-title mb-3">
+                    <span class="fw-bold"><i class="fa fa-map-marker-alt me-2"></i> Lugares para visitar</span>
                     <i class="fa fa-ellipsis-h"></i>
                 </div>
                 
                 <!-- Items -->
-                <div class="list-item-row">
-                    <div class="skeleton-box crossed item-img"></div>
-                    <div class="skeleton-box item-content"></div>
-                </div>
-                <div class="list-item-row">
-                    <div class="skeleton-box crossed item-img"></div>
-                    <div class="skeleton-box item-content"></div>
-                </div>
-                <div class="list-item-row">
-                    <div class="skeleton-box crossed item-img"></div>
-                    <div class="skeleton-box item-content"></div>
-                </div>
-                <div class="list-item-row">
-                    <div class="skeleton-box crossed item-img"></div>
-                    <div class="skeleton-box item-content"></div>
-                </div>
+                <a href="info.html" class="text-decoration-none text-dark">
+                    <div class="list-item-row bg-white shadow-sm">
+                        <img src="../Imagenes/Sites/eiffel.jpeg" alt="Eiffel" class="item-img">
+                        <div class="item-content d-flex flex-column justify-content-center ms-2">
+                            <span class="fw-bold">Torre Eiffel</span>
+                            <span class="text-muted"><i class="fa fa-star text-warning"></i> 4.8 (12k reseñas)</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="info.html" class="text-decoration-none text-dark">
+                    <div class="list-item-row bg-white shadow-sm">
+                        <img src="../Imagenes/Sites/arte.jpeg" alt="Louvre" class="item-img">
+                        <div class="item-content d-flex flex-column justify-content-center ms-2">
+                            <span class="fw-bold">Museo del Louvre</span>
+                            <span class="text-muted"><i class="fa fa-star text-warning"></i> 4.9 (18k reseñas)</span>
+                        </div>
+                    </div>
+                </a>
                 
                 <div class="add-btn-row mt-3">
-                    <input type="text" class="add-input" placeholder="Añadir lugar">
-                    <button class="add-icon-btn"></button>
-                    <button class="add-icon-btn"></button>
+                    <input type="text" class="add-input shadow-sm" placeholder="Buscar lugares mágicos...">
+                    <button class="add-icon-btn shadow-sm"><i class="fa fa-microphone"></i></button>
+                    <button class="add-icon-btn primary shadow-sm"><i class="fa fa-plus"></i></button>
                 </div>
             </div>
 
             <!-- Itinerario Section -->
-            <div class="content-section">
-                <div class="section-title">
-                    <span class="fs-6 fw-bold">Itinerario</span>
-                    <div class="top-btn" style="background-color: var(--Acento); color: #fff; font-size: 0.75rem;"><i class="fa fa-calendar-alt me-1"></i> 8/4 - 17/4</div>
+            <div class="content-section" id="itinerario">
+                <div class="section-title mb-3">
+                    <span class="fw-bold"><i class="fa fa-route me-2"></i> Itinerario</span>
+                    <div class="top-btn accent shadow-sm"><i class="fa fa-calendar-alt me-1"></i> 8/4 - 17/4</div>
                 </div>
                 
                 <!-- Dia 1 -->
-                <div class="mb-4">
-                    <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 0.8rem;">
-                        <span><i class="fa fa-chevron-down me-2"></i> Viernes 8 de Abril</span>
+                <div class="mb-4" id="fechas">
+                    <div class="day-row-header d-flex justify-content-between align-items-center mb-3">
+                        <span class="fw-bold text-dark"><i class="fa fa-chevron-down me-2"></i> Viernes 8 de Abril</span>
                         <i class="fa fa-ellipsis-h"></i>
                     </div>
                     
-                    <div class="list-item-row">
-                        <div class="skeleton-box crossed item-img"></div>
-                        <div class="skeleton-box item-content"></div>
-                    </div>
-                    <div class="list-item-row">
-                        <div class="skeleton-box crossed item-img"></div>
-                        <div class="skeleton-box item-content"></div>
+                    <div class="list-item-row bg-white shadow-sm" style="position: relative;">
+                        <div class="timeline-dot"></div>
+                        <img src="../Imagenes/Sites/eiffel.jpeg" alt="Eiffel" class="item-img">
+                        <div class="item-content d-flex flex-column justify-content-center ms-2">
+                            <span class="fw-bold">Torre Eiffel</span>
+                            <span class="text-muted"><i class="far fa-clock me-1"></i> 10:00 AM - 12:30 PM</span>
+                        </div>
                     </div>
                     
-                    <div class="add-btn-row mt-2">
-                        <input type="text" class="add-input" placeholder="Añadir lugar">
-                        <button class="add-icon-btn"></button>
-                        <button class="add-icon-btn"></button>
+                    <div class="add-btn-row mt-3">
+                        <input type="text" class="add-input shadow-sm" placeholder="Añadir actividad...">
+                        <button class="add-icon-btn shadow-sm"><i class="fa fa-clock"></i></button>
+                        <button class="add-icon-btn primary shadow-sm"><i class="fa fa-plus"></i></button>
                     </div>
                 </div>
 
                 <!-- Dia 2 -->
                 <div>
-                    <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 0.8rem;">
-                        <span><i class="fa fa-chevron-down me-2"></i> Sábado 9 de Abril</span>
+                    <div class="day-row-header d-flex justify-content-between align-items-center mb-3">
+                        <span class="fw-bold text-dark"><i class="fa fa-chevron-down me-2"></i> Sábado 9 de Abril</span>
                         <i class="fa fa-ellipsis-h"></i>
                     </div>
                     
                     <div class="add-btn-row mt-2">
-                        <input type="text" class="add-input" placeholder="Añadir lugar">
-                        <button class="add-icon-btn"></button>
-                        <button class="add-icon-btn"></button>
+                        <input type="text" class="add-input shadow-sm" placeholder="Añadir actividad...">
+                        <button class="add-icon-btn shadow-sm"><i class="fa fa-clock"></i></button>
+                        <button class="add-icon-btn primary shadow-sm"><i class="fa fa-plus"></i></button>
                     </div>
                 </div>
             </div>
 
             <!-- Presupuesto Section -->
-            <div class="content-section" style="background-color: var(--FondoPrincipal); padding-top: 1.5rem; padding-bottom: 2rem;">
+            <div class="content-section position-relative" id="presupuesto">
                 <div class="section-title mb-3">
-                    <span class="fs-6 fw-bold">Presupuesto</span>
+                    <span class="fw-bold"><i class="fa fa-wallet me-2"></i> Presupuesto</span>
                 </div>
                 
-                <div class="budget-card">
-                    <h4 class="mb-0">0,00 ARS</h4>
+                <div class="budget-card shadow-sm">
+                    <h3 class="mb-1 fw-bold">0,00 ARS</h3>
+                    <p class="mb-0 text-muted">Presupuesto disponible</p>
                 </div>
                 
-                <button class="btn btns w-100 border border-dark fw-bold mb-2 py-2" data-bs-toggle="modal" data-bs-target="#budgetModal">Establecer un presupuesto</button>
-                <a href="final_settings.html" class="btn btns w-100 border border-dark fw-bold py-2 d-block text-decoration-none">Continuar</a>
+                <button class="btn btns budget-btn w-100 border border-dark fw-bold mb-3 py-2 shadow-sm d-flex justify-content-center align-items-center" data-bs-toggle="modal" data-bs-target="#budgetModal">
+                    <i class="fa fa-cog me-2"></i> Establecer presupuesto
+                </button>
+                <a href="final_settings.html" class="btn budget-btn-accent w-100 border border-dark fw-bold py-2 d-block text-decoration-none shadow-sm d-flex justify-content-center align-items-center">
+                    Continuar <i class="fa fa-arrow-right ms-2"></i>
+                </a>
             </div>
         </div>
     </div>
@@ -172,6 +194,9 @@
     <!-- Map Area -->
     <div class="map-container">
         <div id="map"></div>
+        <button id="show-sidebar-btn" class="show-sidebar-btn shadow-sm" onclick="showSidebar();">
+            <i class="fa-solid fa-angle-double-right"></i> Mostrar barra
+        </button>
     </div>
 
     <!-- Budget Modal -->
