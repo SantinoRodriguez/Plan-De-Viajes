@@ -47,36 +47,13 @@ El repositorio está organizado de la siguiente manera:
 
 ---
 
-## 🎨 Maquetados (Wireframes y Diseño en Figma)
+## 🎨 Maquetados (Diseño en Figma)
 
-El diseño visual y la estructura de la interfaz de usuario se planificaron y desarrollaron en Figma. Puedes acceder al proyecto interactivo a través del siguiente enlace directo:
+El diseño visual, la estructura de la interfaz y la experiencia de usuario (UX/UI) de la plataforma fueron planificados y estructurados íntegramente en Figma.
 
-🔗 **[Proyecto de Figma - WebApp Viajes](https://www.figma.com/design/sq8l7DjAwbSxVZBTh0zcIy/WebApp-Viajes?node-id=0-1&p=f&t=wwZ350gs8zpsUMY5-0)**
+Puedes acceder al proyecto interactivo haciendo clic en el siguiente enlace:
 
----
-
-### Maquetas de Media Fidelidad (`Maquetados/Media Fidelidad/`)
-
-Dentro del directorio [**Maquetados/Media Fidelidad/**](./Maquetados/Media%20Fidelidad/) se encuentran las maquetas visuales estáticas en formato PNG que estructuran el diseño del frontend de la aplicación:
-
-* 🖥️ **Pantalla Principal (Landing Page):** [Inicio.png](./Maquetados/Media%20Fidelidad/Inicio.png)
-* 🔐 **Iniciar Sesión:** [Iniciar-Sesion.png](./Maquetados/Media%20Fidelidad/Iniciar-Sesion.png)
-* 📝 **Registro de Usuario:** [Registrarse.png](./Maquetados/Media%20Fidelidad/Registrarse.png)
-* 🧭 **Explorador de Destinos:** [Explorar.png](./Maquetados/Media%20Fidelidad/Explorar.png)
-* 🗃️ **Panel de Mis Viajes:** [Mis-Viajes.png](./Maquetados/Media%20Fidelidad/Mis-Viajes.png)
-* 🗺️ **Planificar Nuevo Viaje:** [Planificar-Viaje.png](./Maquetados/Media%20Fidelidad/Planificar-Viaje.png)
-* ⚙️ **Ajustes Finales de Viaje:** [Ajustes-Finales.png](./Maquetados/Media%20Fidelidad/Ajustes-Finales.png)
-* 📅 **Cronograma de Itinerario:** [Itinerario.png](./Maquetados/Media%20Fidelidad/Itinerario.png)
-* 📍 **Destinos / Lugares (Vista Comprimida):** [Lugares-Comprimido.png](./Maquetados/Media%20Fidelidad/Lugares-Comprimido.png)
-* 📍 **Destinos / Lugares (Vista Extendida):** [Lugares-Extendido.png](./Maquetados/Media%20Fidelidad/Lugares-Extendido.png)
-* 💳 **Control de Presupuesto y Gastos:** [Presupuesto.png](./Maquetados/Media%20Fidelidad/Presupuesto.png)
-* 🏷️ **Planes y Precios de Suscripción:** [Precio.png](./Maquetados/Media%20Fidelidad/Precio.png)
-* 🤝 **Compartir Viaje:** [Compartir-Viaje.png](./Maquetados/Media%20Fidelidad/Compartir-Viaje.png)
-* 📜 **Historial de Viajes Realizados:** [Viajes-Realizados.png](./Maquetados/Media%20Fidelidad/Viajes-Realizados.png)
-* 📈 **Informe Técnico/Estadístico:** [Informe.png](./Maquetados/Media%20Fidelidad/Informe.png)
-
-> [!NOTE]
-> La carpeta [**Alta Fidelidad/**](./Maquetados/Alta%20Fidelidad/) está reservada para futuras iteraciones del diseño estético visual a color y mockup final.
+🔗 <a href="https://www.figma.com/design/sq8l7DjAwbSxVZBTh0zcIy/WebApp-Viajes?node-id=0-1&p=f&t=wwZ350gs8zpsUMY5-0" target="_blank">**Proyecto de Figma - WebApp Viajes**</a> (se abrirá en una nueva pestaña).
 
 ---
 
