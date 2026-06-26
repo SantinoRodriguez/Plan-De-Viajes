@@ -110,9 +110,9 @@
                     <div class="card2 rounded-4 p-3 border border-dark shadow-sm h-100">
                         <div class="d-flex flex-row gap-2 mb-3">
                             <div class="card rounded-4 border-dark w-100 px-3 py-1">
-                                <input type="text" class="form-control hero-input border-0 p-1" placeholder="Destinos">
+                                <input type="text" id="buscar-destinos" class="form-control hero-input border-0 p-1" placeholder="Destinos">
                             </div>
-                            <button class="btn btns fw-bold rounded-4 px-4 shadow-sm">Buscar</button>
+                            <button class="btn btns fw-bold rounded-4 px-4 shadow-sm" id="btn-buscar-alojamiento">Buscar</button>
                         </div>
 
                         <div class="card rounded-4 p-3 border border-dark shadow-sm">
@@ -406,6 +406,6 @@
     crossorigin="anonymous"></script>
 <script src="../js/script.js"></script>
 <!-- Reemplaza el parámetro 'key' con tu clave de API de Google Maps real si es necesario -->
-<script src="https://maps.googleapis.com/maps/api/js?key=&callback=initMap" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=&libraries=places&callback=initMap" async defer></script>
 
 </html>

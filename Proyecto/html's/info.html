@@ -4,29 +4,323 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Información del Lugar - Plan de Viajes</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Torre Eiffel - Información Detallada</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Georgia&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome & Bootstrap -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="../css/styles.css">
 </head>
 
-<body>
-    <header>
-        <div class="d-flex flex-row">
-            <h1>Torre Eiffel</h1>
-            <p class="acento p-1 rounded-4">Monumento</p>
-        </div>
-        <div>
-            <p>Champ de Mars, 5 Avenue Anatole France, 75007 París, Francia</p>
-        </div>
+<body class="tour-page-body">
+    <!-- Navbar / Header Superior del sitio -->
+    <header class="bg-white border-bottom border-dark py-2">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container">
+                <a class="navbar-brand fw-bold text-dark" href="../index.html">Plan de Viajes</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                    <ul class="navbar-nav gap-2">
+                        <li class="nav-item">
+                            <a class="nav-link" href="explore.html">Explorar</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="travels.html">Mis Viajes</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="prices.html">Precio</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="log_in.html"><span class="login-link"><i class="fa fa-user-circle"></i> Iniciar Sesión</span></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
     </header>
 
+    <!-- Page Header (Header Section) -->
+    <section class="tour-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <div class="d-flex flex-wrap align-items-center gap-3">
+                        <h1>Torre Eiffel</h1>
+                        <span class="tour-badge">Monumento</span>
+                    </div>
+                    <p class="tour-header-address">
+                        <i class="fa-solid fa-map-marker-alt me-1"></i> Champ de Mars, 5 Avenue Anatole France, 75007 París, Francia
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Area -->
+    <main class="container my-5">
+        <div class="row gx-4 gy-4">
+            <!-- Left Column (col-md-8) -->
+            <div class="col-lg-8">
+                <!-- Image Gallery -->
+                <div class="mb-4">
+                    <img id="mainImage" src="../Imagenes/Sites/eiffel.jpeg" alt="Torre Eiffel principal" class="tour-main-img shadow-sm mb-3">
+                    <div class="row g-2">
+                        <div class="col-3">
+                            <img src="../Imagenes/Sites/eiffel.jpeg" alt="Eiffel Vista 1" class="tour-thumb-img active thumbnail-img" onclick="changeImage(this.src, this)">
+                        </div>
+                        <div class="col-3">
+                            <img src="../Imagenes/Sites/eiffel-1.jpeg" alt="Eiffel Vista 2" class="tour-thumb-img thumbnail-img" onclick="changeImage(this.src, this)">
+                        </div>
+                        <div class="col-3">
+                            <img src="../Imagenes/Sites/eiffel-2.jpg" alt="Eiffel Vista 3" class="tour-thumb-img thumbnail-img" onclick="changeImage(this.src, this)">
+                        </div>
+                        <div class="col-3">
+                            <img src="../Imagenes/Sites/eiffel-4.avif" alt="Eiffel Vista 4" class="tour-thumb-img thumbnail-img" onclick="changeImage(this.src, this)">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Descripción -->
+                <div class="mb-5">
+                    <h3 class="fw-bold mb-3"><i class="fa-solid fa-align-left me-2"></i>Descripción</h3>
+                    <p class="fs-5 lh-base">
+                        La Torre Eiffel es una torre de hierro pudelado de 330 metros de altura construida por Gustave Eiffel para la Exposición Universal de 1889 en París. Inicialmente criticada por los artistas parisinos, se ha convertido en el monumento más emblemático de Francia y una de las estructuras más reconocibles del mundo.
+                    </p>
+                    <p class="fs-5 lh-base">
+                        Ofrece vistas panorámicas incomparables de París desde sus tres niveles. El símbolo más icónico de Francia y uno de los monumentos más visitados del mundo.
+                    </p>
+                </div>
+
+                <!-- Información Rápida -->
+                <div class="mb-5">
+                    <h3 class="fw-bold mb-3"><i class="fa-solid fa-circle-info me-2"></i>Información rápida</h3>
+                    <div class="row g-3">
+                        <div class="col-md-4 col-6">
+                            <div class="tour-info-box shadow-sm">
+                                <div class="tour-info-box-title">Duración estimada</div>
+                                <div class="tour-info-box-value">2 - 3 Horas</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-6">
+                            <div class="tour-info-box shadow-sm">
+                                <div class="tour-info-box-title">Nivel de esfuerzo</div>
+                                <div class="tour-info-box-value">Bajo (ascensor disponible)</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-6">
+                            <div class="tour-info-box shadow-sm">
+                                <div class="tour-info-box-title">Mejor horario</div>
+                                <div class="tour-info-box-value">Amanecer o atardecer</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-6">
+                            <div class="tour-info-box shadow-sm">
+                                <div class="tour-info-box-title">Costo estimado</div>
+                                <div class="tour-info-box-value">28€ (adultos hasta la cima)</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-6">
+                            <div class="tour-info-box shadow-sm">
+                                <div class="tour-info-box-title">Nivel turístico</div>
+                                <div class="tour-info-box-value">Muy alto</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-6">
+                            <div class="tour-info-box shadow-sm">
+                                <div class="tour-info-box-title">Ideal para</div>
+                                <div class="tour-info-box-value">Parejas - Fotografías</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Por qué vale la pena -->
+                <div class="mb-5">
+                    <h3 class="fw-bold mb-3"><i class="fa-solid fa-star me-2"></i>Por qué vale la pena</h3>
+                    
+                    <div class="tour-step-row">
+                        <div class="tour-step-number">1</div>
+                        <div class="tour-step-card shadow-sm">
+                            <h5>Vistas panorámicas únicas</h5>
+                            <p>Desde la cima puedes ver todo París: el Arco del Triunfo, Montmartre, el Sena y mucho más. Es especialmente mágico al atardecer.</p>
+                        </div>
+                    </div>
+
+                    <div class="tour-step-row">
+                        <div class="tour-step-number">2</div>
+                        <div class="tour-step-card shadow-sm">
+                            <h5>Experiencia icónica imprescindible</h5>
+                            <p>Es el símbolo de París. Aunque sea muy turístico, la experiencia de estar allí es única y vale completamente la pena.</p>
+                        </div>
+                    </div>
+
+                    <div class="tour-step-row">
+                        <div class="tour-step-number">3</div>
+                        <div class="tour-step-card shadow-sm">
+                            <h5>Perfecta para fotos memorables</h5>
+                            <p>Uno de los monumentos más fotogénicos del mundo. Tanto desde abajo como las vistas desde arriba son increíbles.</p>
+                        </div>
+                    </div>
+
+                    <div class="tour-step-row">
+                        <div class="tour-step-number">4</div>
+                        <div class="tour-step-card shadow-sm">
+                            <h5>Ambiente nocturno espectacular</h5>
+                            <p>El espectáculo de luces cada hora en punto durante la noche es mágico. Ver París iluminado desde la torre es inolvidable.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column (Sidebar col-lg-4) -->
+            <div class="col-lg-4">
+                <!-- Location / Map -->
+                <div class="mb-4">
+                    <h3 class="fw-bold mb-3"><i class="fa-solid fa-map-marked-alt me-2"></i>Ubicación</h3>
+                    <div class="tour-map-container shadow-sm">
+                        <!-- Embedded Google Map targeting Torre Eiffel coordinates -->
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2624.991625693759!2d2.2922926156743895!3d48.85837007928746!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e66e2964e34e2d%3A0x8ddca9ee380ef7e0!2sTorre%20Eiffel!5e0!3m2!1ses-419!2sar!4v1680000000000!5m2!1ses-419!2sar" 
+                            width="100%" 
+                            height="240" 
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                    <p class="small text-muted mt-1"><i class="fa-solid fa-map-pin text-danger me-1"></i> Champ de Mars, 5 Avenue Anatole France, 75007 París</p>
+                </div>
+
+                <!-- Lugares Cercanos -->
+                <div class="mb-4">
+                    <h3 class="fw-bold mb-3"><i class="fa-solid fa-location-arrow me-2"></i>Lugares cercanos</h3>
+                    <div class="tour-nearby-item shadow-sm">
+                        <span>Jardines del Trocadero</span>
+                        <span class="badge bg-white text-dark border border-dark">400m</span>
+                    </div>
+                    <div class="tour-nearby-item shadow-sm">
+                        <span>Museo del Quai Branly</span>
+                        <span class="badge bg-white text-dark border border-dark">800m</span>
+                    </div>
+                    <div class="tour-nearby-item shadow-sm">
+                        <span>Puente Bir-Hakeim</span>
+                        <span class="badge bg-white text-dark border border-dark">800m</span>
+                    </div>
+                    <div class="tour-nearby-item shadow-sm">
+                        <span>Río Sena (crucero)</span>
+                        <span class="badge bg-white text-dark border border-dark">300m</span>
+                    </div>
+                </div>
+
+                <!-- Add to Itinerary Form -->
+                <div class="mb-4">
+                    <h3 class="fw-bold mb-3"><i class="fa-solid fa-calendar-plus me-2"></i>Añadir al itinerario</h3>
+                    <div class="tour-card shadow-sm">
+                        <div class="mb-3">
+                            <label for="travel-day" class="tour-form-label">Día del viaje</label>
+                            <select id="travel-day" class="form-select tour-select">
+                                <option selected>Selecciona un día</option>
+                                <option value="1">Día 1 - Viernes 8 Abril</option>
+                                <option value="2">Día 2 - Sábado 9 Abril</option>
+                                <option value="3">Día 3 - Domingo 10 Abril</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="start-time" class="tour-form-label">Hora de inicio</label>
+                            <input type="time" id="start-time" class="form-control tour-input" value="10:00">
+                        </div>
+                        <div class="mb-2">
+                            <label class="tour-form-label d-block">Prioridad</label>
+                            <div class="tour-btn-group" id="priority-group">
+                                <button type="button" class="tour-btn-priority active" onclick="setPriority('Baja', this)">Baja</button>
+                                <button type="button" class="tour-btn-priority" onclick="setPriority('Media', this)">Media</button>
+                                <button type="button" class="tour-btn-priority" onclick="setPriority('Alta', this)">Alta</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personal Notes -->
+                <div class="mb-4">
+                    <h3 class="fw-bold mb-3"><i class="fa-solid fa-pen-to-square me-2"></i>Notas personales</h3>
+                    <textarea class="form-control tour-textarea shadow-sm" rows="4" placeholder="Añade comentarios, motivación o recordatorios..."></textarea>
+                </div>
+
+                <!-- Things to Keep in Mind -->
+                <div class="mb-4">
+                    <h3 class="fw-bold mb-3"><i class="fa-solid fa-triangle-exclamation me-2"></i>Cosas a tener en cuenta</h3>
+                    <div class="tour-card shadow-sm small d-flex flex-column gap-2">
+                        <div class="d-flex align-items-start gap-2 border-bottom border-dark pb-2 mb-1">
+                            <i class="fa-solid fa-ticket text-warning mt-1"></i>
+                            <span>Compra las entradas online con anticipación para evitar colas de hasta 2 horas</span>
+                        </div>
+                        <div class="d-flex align-items-start gap-2 border-bottom border-dark pb-2 mb-1">
+                            <i class="fa-solid fa-clock text-warning mt-1"></i>
+                            <span>El mejor momento es al amanecer o al atardecer para ver la ciudad iluminarse</span>
+                        </div>
+                        <div class="d-flex align-items-start gap-2 border-bottom border-dark pb-2 mb-1">
+                            <i class="fa-solid fa-coins text-warning mt-1"></i>
+                            <span>Si tienes presupuesto ajustado, las vistas desde el segundo piso son casi igual de buenas</span>
+                        </div>
+                        <div class="d-flex align-items-start gap-2 border-bottom border-dark pb-2 mb-1">
+                            <i class="fa-solid fa-shirt text-warning mt-1"></i>
+                            <span>Lleva ropa abrigada, en la cima hace viento y frío incluso en verano</span>
+                        </div>
+                        <div class="d-flex align-items-start gap-2 border-bottom border-dark pb-2 mb-1">
+                            <i class="fa-solid fa-utensils text-warning mt-1"></i>
+                            <span>Hay restaurantes en el primer y segundo piso, pero son caros. Mejor come antes</span>
+                        </div>
+                        <div class="d-flex align-items-start gap-2">
+                            <i class="fa-solid fa-lightbulb text-warning mt-1"></i>
+                            <span>El espectáculo de luces es cada hora en punto después del anochecer durante 5 minutos</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer (Button Section) -->
+    <footer class="tour-footer">
+        <div class="container">
+            <div class="row align-items-center gy-3">
+                <div class="col-md-6 d-flex flex-wrap gap-2 justify-content-center justify-content-md-start">
+                    <button class="btn btn-tour"><i class="fa-regular fa-bookmark me-1"></i> Guardar para después</button>
+                    <button class="btn btn-tour"><i class="fa-solid fa-code-compare me-1"></i> Comparar</button>
+                    <button class="btn btn-tour"><i class="fa-solid fa-share-nodes me-1"></i> Compartir</button>
+                </div>
+                <div class="col-md-6 d-flex flex-wrap gap-2 justify-content-center justify-content-md-end">
+                    <a href="lugares.html" class="btn btn-tour text-decoration-none">Cancelar</a>
+                    <button class="btn btn-tour btn-tour-primary"><i class="fa-solid fa-plus me-1"></i> Agregar al itinerario</button>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
     <script src="../js/script.js"></script>
+    <script>
+        // Simple client-side toggle for priority buttons
+        function setPriority(level, btn) {
+            const buttons = document.querySelectorAll('#priority-group .tour-btn-priority');
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            console.log("Selected priority level:", level);
+        }
+    </script>
 </body>
 
 </html>

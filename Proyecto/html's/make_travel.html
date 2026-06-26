@@ -119,9 +119,9 @@
                 </a>
                 
                 <div class="add-btn-row mt-3">
-                    <input type="text" class="add-input shadow-sm" placeholder="Buscar lugares mágicos...">
+                    <input type="text" id="buscar-lugares" class="add-input shadow-sm" placeholder="Buscar lugares mágicos...">
                     <button class="add-icon-btn shadow-sm"><i class="fa fa-microphone"></i></button>
-                    <button class="add-icon-btn primary shadow-sm"><i class="fa fa-plus"></i></button>
+                    <button class="add-icon-btn primary shadow-sm" id="btn-add-lugar"><i class="fa fa-plus"></i></button>
                 </div>
             </div>
 
@@ -221,7 +221,7 @@
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
     <script src="../js/script.js"></script>
-    <!-- Incluir API de Maps llamando a initMap -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=&callback=initMap" async defer></script>
+    <!-- Incluir API de Maps llamando a initMap con libreria de places -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=&libraries=places&callback=initMap" async defer></script>
 </body>
 </html>

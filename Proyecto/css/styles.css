@@ -1936,3 +1936,267 @@ input:checked+.slider:before {
     background-color: var(--BotonHover);
     transform: translateY(-1px);
 }
+
+/* --- ESTILOS DE INFO.HTML (TORRE EIFFEL DETALLE) --- */
+:root {
+    --TourDarkBrown: #50230F;
+    --TourLightBrown: #D2B48C;
+    --TourGoldBg: #ECCFB3;
+    --TourNumberBg: #B68C6A;
+    --TourBadgeBg: #FADCB3;
+    --TourPageBg: #F8F3E9;
+    --TourFooterBg: #50230F;
+}
+
+.tour-page-body {
+    background-color: var(--TourPageBg) !important;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: var(--TourDarkBrown);
+}
+
+.tour-header {
+    background-color: var(--TourLightBrown);
+    border-bottom: 2px solid var(--TourDarkBrown);
+    padding: 2.5rem 0;
+}
+
+.tour-header h1 {
+    font-family: 'Georgia', serif;
+    color: var(--TourDarkBrown);
+    font-weight: 700;
+    font-size: 2.75rem;
+    margin: 0;
+}
+
+.tour-badge {
+    background-color: var(--TourBadgeBg);
+    color: var(--TourDarkBrown);
+    border: 1px solid var(--TourDarkBrown);
+    border-radius: 50px;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: inline-block;
+}
+
+.tour-header-address {
+    color: var(--TourDarkBrown);
+    font-size: 0.95rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0;
+}
+
+.tour-card {
+    background-color: var(--TourGoldBg);
+    border: 1px solid var(--TourDarkBrown);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.tour-section-title {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    color: var(--TourDarkBrown);
+    margin-top: 1.75rem;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+/* Gallery */
+.tour-main-img {
+    border: 1px solid var(--TourDarkBrown);
+    border-radius: 0px; /* Sharp corners per instructions */
+    width: 100%;
+    height: auto;
+    max-height: 450px;
+    object-fit: cover;
+}
+
+.tour-thumb-img {
+    border: 1px solid var(--TourDarkBrown);
+    border-radius: 0px;
+    width: 100%;
+    height: 80px;
+    object-fit: cover;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.tour-thumb-img:hover {
+    opacity: 0.8;
+}
+
+.tour-thumb-img.active {
+    outline: 3px solid var(--TourDarkBrown);
+    outline-offset: -3px;
+}
+
+/* Info Box */
+.tour-info-box {
+    background-color: var(--TourGoldBg);
+    border: 1px solid var(--TourDarkBrown);
+    border-radius: 8px;
+    padding: 0.85rem;
+    height: 100%;
+}
+
+.tour-info-box-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--TourDarkBrown);
+    opacity: 0.8;
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+}
+
+.tour-info-box-value {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--TourDarkBrown);
+    margin: 0;
+}
+
+/* Why worth it */
+.tour-step-row {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.tour-step-number {
+    background-color: var(--TourNumberBg);
+    color: var(--TourDarkBrown);
+    border: 1px solid var(--TourDarkBrown);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+    margin-top: 6px;
+}
+
+.tour-step-card {
+    background-color: var(--TourGoldBg);
+    border: 1px solid var(--TourDarkBrown);
+    border-radius: 12px;
+    padding: 1rem;
+    flex-grow: 1;
+}
+
+.tour-step-card h5 {
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+}
+
+.tour-step-card p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+/* Sidebar Specifics */
+.tour-map-container {
+    border: 1px solid var(--TourDarkBrown);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.tour-nearby-item {
+    background-color: var(--TourGoldBg);
+    border: 1px solid var(--TourDarkBrown);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.tour-form-label {
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-bottom: 0.25rem;
+    color: var(--TourDarkBrown);
+}
+
+.tour-select, .tour-input, .tour-textarea {
+    background-color: var(--TourGoldBg) !important;
+    border: 1px solid var(--TourDarkBrown) !important;
+    border-radius: 8px !important;
+    color: var(--TourDarkBrown) !important;
+    font-size: 0.9rem !important;
+}
+
+.tour-select::placeholder, .tour-input::placeholder, .tour-textarea::placeholder {
+    color: rgba(80, 35, 15, 0.6) !important;
+}
+
+/* Priority Button Group */
+.tour-btn-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.tour-btn-priority {
+    background-color: var(--TourLightBrown);
+    color: var(--TourDarkBrown);
+    border: 1px solid var(--TourDarkBrown);
+    border-radius: 8px;
+    padding: 0.4rem 1rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+    flex: 1;
+    transition: background-color 0.2s;
+}
+
+.tour-btn-priority:hover {
+    background-color: var(--TourNumberBg);
+}
+
+.tour-btn-priority.active {
+    background-color: var(--TourDarkBrown);
+    color: #FAF6EF;
+}
+
+/* Footer Section */
+.tour-footer {
+    background-color: var(--TourFooterBg);
+    border-top: 2px solid var(--TourDarkBrown);
+    padding: 1.5rem 0;
+    margin-top: 3rem;
+}
+
+.btn-tour {
+    background-color: var(--TourLightBrown);
+    color: var(--TourDarkBrown) !important;
+    border: 1px solid var(--TourDarkBrown) !important;
+    border-radius: 8px !important;
+    font-weight: 700 !important;
+    padding: 0.5rem 1.25rem !important;
+    transition: all 0.2s ease;
+}
+
+.btn-tour:hover {
+    background-color: var(--TourNumberBg);
+}
+
+.btn-tour-primary {
+    background-color: var(--TourDarkBrown) !important;
+    color: #F8F3E9 !important;
+    border: 1px solid var(--TourLightBrown) !important;
+}
+
+.btn-tour-primary:hover {
+    background-color: var(--TourNumberBg) !important;
+    color: var(--TourDarkBrown) !important;
+}
