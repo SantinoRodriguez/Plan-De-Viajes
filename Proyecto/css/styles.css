@@ -2200,3 +2200,8 @@ input:checked+.slider:before {
     background-color: var(--TourNumberBg) !important;
     color: var(--TourDarkBrown) !important;
 }
+
+/* Bajar la opacidad del placeholder (ejemplo) de la contraseña */
+input[type="password"]::placeholder {
+    opacity: 0.35 !important;
+}

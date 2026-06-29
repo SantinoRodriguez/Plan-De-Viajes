@@ -54,10 +54,10 @@
             <div class="row align-items-center">
                 <div class="col-md-8">
                     <div class="d-flex flex-wrap align-items-center gap-3">
-                        <h1>Torre Eiffel</h1>
-                        <span class="tour-badge">Monumento</span>
+                        <h1 id="info-title">Torre Eiffel</h1>
+                        <span id="info-badge" class="tour-badge">Monumento</span>
                     </div>
-                    <p class="tour-header-address">
+                    <p id="info-address" class="tour-header-address">
                         <i class="fa-solid fa-map-marker-alt me-1"></i> Champ de Mars, 5 Avenue Anatole France, 75007 París, Francia
                     </p>
                 </div>
@@ -73,7 +73,7 @@
                 <!-- Image Gallery -->
                 <div class="mb-4">
                     <img id="mainImage" src="../Imagenes/Sites/eiffel.jpeg" alt="Torre Eiffel principal" class="tour-main-img shadow-sm mb-3">
-                    <div class="row g-2">
+                    <div id="info-thumbnails" class="row g-2">
                         <div class="col-3">
                             <img src="../Imagenes/Sites/eiffel.jpeg" alt="Eiffel Vista 1" class="tour-thumb-img active thumbnail-img" onclick="changeImage(this.src, this)">
                         </div>
@@ -92,18 +92,19 @@
                 <!-- Descripción -->
                 <div class="mb-5">
                     <h3 class="fw-bold mb-3"><i class="fa-solid fa-align-left me-2"></i>Descripción</h3>
-                    <p class="fs-5 lh-base">
-                        La Torre Eiffel es una torre de hierro pudelado de 330 metros de altura construida por Gustave Eiffel para la Exposición Universal de 1889 en París. Inicialmente criticada por los artistas parisinos, se ha convertido en el monumento más emblemático de Francia y una de las estructuras más reconocibles del mundo.
-                    </p>
-                    <p class="fs-5 lh-base">
-                        Ofrece vistas panorámicas incomparables de París desde sus tres niveles. El símbolo más icónico de Francia y uno de los monumentos más visitados del mundo.
-                    </p>
+                    <div id="info-description">
+                        <p class="fs-5 lh-base">
+                            La Torre Eiffel es una torre de hierro pudelado de 330 metros de altura construida por Gustave Eiffel para la Exposición Universal de 1889 en París. Inicialmente criticada por los artistas parisinos, se ha convertido en el monumento más emblemático de Francia y una de las estructuras más reconocibles del mundo.
+                        </p>
+                        <p class="fs-5 lh-base">
+                            Ofrece vistas panorámicas incomparables de París desde sus tres niveles. El símbolo más icónico de Francia y uno de los monumentos más visitados del mundo.
+                        </p>
+                    </div>
                 </div>
 
-                <!-- Información Rápida -->
                 <div class="mb-5">
                     <h3 class="fw-bold mb-3"><i class="fa-solid fa-circle-info me-2"></i>Información rápida</h3>
-                    <div class="row g-3">
+                    <div id="info-quick" class="row g-3">
                         <div class="col-md-4 col-6">
                             <div class="tour-info-box shadow-sm">
                                 <div class="tour-info-box-title">Duración estimada</div>
@@ -186,19 +187,11 @@
                 <!-- Location / Map -->
                 <div class="mb-4">
                     <h3 class="fw-bold mb-3"><i class="fa-solid fa-map-marked-alt me-2"></i>Ubicación</h3>
-                    <div class="tour-map-container shadow-sm">
-                        <!-- Embedded Google Map targeting Torre Eiffel coordinates -->
-                        <iframe 
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2624.991625693759!2d2.2922926156743895!3d48.85837007928746!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e66e2964e34e2d%3A0x8ddca9ee380ef7e0!2sTorre%20Eiffel!5e0!3m2!1ses-419!2sar!4v1680000000000!5m2!1ses-419!2sar" 
-                            width="100%" 
-                            height="240" 
-                            style="border:0;" 
-                            allowfullscreen="" 
-                            loading="lazy" 
-                            referrerpolicy="no-referrer-when-downgrade">
-                        </iframe>
+                    <div class="tour-map-container shadow-sm p-0">
+                        <!-- Dynamic Google Map -->
+                        <div id="info-map" style="width: 100%; height: 240px; border-radius: 8px;"></div>
                     </div>
-                    <p class="small text-muted mt-1"><i class="fa-solid fa-map-pin text-danger me-1"></i> Champ de Mars, 5 Avenue Anatole France, 75007 París</p>
+                    <p id="info-sidebar-address" class="small text-muted mt-1"><i class="fa-solid fa-map-pin text-danger me-1"></i> Champ de Mars, 5 Avenue Anatole France, 75007 París</p>
                 </div>
 
                 <!-- Lugares Cercanos -->
@@ -321,6 +314,7 @@
             console.log("Selected priority level:", level);
         }
     </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=&libraries=places&callback=initInfoPage" async defer></script>
 </body>
 
 </html>
