@@ -738,5 +738,224 @@ async function checkSession() {
     }
 }
 
-// Ejecutar comprobación al cargar el DOM
-document.addEventListener("DOMContentLoaded", checkSession);
+// Función para cargar los viajes desde FastAPI
+async function cargarViajes() {
+    const viajesGrid = document.getElementById("viajes-grid");
+    if (!viajesGrid) return; // Solo ejecutar si estamos en travels.html (donde existe el grid)
+
+    try {
+        // Verificar sesión activa
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+        if (sessionError || !sessionData.session) {
+            viajesGrid.innerHTML = '<div class="col-12 text-center mt-5"><h4>Debes iniciar sesión para ver tus viajes</h4><a href="log_in.html" class="btn btns mt-3">Iniciar Sesión</a></div>';
+            return;
+        }
+
+        const token = sessionData.session.access_token;
+        
+        // Llamada a nuestro backend de FastAPI
+        const response = await fetch("http://localhost:8000/api/viajes", {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error en el servidor: ${response.status}`);
+        }
+
+        const viajes = await response.json();
+
+        // Si no hay viajes, mostrar mensaje
+        if (!viajes || viajes.length === 0) {
+            viajesGrid.innerHTML = '<div class="col-12 text-center mt-5"><h4>No se han realizado viajes</h4></div>';
+            return;
+        }
+
+        // Si hay viajes, renderizarlos dinámicamente
+        let htmlContent = "";
+        viajes.forEach(viaje => {
+            // Utilizamos la primera letra del destino como "imagen" provisional ya que aún no hay subidas
+            const initial = viaje.Destino_Principal ? viaje.Destino_Principal.charAt(0).toUpperCase() : 'V';
+            
+            htmlContent += `
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <a href="#">
+                        <div class="ratio ratio-1x1 mb-4">
+                            <div class="card-img-top collage-img d-flex align-items-center justify-content-center bg-dark text-white fw-bold display-1 rounded-4">
+                                ${initial}
+                            </div>
+                        </div>
+                        <h3 class="text-center fs-4">${viaje.Nombre_Viaje || 'Viaje Sin Nombre'}</h3>
+                        <p class="text-center fs-6">${viaje.Destino_Principal || 'Destino Desconocido'}</p>
+                    </a>
+                </div>
+            `;
+        });
+        viajesGrid.innerHTML = htmlContent;
+
+    } catch (err) {
+        console.error("Error al cargar viajes:", err);
+        viajesGrid.innerHTML = '<div class="col-12 text-center mt-5 text-danger"><h4>Ocurrió un error al cargar tus viajes. ¿El backend de FastAPI está encendido?</h4></div>';
+    }
+}
+
+// Función para cargar los recuerdos desde FastAPI
+async function cargarRecuerdos() {
+    const recuerdosGrid = document.getElementById("recuerdos-grid");
+    if (!recuerdosGrid) return; // Solo ejecutar si existe el grid de recuerdos
+
+    try {
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+        if (sessionError || !sessionData.session) {
+            recuerdosGrid.innerHTML = '<div class="col-12 text-center mt-3"><h4>Debes iniciar sesión para ver tus recuerdos</h4></div>';
+            return;
+        }
+
+        const token = sessionData.session.access_token;
+        const response = await fetch("http://localhost:8000/api/recuerdos", {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error en el servidor: ${response.status}`);
+        }
+
+        const recuerdos = await response.json();
+
+        // En caso de que no haya recuerdos, mostrar el mensaje "No se han realizado viajes" solicitado
+        if (!recuerdos || recuerdos.length === 0) {
+            recuerdosGrid.innerHTML = '<div class="col-12 text-center mt-3"><h4>No se han realizado viajes</h4></div>';
+            return;
+        }
+
+        let htmlContent = "";
+        recuerdos.forEach(recuerdo => {
+            htmlContent += `
+                <div class="col-3">
+                    <div class="ratio ratio-1x1 memory-card">
+                        <img src="${recuerdo.Url || '../Imagenes/placeholder.jpg'}" class="img-fluid object-fit-cover rounded-3" alt="${recuerdo.Descripcion || 'Recuerdo'}">
+                    </div>
+                </div>
+            `;
+        });
+        recuerdosGrid.innerHTML = htmlContent;
+
+    } catch (err) {
+        console.error("Error al cargar recuerdos:", err);
+        recuerdosGrid.innerHTML = '<div class="col-12 text-center mt-3 text-danger"><h4>Ocurrió un error al cargar tus recuerdos. ¿El backend está encendido?</h4></div>';
+    }
+}
+
+// Función para cargar los viajes realizados desde FastAPI
+async function cargarViajesRealizados() {
+    const sectionGrid = document.getElementById("viajes-realizados-section-grid"); // En travels.html
+    const mainGrid = document.getElementById("viajes-realizados-grid"); // En finished_travels.html
+
+    if (!sectionGrid && !mainGrid) return;
+
+    try {
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+        if (sessionError || !sessionData.session) {
+            const loginMsg = '<div class="col-12 text-center mt-3"><h4>Debes iniciar sesión para ver tus viajes realizados</h4></div>';
+            if (sectionGrid) sectionGrid.innerHTML = loginMsg;
+            if (mainGrid) mainGrid.innerHTML = loginMsg;
+            return;
+        }
+
+        const token = sessionData.session.access_token;
+        // Filtrar por estado 'realizado'
+        const response = await fetch("http://localhost:8000/api/viajes?estado=realizado", {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error en el servidor: ${response.status}`);
+        }
+
+        const viajes = await response.json();
+
+        // En caso de que no haya viajes realizados, mostrar el mensaje "No se han realizado viajes"
+        if (!viajes || viajes.length === 0) {
+            const noViajesMsg = '<div class="col-12 text-center mt-3"><h4>No se han realizado viajes</h4></div>';
+            if (sectionGrid) sectionGrid.innerHTML = noViajesMsg;
+            if (mainGrid) mainGrid.innerHTML = noViajesMsg;
+            return;
+        }
+
+        // Renderizar en la sección de travels.html
+        if (sectionGrid) {
+            let htmlContent = "";
+            viajes.forEach(viaje => {
+                const initial = viaje.Destino_Principal ? viaje.Destino_Principal.charAt(0).toUpperCase() : 'V';
+                htmlContent += `
+                    <div class="col-3">
+                        <div class="ratio ratio-1x1 memory-card mb-2">
+                            <div class="card-img-top collage-img d-flex align-items-center justify-content-center bg-dark text-white fw-bold display-1 rounded-4">
+                                ${initial}
+                            </div>
+                        </div>
+                        <p class="fw-bold text-center fs-4">${viaje.Nombre_Viaje || 'Viaje Sin Nombre'}</p>
+                    </div>
+                `;
+            });
+            sectionGrid.innerHTML = htmlContent;
+        }
+
+        // Renderizar en la página finished_travels.html
+        if (mainGrid) {
+            let htmlContent = "";
+            viajes.forEach(viaje => {
+                const initial = viaje.Destino_Principal ? viaje.Destino_Principal.charAt(0).toUpperCase() : 'V';
+                const year = viaje.Fecha_Inicio ? new Date(viaje.Fecha_Inicio).getFullYear() : '2026';
+                const fecha = (viaje.Fecha_Inicio && viaje.Fecha_Fin) 
+                    ? `${new Date(viaje.Fecha_Inicio).toLocaleDateString()} - ${new Date(viaje.Fecha_Fin).toLocaleDateString()}`
+                    : 'Fechas no definidas';
+
+                htmlContent += `
+                    <div class="col-12 col-md-6">
+                        <div class="dest-card ratio-card rounded-3 overflow-hidden border">
+                            <div class="img-wrapper">
+                                <div class="w-100 bg-dark text-white d-flex align-items-center justify-content-center fw-bold display-3" style="height: 200px;">
+                                    ${initial}
+                                </div>
+                                <span class="year-badge badge rounded-pill bg-warning text-dark">${year}</span>
+                            </div>
+                            <div class="p-3">
+                                <h3 class="fw-bold fs-6 mb-2">${viaje.Nombre_Viaje || 'Viaje Sin Nombre'}</h3>
+                                <div class="d-flex align-items-center gap-2 mb-2 small text-secondary">
+                                    <i class="fa-regular fa-calendar"></i>
+                                    <span>${fecha}</span>
+                                    <span>${viaje.Duracion_Dias || 0} Días</span>
+                                </div>
+                                <span class="tag-pill badge rounded-pill">${viaje.Destino_Principal || 'Destino'}</span>
+                                <div class="btn-ver-link d-flex justify-content-end align-items-center gap-2 mt-2 pt-2 small fw-medium">
+                                    <a href="itinerario.html?id=${viaje.Id_Viaje}">Ver Detalles <i class="fa fa-arrow-right"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            mainGrid.innerHTML = htmlContent;
+        }
+
+    } catch (err) {
+        console.error("Error al cargar viajes realizados:", err);
+        const errMsg = '<div class="col-12 text-center mt-3 text-danger"><h4>Ocurrió un error al cargar tus viajes realizados. ¿El backend está encendido?</h4></div>';
+        if (sectionGrid) sectionGrid.innerHTML = errMsg;
+        if (mainGrid) mainGrid.innerHTML = errMsg;
+    }
+}
+
+// Ejecutar comprobaciones al cargar el DOM
+document.addEventListener("DOMContentLoaded", () => {
+    checkSession();
+    cargarViajes();
+    cargarRecuerdos();
+    cargarViajesRealizados();
+});
