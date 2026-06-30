@@ -200,7 +200,24 @@ Si descargaste el archivo `.zip`, descomprímelo en una carpeta de tu preferenci
 git clone https://github.com/SantinoRodriguez/Plan-De-Viajes.git
 ```
 
-### Paso 2: Ejecutar la Aplicación
+### Paso 2: Ejecutar el Backend (FastAPI)
+
+Para que las secciones de **Mis Viajes**, **Viajes Realizados** y **Recuerdos** puedan cargar la información correctamente desde Supabase, debes levantar el backend en Python:
+
+1. Asegúrate de estar en el directorio `Proyecto` y de tener instalado Python.
+2. Instala las dependencias necesarias ejecutando:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Inicia el servidor de desarrollo de FastAPI con:
+   ```bash
+   uvicorn main:app --reload
+   ```
+   *El servidor backend se ejecutará en `http://localhost:8000` y está configurado con CORS para interactuar con tu frontend.*
+
+### Paso 3: Ejecutar el Frontend
+
+Para visualizar la aplicación web, puedes elegir una de las siguientes opciones:
 
 #### Opción 1: Abrir Directamente (Sin instalación)
 Ingresa a la carpeta `Proyecto` y haz doble clic en `index.html`. El sitio se cargará directamente en tu navegador web.
@@ -210,9 +227,9 @@ Para evitar problemas de carga de archivos externos o políticas de origen local
 
 * **Si usas Python:**
   ```bash
-  python -m http.server 8000
+  python -m http.server 3000
   ```
-  Luego accede a: `http://localhost:8000`
+  Luego accede a: `http://localhost:3000`
 
 * **Si usas Node.js (npm):**
   ```bash
@@ -223,7 +240,8 @@ Para evitar problemas de carga de archivos externos o políticas de origen local
 * **Si usas la extensión "Live Server" en VS Code:**
   Haz clic en el botón **"Go Live"** en la esquina inferior derecha mientras visualizas `index.html`.
 
-### Paso 3: Validar la conexión con la base de datos
+### Paso 4: Validar la conexión con la base de datos
 1. Abre tu navegador web en la aplicación.
 2. Presiona `F12` (o haz clic derecho y selecciona *Inspeccionar*) y ve a la pestaña **Consola**.
 3. Deberías ver un mensaje como: `Conexión exitosa a Supabase...`. Esto confirma que las credenciales integradas en `js/supabase-config.js` se están comunicando correctamente con la base de datos remota PostgreSQL.
+4. Asegúrate de que el backend de FastAPI en el puerto 8000 esté encendido para que las llamadas de consulta a tus viajes y recuerdos funcionen correctamente.

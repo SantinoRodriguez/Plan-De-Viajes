@@ -101,11 +101,26 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Función callback global para inicializar Google Maps
-window.initMap = function () {
+window.initMap = async function () {
+    // Import required libraries dynamically
+    let Map, AdvancedMarkerElement, PlaceAutocompleteElement;
+    try {
+        const mapsLib = await google.maps.importLibrary("maps");
+        Map = mapsLib.Map;
+        const markerLib = await google.maps.importLibrary("marker");
+        AdvancedMarkerElement = markerLib.AdvancedMarkerElement;
+        const placesLib = await google.maps.importLibrary("places");
+        PlaceAutocompleteElement = placesLib.PlaceAutocompleteElement;
+    } catch (e) {
+        console.error("No se pudo cargar la API de Google Maps", e);
+        return;
+    }
+
     const defaultCenter = { lat: -34.6037, lng: -58.3816 }; // Buenos Aires
     const mapOptions = {
         center: defaultCenter,
         zoom: 12,
+        mapId: "DEMO_MAP_ID", // Obligatorio para AdvancedMarkerElement
         // Estilos para combinar el mapa con la estética cálida y premium del sitio
         styles: [
             {
@@ -181,94 +196,89 @@ window.initMap = function () {
     const mapElement = document.getElementById("map");
     if (!mapElement) return;
 
-    const map = new google.maps.Map(mapElement, mapOptions);
+    const map = new Map(mapElement, mapOptions);
 
-    // Marcador interactivo inicial en Buenos Aires
-    let marker = new google.maps.Marker({
+    // Marcador interactivo inicial en Buenos Aires usando el componente moderno
+    let marker = new AdvancedMarkerElement({
         position: defaultCenter,
         map: map,
         title: "Buenos Aires (Arrastrame para seleccionar)",
-        draggable: true,
-        animation: google.maps.Animation.DROP
+        gmpDraggable: true // Propiedad moderna para arrastrar
     });
 
     // Mover el marcador haciendo clic en cualquier parte del mapa
     map.addListener("click", (event) => {
-        marker.setPosition(event.latLng);
-        // Efecto visual de rebote al posicionarse
-        marker.setAnimation(google.maps.Animation.BOUNCE);
-        setTimeout(() => {
-            marker.setAnimation(null);
-        }, 750);
-
+        marker.position = event.latLng;
         console.log("Coordenadas seleccionadas:", event.latLng.lat(), event.latLng.lng());
     });
 
     // Log de coordenadas al terminar de arrastrar el marcador
     marker.addListener("dragend", () => {
-        const position = marker.getPosition();
-        console.log("Coordenadas arrastradas:", position.lat(), position.lng());
+        const position = marker.position;
+        // Dependiendo de si es un LatLng o LatLngAltitude, lat/lng pueden ser propiedades o funciones
+        const lat = typeof position.lat === 'function' ? position.lat() : position.lat;
+        const lng = typeof position.lng === 'function' ? position.lng() : position.lng;
+        console.log("Coordenadas arrastradas:", lat, lng);
     });
 
     // --- INTEGRACIÓN DE GOOGLE PLACES API ---
     const inputLugares = document.getElementById("buscar-lugares");
     const inputDestinos = document.getElementById("buscar-destinos");
 
-    // Configurar Autocomplete para buscar-lugares si existe
-    if (inputLugares) {
-        const autocompleteLugares = new google.maps.places.Autocomplete(inputLugares, {
-            fields: ['place_id', 'geometry.location', 'photos', 'formatted_address', 'name']
-        });
+    // Función auxiliar para configurar el nuevo componente web de Autocomplete
+    function setupPlaceAutocomplete(inputElement) {
+        if (!inputElement) return;
 
-        autocompleteLugares.addListener('place_changed', () => {
-            const place = autocompleteLugares.getPlace();
-            if (!place.geometry || !place.geometry.location) {
-                console.log("No hay detalles disponibles para: '" + place.name + "'");
+        const autocomplete = new PlaceAutocompleteElement();
+        autocomplete.id = inputElement.id;
+        autocomplete.className = inputElement.className;
+        autocomplete.setAttribute("placeholder", inputElement.placeholder || "Buscar...");
+        
+        // Reemplazar el input clásico por el web component moderno
+        inputElement.parentNode.replaceChild(autocomplete, inputElement);
+
+        autocomplete.addEventListener('gmp-placeselect', async (event) => {
+            const place = event.place;
+            if (!place) return;
+
+            // Solicitar los campos necesarios para la vista previa
+            await place.fetchFields({ fields: ['id', 'location', 'photos', 'formattedAddress', 'displayName'] });
+
+            if (!place.location) {
+                console.log("No hay detalles disponibles para: '" + place.displayName + "'");
                 return;
             }
 
             // Centrar mapa y mover marcador
-            map.setCenter(place.geometry.location);
+            map.setCenter(place.location);
             map.setZoom(15);
-            marker.setPosition(place.geometry.location);
+            marker.position = place.location;
 
             // Extraer fotos
             let photoUrls = [];
             if (place.photos && place.photos.length > 0) {
-                photoUrls = place.photos.map(p => p.getUrl({ maxWidth: 600, maxHeight: 600 }));
+                photoUrls = place.photos.map(p => p.getURI({ maxWidth: 600, maxHeight: 600 }));
             }
 
-            mostrarVistaPreviaLugar(place, photoUrls);
+            // Adaptar las propiedades para la función heredada mostrarVistaPreviaLugar
+            const legacyPlaceAdapter = {
+                name: place.displayName,
+                formatted_address: place.formattedAddress,
+                place_id: place.id,
+                geometry: {
+                    location: {
+                        lat: () => typeof place.location.lat === 'function' ? place.location.lat() : place.location.lat,
+                        lng: () => typeof place.location.lng === 'function' ? place.location.lng() : place.location.lng
+                    }
+                }
+            };
+
+            mostrarVistaPreviaLugar(legacyPlaceAdapter, photoUrls);
         });
     }
 
-    // Configurar Autocomplete para buscar-destinos si existe
-    if (inputDestinos) {
-        const autocompleteDestinos = new google.maps.places.Autocomplete(inputDestinos, {
-            fields: ['place_id', 'geometry.location', 'photos', 'formatted_address', 'name']
-        });
-
-        autocompleteDestinos.addListener('place_changed', () => {
-            const place = autocompleteDestinos.getPlace();
-            if (!place.geometry || !place.geometry.location) {
-                console.log("No hay detalles disponibles para: '" + place.name + "'");
-                return;
-            }
-
-            // Centrar mapa y mover marcador
-            map.setCenter(place.geometry.location);
-            map.setZoom(15);
-            marker.setPosition(place.geometry.location);
-
-            // Extraer fotos
-            let photoUrls = [];
-            if (place.photos && place.photos.length > 0) {
-                photoUrls = place.photos.map(p => p.getUrl({ maxWidth: 600, maxHeight: 600 }));
-            }
-
-            mostrarVistaPreviaLugar(place, photoUrls);
-        });
-    }
+    setupPlaceAutocomplete(inputLugares);
+    setupPlaceAutocomplete(inputDestinos);
 };
 
 // Función para mostrar una tarjeta premium de vista previa del lugar y sus fotos
@@ -393,7 +403,7 @@ window.changeImage = function (src, element) {
 };
 
 // Initialize dynamic info.html page with Google Places API
-window.initInfoPage = function () {
+window.initInfoPage = async function () {
     const urlParams = new URLSearchParams(window.location.search);
     const placeId = urlParams.get('place_id');
     const nameParam = urlParams.get('name');
@@ -410,13 +420,28 @@ window.initInfoPage = function () {
         return;
     }
 
+    // Load libraries
+    let Map, PlacesService, AdvancedMarkerElement;
+    try {
+        const mapsLib = await google.maps.importLibrary("maps");
+        Map = mapsLib.Map;
+        const placesLib = await google.maps.importLibrary("places");
+        PlacesService = placesLib.PlacesService;
+        const markerLib = await google.maps.importLibrary("marker");
+        AdvancedMarkerElement = markerLib.AdvancedMarkerElement;
+    } catch (e) {
+        console.error("Failed to load Google Maps API for info page", e);
+        return;
+    }
+
     // Initialize Map for info-map
     const mapElement = document.getElementById("info-map");
     let map = null;
     if (mapElement) {
-        map = new google.maps.Map(mapElement, {
+        map = new Map(mapElement, {
             center: { lat: 0, lng: 0 },
             zoom: 15,
+            mapId: "DEMO_MAP_ID", // Required for AdvancedMarkerElement
             mapTypeControl: false,
             streetViewControl: false
         });
@@ -424,7 +449,7 @@ window.initInfoPage = function () {
 
     // Initialize PlacesService
     // We can pass the map or a dummy div
-    const service = new google.maps.places.PlacesService(map || document.createElement('div'));
+    const service = new PlacesService(map || document.createElement('div'));
 
     const request = {
         placeId: placeId,
@@ -556,7 +581,7 @@ window.initInfoPage = function () {
             // 6. Update Map position and add marker
             if (map && place.geometry && place.geometry.location) {
                 map.setCenter(place.geometry.location);
-                new google.maps.Marker({
+                new AdvancedMarkerElement({
                     map: map,
                     position: place.geometry.location,
                     title: place.name
@@ -704,6 +729,9 @@ async function checkSession() {
             }, 3000);
         }
 
+        // Determinar si nos encontramos dentro de una subcarpeta (html's)
+        const isSubpage = window.location.pathname.includes("html's");
+
         // Buscar los links de iniciar sesión para actualizarlos
         const loginSpans = document.querySelectorAll(".login-link");
         loginSpans.forEach(span => {
@@ -720,13 +748,11 @@ async function checkSession() {
                             console.error("Error al cerrar sesión:", error);
                         } else {
                             localStorage.setItem("loginSuccessMessage", "Sesión cerrada correctamente.");
-                            const isSubpage = window.location.pathname.includes("/html's/");
                             window.location.href = isSubpage ? "../index.html" : "index.html";
                         }
                     };
                 } else {
                     // Si no está autenticado, asegurar que apunte a log_in.html
-                    const isSubpage = window.location.pathname.includes("/html's/");
                     parentLink.href = isSubpage ? "log_in.html" : "html's/log_in.html";
                     // Resetear el click handler
                     parentLink.onclick = null;
@@ -736,6 +762,27 @@ async function checkSession() {
     } catch (error) {
         console.error("Error al comprobar la sesión de Supabase:", error);
     }
+}
+
+// Función para verificar si el servidor de FastAPI está corriendo y actualizar el badge
+async function verificarServidorFastAPI() {
+    const statusBadge = document.getElementById("backend-status");
+    if (!statusBadge) return false;
+
+    try {
+        const response = await fetch("http://localhost:8000/api/health", { method: "GET" });
+        if (response.ok) {
+            statusBadge.textContent = "Servidor Online";
+            statusBadge.className = "badge rounded-pill bg-success align-self-start align-self-sm-center";
+            return true;
+        }
+    } catch (e) {
+        // Ignorar error de red
+    }
+
+    statusBadge.textContent = "Servidor Offline";
+    statusBadge.className = "badge rounded-pill bg-danger align-self-start align-self-sm-center";
+    return false;
 }
 
 // Función para cargar los viajes desde FastAPI
@@ -766,9 +813,9 @@ async function cargarViajes() {
 
         const viajes = await response.json();
 
-        // Si no hay viajes, mostrar mensaje
+        // Si la cuenta no tiene nada para mostrar, decir "Debes subir contenido para poder verlo"
         if (!viajes || viajes.length === 0) {
-            viajesGrid.innerHTML = '<div class="col-12 text-center mt-5"><h4>No se han realizado viajes</h4></div>';
+            viajesGrid.innerHTML = '<div class="col-12 text-center mt-5"><h4>Debes subir contenido para poder verlo</h4></div>';
             return;
         }
 
@@ -780,7 +827,7 @@ async function cargarViajes() {
             
             htmlContent += `
                 <div class="col-12 col-sm-6 col-lg-3">
-                    <a href="#">
+                    <a href="make_travel.html?id_viaje=${viaje.Id_Viaje}" class="text-decoration-none text-dark">
                         <div class="ratio ratio-1x1 mb-4">
                             <div class="card-img-top collage-img d-flex align-items-center justify-content-center bg-dark text-white fw-bold display-1 rounded-4">
                                 ${initial}
@@ -796,7 +843,12 @@ async function cargarViajes() {
 
     } catch (err) {
         console.error("Error al cargar viajes:", err);
-        viajesGrid.innerHTML = '<div class="col-12 text-center mt-5 text-danger"><h4>Ocurrió un error al cargar tus viajes. ¿El backend de FastAPI está encendido?</h4></div>';
+        const isOnline = await verificarServidorFastAPI();
+        if (!isOnline) {
+            viajesGrid.innerHTML = '<div class="col-12 text-center mt-5 text-danger"><h4>El servidor de FastAPI no se está ejecutando</h4><p>Asegúrate de iniciar el backend usando <code>uvicorn main:app --reload</code>.</p></div>';
+        } else {
+            viajesGrid.innerHTML = '<div class="col-12 text-center mt-5 text-danger"><h4>Ocurrió un error al cargar tus viajes.</h4></div>';
+        }
     }
 }
 
@@ -825,9 +877,9 @@ async function cargarRecuerdos() {
 
         const recuerdos = await response.json();
 
-        // En caso de que no haya recuerdos, mostrar el mensaje "No se han realizado viajes" solicitado
+        // Si la cuenta no tiene nada para mostrar, decir "Debes subir contenido para poder verlo"
         if (!recuerdos || recuerdos.length === 0) {
-            recuerdosGrid.innerHTML = '<div class="col-12 text-center mt-3"><h4>No se han realizado viajes</h4></div>';
+            recuerdosGrid.innerHTML = '<div class="col-12 text-center mt-3"><h4>Debes subir contenido para poder verlo</h4></div>';
             return;
         }
 
@@ -845,7 +897,12 @@ async function cargarRecuerdos() {
 
     } catch (err) {
         console.error("Error al cargar recuerdos:", err);
-        recuerdosGrid.innerHTML = '<div class="col-12 text-center mt-3 text-danger"><h4>Ocurrió un error al cargar tus recuerdos. ¿El backend está encendido?</h4></div>';
+        const isOnline = await verificarServidorFastAPI();
+        if (!isOnline) {
+            recuerdosGrid.innerHTML = '<div class="col-12 text-center mt-3 text-danger"><h4>El servidor de FastAPI no se está ejecutando</h4></div>';
+        } else {
+            recuerdosGrid.innerHTML = '<div class="col-12 text-center mt-3 text-danger"><h4>Ocurrió un error al cargar tus recuerdos.</h4></div>';
+        }
     }
 }
 
@@ -879,9 +936,9 @@ async function cargarViajesRealizados() {
 
         const viajes = await response.json();
 
-        // En caso de que no haya viajes realizados, mostrar el mensaje "No se han realizado viajes"
+        // Si la cuenta no tiene nada para mostrar, decir "Debes subir contenido para poder verlo"
         if (!viajes || viajes.length === 0) {
-            const noViajesMsg = '<div class="col-12 text-center mt-3"><h4>No se han realizado viajes</h4></div>';
+            const noViajesMsg = '<div class="col-12 text-center mt-3"><h4>Debes subir contenido para poder verlo</h4></div>';
             if (sectionGrid) sectionGrid.innerHTML = noViajesMsg;
             if (mainGrid) mainGrid.innerHTML = noViajesMsg;
             return;
@@ -946,16 +1003,127 @@ async function cargarViajesRealizados() {
 
     } catch (err) {
         console.error("Error al cargar viajes realizados:", err);
-        const errMsg = '<div class="col-12 text-center mt-3 text-danger"><h4>Ocurrió un error al cargar tus viajes realizados. ¿El backend está encendido?</h4></div>';
+        const isOnline = await verificarServidorFastAPI();
+        const errMsg = !isOnline 
+            ? '<div class="col-12 text-center mt-3 text-danger"><h4>El servidor de FastAPI no se está ejecutando</h4></div>'
+            : '<div class="col-12 text-center mt-3 text-danger"><h4>Ocurrió un error al cargar tus viajes realizados.</h4></div>';
         if (sectionGrid) sectionGrid.innerHTML = errMsg;
         if (mainGrid) mainGrid.innerHTML = errMsg;
     }
 }
 
+// Inicializar make_travel.html de forma dinámica
+async function initMakeTravel() {
+    const isMakeTravelPage = window.location.pathname.includes('make_travel.html');
+    if (!isMakeTravelPage) return;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const idViaje = urlParams.get('id_viaje');
+
+    const btnGuardar = document.getElementById("btn-guardar-viaje");
+    const inputNombre = document.getElementById("viaje-nombre");
+    const inputDestino = document.getElementById("viaje-destino");
+    const inputInicio = document.getElementById("viaje-fecha-inicio");
+    const inputFin = document.getElementById("viaje-fecha-fin");
+    const inputViajeros = document.getElementById("viaje-viajeros");
+
+    if (idViaje) {
+        // Cargar viaje existente
+        try {
+            const { data: sessionData } = await supabase.auth.getSession();
+            if (sessionData && sessionData.session) {
+                const token = sessionData.session.access_token;
+                const response = await fetch(`http://localhost:8000/api/viajes/${idViaje}`, {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                if (response.ok) {
+                    const viaje = await response.json();
+                    inputNombre.value = viaje.Nombre_Viaje || "";
+                    inputDestino.value = viaje.Destino_Principal || "";
+                    if (viaje.Fecha_Inicio) inputInicio.value = viaje.Fecha_Inicio.split('T')[0];
+                    if (viaje.Fecha_Fin) inputFin.value = viaje.Fecha_Fin.split('T')[0];
+                    if (viaje.Cantidad_Viajeros) inputViajeros.value = viaje.Cantidad_Viajeros;
+                }
+            }
+        } catch (error) {
+            console.error("Error al cargar el viaje:", error);
+        }
+    } else {
+        // Dejar por defecto para nuevo
+        inputNombre.value = "Nuevo Viaje";
+        inputDestino.value = "";
+        inputInicio.value = "";
+        inputFin.value = "";
+        inputViajeros.value = 1;
+    }
+
+    if (btnGuardar) {
+        btnGuardar.addEventListener("click", async () => {
+            try {
+                btnGuardar.disabled = true;
+                btnGuardar.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i> Guardando...';
+
+                const { data: sessionData } = await supabase.auth.getSession();
+                if (!sessionData || !sessionData.session) {
+                    alert("Debes iniciar sesión para guardar un viaje.");
+                    return;
+                }
+
+                const token = sessionData.session.access_token;
+                
+                // Recolectar datos
+                const payload = {
+                    Nombre_Viaje: inputNombre.value,
+                    Destino_Principal: inputDestino.value,
+                    Fecha_Inicio: inputInicio.value || null,
+                    Fecha_Fin: inputFin.value || null,
+                    Cantidad_Viajeros: parseInt(inputViajeros.value) || 1,
+                    Estado: "En planificación"
+                };
+
+                // Si hay ID existente se incluye para hacer UPDATE
+                const currentId = new URLSearchParams(window.location.search).get('id_viaje');
+                if (currentId) {
+                    payload.Id_Viaje = parseInt(currentId);
+                }
+
+                const response = await fetch(`http://localhost:8000/api/viajes`, {
+                    method: "POST",
+                    headers: { 
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    const savedViaje = await response.json();
+                    alert("¡Viaje guardado exitosamente!");
+                    if (!currentId && savedViaje.Id_Viaje) {
+                        // Cambiar la URL local sin recargar para prevenir duplicados al guardar otra vez
+                        window.history.replaceState(null, '', `make_travel.html?id_viaje=${savedViaje.Id_Viaje}`);
+                    }
+                } else {
+                    const errText = await response.text();
+                    alert("Error al guardar: " + errText);
+                }
+            } catch (error) {
+                console.error("Error al guardar el viaje:", error);
+                alert("Ocurrió un error al guardar.");
+            } finally {
+                btnGuardar.disabled = false;
+                btnGuardar.innerHTML = '<i class="fa fa-save me-1"></i> Guardar';
+            }
+        });
+    }
+}
+
 // Ejecutar comprobaciones al cargar el DOM
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     checkSession();
+    await verificarServidorFastAPI();
     cargarViajes();
     cargarRecuerdos();
     cargarViajesRealizados();
+    await initMakeTravel();
 });

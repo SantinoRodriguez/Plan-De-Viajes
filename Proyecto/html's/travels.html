@@ -45,10 +45,15 @@
     <section class="hero-section container-fluid py-1">
         <div class="hero-box">
             <div class="col-lg-7 mx-auto">
-                <div class="d-flex flex-row justify-content-between mt-5 mx-sm-5 mx-md-0">
-                    <h1 class="hero-title">
-                        Vistos Recientemente
-                    </h1>
+                <div class="d-flex flex-row justify-content-between mt-5 mx-sm-5 mx-md-0 align-items-center">
+                    <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-2">
+                        <h1 class="hero-title mb-0">
+                            Vistos Recientemente
+                        </h1>
+                        <span id="backend-status"
+                            class="badge rounded-pill bg-secondary align-self-start align-self-sm-center"
+                            style="font-size: 0.75rem; padding: 0.4em 0.8em;">Verificando backend...</span>
+                    </div>
                     <a href="make_travel.html" class="btn btns fw-bold my-auto">
                         + Planificar nuevo viaje
                     </a>
@@ -71,9 +76,11 @@
                     <div class="card2 rounded-4 p-3 border border-dark shadow-sm h-100">
                         <div class="d-flex flex-row gap-2 mb-3">
                             <div class="card rounded-4 border-dark w-100 px-3 py-1">
-                                <input type="text" id="buscar-destinos" class="form-control hero-input border-0 p-1" placeholder="Destinos">
+                                <input type="text" id="buscar-destinos" class="form-control hero-input border-0 p-1"
+                                    placeholder="Destinos">
                             </div>
-                            <button class="btn btns fw-bold rounded-4 px-4 shadow-sm" id="btn-buscar-alojamiento">Buscar</button>
+                            <button class="btn btns fw-bold rounded-4 px-4 shadow-sm"
+                                id="btn-buscar-alojamiento">Buscar</button>
                         </div>
 
                         <div class="card rounded-4 p-3 border border-dark shadow-sm">
@@ -144,9 +151,13 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <span class="fw-semibold small">Habitaciones</span>
                                         <div class="d-flex align-items-center gap-2">
-                                            <button class="btn btns rounded-circle py-0 px-2 fw-bold counter-btn-minus" data-min="1">-</button>
-                                            <div class="border border-dark rounded-pill px-3 py-1 fw-bold counter-display">2</div>
-                                            <button class="btn btns rounded-circle py-0 px-2 fw-bold counter-btn-plus">+</button>
+                                            <button class="btn btns rounded-circle py-0 px-2 fw-bold counter-btn-minus"
+                                                data-min="1">-</button>
+                                            <div
+                                                class="border border-dark rounded-pill px-3 py-1 fw-bold counter-display">
+                                                2</div>
+                                            <button
+                                                class="btn btns rounded-circle py-0 px-2 fw-bold counter-btn-plus">+</button>
                                         </div>
                                     </div>
                                 </div>
@@ -154,9 +165,13 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <span class="fw-semibold small">Niños</span>
                                         <div class="d-flex align-items-center gap-2">
-                                            <button class="btn btns rounded-circle py-0 px-2 fw-bold counter-btn-minus" data-min="0">-</button>
-                                            <div class="border border-dark rounded-pill px-3 py-1 fw-bold counter-display">1</div>
-                                            <button class="btn btns rounded-circle py-0 px-2 fw-bold counter-btn-plus">+</button>
+                                            <button class="btn btns rounded-circle py-0 px-2 fw-bold counter-btn-minus"
+                                                data-min="0">-</button>
+                                            <div
+                                                class="border border-dark rounded-pill px-3 py-1 fw-bold counter-display">
+                                                1</div>
+                                            <button
+                                                class="btn btns rounded-circle py-0 px-2 fw-bold counter-btn-plus">+</button>
                                         </div>
                                     </div>
                                 </div>
@@ -164,9 +179,13 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <span class="fw-semibold small">Adultos</span>
                                         <div class="d-flex align-items-center gap-2">
-                                            <button class="btn btns rounded-circle py-0 px-2 fw-bold counter-btn-minus" data-min="1">-</button>
-                                            <div class="border border-dark rounded-pill px-3 py-1 fw-bold counter-display">2</div>
-                                            <button class="btn btns rounded-circle py-0 px-2 fw-bold counter-btn-plus">+</button>
+                                            <button class="btn btns rounded-circle py-0 px-2 fw-bold counter-btn-minus"
+                                                data-min="1">-</button>
+                                            <div
+                                                class="border border-dark rounded-pill px-3 py-1 fw-bold counter-display">
+                                                2</div>
+                                            <button
+                                                class="btn btns rounded-circle py-0 px-2 fw-bold counter-btn-plus">+</button>
                                         </div>
                                     </div>
                                 </div>
@@ -174,9 +193,13 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <span class="fw-semibold small">Mascotas</span>
                                         <div class="d-flex align-items-center gap-2">
-                                            <button class="btn btns rounded-circle py-0 px-2 fw-bold counter-btn-minus" data-min="0">-</button>
-                                            <div class="border border-dark rounded-pill px-3 py-1 fw-bold counter-display">0</div>
-                                            <button class="btn btns rounded-circle py-0 px-2 fw-bold counter-btn-plus">+</button>
+                                            <button class="btn btns rounded-circle py-0 px-2 fw-bold counter-btn-minus"
+                                                data-min="0">-</button>
+                                            <div
+                                                class="border border-dark rounded-pill px-3 py-1 fw-bold counter-display">
+                                                0</div>
+                                            <button
+                                                class="btn btns rounded-circle py-0 px-2 fw-bold counter-btn-plus">+</button>
                                         </div>
                                     </div>
                                 </div>
@@ -247,6 +270,6 @@
 <script src="../js/supabase-config.js"></script>
 <script src="../js/script.js"></script>
 <!-- Reemplaza el parámetro 'key' con tu clave de API de Google Maps real si es necesario -->
-<script src="https://maps.googleapis.com/maps/api/js?key=&libraries=places&callback=initMap" async defer></script>
+<script src="../js/maps-config.js"></script>
 
 </html>

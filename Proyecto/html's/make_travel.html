@@ -41,6 +41,7 @@
             <div class="trip-header-area position-relative" id="resumen">
                 <img src="../Imagenes/Cities/paris.jpeg" alt="Paris" class="trip-header-img">
                 <div class="trip-header-top-btns">
+                    <button class="btn btn-success shadow-sm text-white fw-bold d-flex align-items-center me-2" id="btn-guardar-viaje" style="height: 36px; padding: 0 15px; border-radius: 20px;"><i class="fa fa-save me-1"></i> Guardar</button>
                     <div class="top-btn secondary shadow-sm"><i class="fa fa-map-marked-alt me-1"></i> Plan</div>
                     <a href="share.html" class="top-btn secondary shadow-sm text-decoration-none"><i class="fa fa-share-alt me-1"></i> Compartir</a>
                     <div class="top-btn shadow-sm"><i class="fa fa-image"></i></div>
@@ -49,12 +50,20 @@
                 </div>
                 
                 <div class="trip-info-card shadow-sm">
-                    <h4 class="mb-1 fw-bold">Viaje a Paris</h4>
-                    <p class="mb-0 text-muted d-flex align-items-center">
-                        <i class="fa fa-calendar-alt me-2"></i> 8/4 - 17/4
-                        <span class="mx-2">•</span>
-                        <i class="fa fa-user-friends me-2"></i> 2 viajeros
-                    </p>
+                    <input type="text" id="viaje-nombre" class="form-control fw-bold border-0 bg-transparent p-0 mb-1" style="font-size: 1.5rem;" placeholder="Nombre del Viaje" value="Nuevo Viaje">
+                    <div class="mb-2">
+                        <input type="text" id="viaje-destino" class="form-control border-0 bg-transparent p-0 text-muted" placeholder="Destino Principal (ej: Paris)" value="">
+                    </div>
+                    <div class="d-flex align-items-center text-muted gap-2 flex-wrap">
+                        <i class="fa fa-calendar-alt"></i> 
+                        <input type="date" id="viaje-fecha-inicio" class="form-control border-0 bg-transparent p-0 text-muted shadow-none" style="width: 110px;">
+                        <span>-</span>
+                        <input type="date" id="viaje-fecha-fin" class="form-control border-0 bg-transparent p-0 text-muted shadow-none" style="width: 110px;">
+                        <span class="mx-1 d-none d-md-inline">•</span>
+                        <i class="fa fa-user-friends"></i> 
+                        <input type="number" id="viaje-viajeros" class="form-control border-0 bg-transparent p-0 text-muted shadow-none" style="width: 50px;" value="1" min="1">
+                        <span>viajeros</span>
+                    </div>
                 </div>
             </div>
 
@@ -222,6 +231,6 @@
         crossorigin="anonymous"></script>
     <script src="../js/script.js"></script>
     <!-- Incluir API de Maps llamando a initMap con libreria de places -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=&libraries=places&callback=initMap" async defer></script>
+    <script src="../js/maps-config.js"></script>
 </body>
 </html>
