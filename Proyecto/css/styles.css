@@ -1,4 +1,4 @@
-:root {
+﻿:root {
     --FondoPrincipal: #FAF6EF;
     --FondoSecundario: #EDE2D0;
     --Superficie: #D8CBB8;
@@ -2205,3 +2205,143 @@ input:checked+.slider:before {
 input[type="password"]::placeholder {
     opacity: 0.35 !important;
 }
+/* ==========================================================================
+   Explora Panel (SPA) & Wanderlog Style Cards
+   ========================================================================== */
+
+.explorar-detalle-panel {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-right: 1px solid rgba(0,0,0,0.1);
+    box-shadow: 4px 0 15px rgba(0,0,0,0.05);
+}
+
+.explorar-detalle-panel .panel-header img {
+    mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+}
+
+#btn-cerrar-explora:hover {
+    background-color: var(--BotonHover);
+    color: white;
+}
+
+/* Wanderlog Style Article Layout */
+.explora-article-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
+
+.explora-article-item {
+    background: transparent;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    padding-bottom: 2rem;
+}
+
+.explora-article-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.explora-article-item:hover {
+    opacity: 0.9;
+}
+
+.explora-article-img-wrapper {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.explora-article-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.explora-badge-category {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(5px);
+    color: var(--TextoPrincipal);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.explora-badge-rating {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(5px);
+    color: #ffd700;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.explora-article-body {
+    padding: 0 0.5rem;
+}
+
+.explora-article-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--TextoPrincipal);
+    margin-bottom: 0.8rem;
+    line-height: 1.2;
+    font-family: 'Inter', sans-serif;
+}
+
+.explora-article-desc {
+    font-size: 1rem;
+    color: var(--TextoSecundario);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.explora-article-metadata {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.explora-meta-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    color: var(--TextoSecundario);
+    background: rgba(0,0,0,0.04);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.explora-meta-badge i {
+    color: var(--BotonPrincipal);
+    font-size: 0.9rem;
+}
+
+/* Empty state styling */
+#explora-empty-state {
+    transition: opacity 0.3s ease;
+}
+
+

@@ -5,7 +5,13 @@ const supabaseUrl = 'https://yzajrlgxezudowsbirzd.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl6YWpybGd4ZXp1ZG93c2JpcnpkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0NTEwMjksImV4cCI6MjA5NzAyNzAyOX0.S4ASHMoXtGIfHA4uT9x_7K5QxLzChdEZ-j66gmN2GwU';
 
 // Inicializar el cliente de Supabase y asignarlo al objeto global para evitar conflictos de redeclaración
-window.supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+if (window.supabase && typeof window.supabase.createClient === 'function') {
+    window.supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+} else if (typeof supabase !== 'undefined' && typeof supabase.createClient === 'function') {
+    window.supabase = supabase.createClient(supabaseUrl, supabaseKey);
+} else {
+    console.error("Supabase library not loaded yet. Make sure to include the CDN script before supabase-config.js");
+}
 
 // Función asincrónica de prueba para verificar la comunicación
 async function probarConexion() {
