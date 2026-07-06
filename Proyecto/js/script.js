@@ -1,4 +1,4 @@
-﻿// Interceptar attachShadow para poder dar estilo al input de gmp-place-autocomplete (Shadow DOM cerrado)
+// Interceptar attachShadow para poder dar estilo al input de gmp-place-autocomplete (Shadow DOM cerrado)
 const nativeAttachShadow = Element.prototype.attachShadow;
 Element.prototype.attachShadow = function (init) {
     const isAutocomplete = this.localName === "gmp-place-autocomplete";
@@ -23,14 +23,14 @@ Element.prototype.attachShadow = function (init) {
 };
 
 // Función global para corregir imágenes rotas o vacías utilizando Google Places
-window.fixPlaceImage = async function(imgElement, placeId) {
+window.fixPlaceImage = async function (imgElement, placeId) {
     if (!placeId) {
         imgElement.src = 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400';
         return;
     }
     // Prevenir bucle infinito en caso de fallos repetidos
     imgElement.onerror = null;
-    
+
     try {
         if (typeof google === 'undefined' || !google.maps) {
             await new Promise((resolve) => {
@@ -42,15 +42,15 @@ window.fixPlaceImage = async function(imgElement, placeId) {
                 }, 100);
             });
         }
-        
+
         const { Place } = await google.maps.importLibrary("places");
         const place = new Place({ id: placeId });
         await place.fetchFields({ fields: ["photos"] });
-        
+
         if (place.photos && place.photos.length > 0) {
             const freshUrl = place.photos[0].getURI({ maxWidth: 400, maxHeight: 400 });
             imgElement.src = freshUrl;
-            
+
             // Actualizar en el estado de actividades si es posible
             if (window.activeActivities) {
                 window.activeActivities.forEach(act => {
@@ -69,14 +69,14 @@ window.fixPlaceImage = async function(imgElement, placeId) {
 };
 
 // Función global para cargar una imagen dinámica de un destino (búsqueda de texto)
-window.loadDestinationImage = async function(viajeId, destino, imgId = null, spinnerId = null) {
+window.loadDestinationImage = async function (viajeId, destino, imgId = null, spinnerId = null) {
     const targetImgId = imgId || `viaje-img-${viajeId}`;
     const targetSpinnerId = spinnerId || `viaje-spinner-${viajeId}`;
-    
+
     const img = document.getElementById(targetImgId);
     const spinner = document.getElementById(targetSpinnerId);
     if (!img) return;
-    
+
     try {
         if (typeof google === 'undefined' || !google.maps) {
             await new Promise((resolve) => {
@@ -88,14 +88,14 @@ window.loadDestinationImage = async function(viajeId, destino, imgId = null, spi
                 }, 100);
             });
         }
-        
+
         const { Place } = await google.maps.importLibrary("places");
         const { places } = await Place.searchByText({
             textQuery: destino,
             fields: ["photos"],
             maxResultCount: 1
         });
-        
+
         if (places && places.length > 0 && places[0].photos && places[0].photos.length > 0) {
             const url = places[0].photos[0].getURI({ maxWidth: 600, maxHeight: 600 });
             img.src = url;
@@ -216,6 +216,10 @@ document.addEventListener("DOMContentLoaded", () => {
 window.initMap = async function () {
     // Import required libraries dynamically
     let Map, AdvancedMarkerElement, PlaceAutocompleteElement;
+    if (typeof google === "undefined") {
+        console.warn("Google Maps API no cargada en esta página.");
+        return;
+    }
     try {
         const mapsLib = await google.maps.importLibrary("maps");
         Map = mapsLib.Map;
@@ -279,7 +283,7 @@ window.initMap = async function () {
         if (inputElement.dataset.diaNumero) {
             autocomplete.dataset.diaNumero = inputElement.dataset.diaNumero;
         }
-        
+
         // Reemplazar el input clásico por el web component moderno
         inputElement.parentNode.replaceChild(autocomplete, inputElement);
 
@@ -292,7 +296,7 @@ window.initMap = async function () {
 
             // Solicitar los campos necesarios para la vista previa
             await place.fetchFields({ fields: ['id', 'location', 'photos', 'formattedAddress', 'displayName', 'rating'] });
-            
+
             autocomplete.selectedPlace = place;
 
             if (!place.location) {
@@ -334,32 +338,33 @@ window.initMap = async function () {
 
         autocomplete.addEventListener('gmp-placeselect', handleSelection);
         autocomplete.addEventListener('gmp-select', handleSelection);
-        
+
         return autocomplete;
     }
 
     const acLugares = setupPlaceAutocomplete(inputLugares);
     const acDestinos = setupPlaceAutocomplete(inputDestinos);
-    
+
     window.activeActivities = [];
 
     // --- FUNCIONES DE RENDERING Y ESTADO LOCAL PARA MAKE_TRAVEL ---
 
-    window.renderLugares = function() {
+    window.renderLugares = function () {
         const listContainer = document.getElementById("lugares-list");
         if (!listContainer) return;
-        
+
         const places = window.activeActivities.filter(act => act.dia_numero === 0);
         listContainer.innerHTML = "";
-        
+
         if (places.length === 0) {
             listContainer.innerHTML = `<p class="text-muted small text-center my-3"><i class="fa-solid fa-map-pin me-1"></i> No hay lugares añadidos aún. ¡Busca y añade uno abajo!</p>`;
             window.updateAllItinerarySelects();
             return;
         }
-        
+
         places.forEach((place, index) => {
-            const fotoSrc = place.foto_url || (place.place_id ? 'invalid-image' : 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400');
+            // Reemplazar la asignación vieja por esta más segura:
+            const fotoSrc = place.foto_url || (place.place_id ? "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1' height='1'></svg>" : 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400');
             const itemHtml = `
                 <div class="list-item-row bg-white shadow-sm mt-2 position-relative">
                     <a href="info.html?place_id=${place.place_id}&name=${encodeURIComponent(place.nombre)}" class="text-decoration-none text-dark d-flex align-items-center w-100">
@@ -379,44 +384,44 @@ window.initMap = async function () {
             `;
             listContainer.insertAdjacentHTML('beforeend', itemHtml);
         });
-        
+
         window.updateAllItinerarySelects();
     };
 
-    window.renderItinerario = function() {
+    window.renderItinerario = function () {
         const container = document.getElementById("itinerario-dias-container");
         if (!container) return;
-        
+
         const inputInicio = document.getElementById("viaje-fecha-inicio");
         const inputFin = document.getElementById("viaje-fecha-fin");
         const dateRangeBadge = document.getElementById("itinerario-fechas-rango");
-        
+
         container.innerHTML = "";
-        
+
         if (!inputInicio.value || !inputFin.value) {
             container.innerHTML = `<p class="text-muted small text-center my-3"><i class="fa-solid fa-calendar-day me-1"></i> Define las fechas del viaje para planificar tu itinerario diario.</p>`;
             if (dateRangeBadge) dateRangeBadge.innerHTML = `<i class="fa fa-calendar-alt me-1"></i> Fechas por definir`;
             return;
         }
-        
+
         const date1 = new Date(inputInicio.value + "T00:00:00");
         const date2 = new Date(inputFin.value + "T00:00:00");
-        
+
         if (isNaN(date1) || isNaN(date2) || date1 > date2) {
             container.innerHTML = `<p class="text-muted small text-center my-3"><i class="fa-solid fa-triangle-exclamation me-1"></i> Fechas inválidas.</p>`;
             return;
         }
-        
+
         const diffTime = Math.abs(date2 - date1);
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-        
+
         if (dateRangeBadge) {
-            dateRangeBadge.innerHTML = `<i class="fa fa-calendar-alt me-1"></i> ${date1.getDate()}/${date1.getMonth()+1} - ${date2.getDate()}/${date2.getMonth()+1}`;
+            dateRangeBadge.innerHTML = `<i class="fa fa-calendar-alt me-1"></i> ${date1.getDate()}/${date1.getMonth() + 1} - ${date2.getDate()}/${date2.getMonth() + 1}`;
         }
-        
+
         const weekdayNames = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
         const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-        
+
         if (typeof window.itinerarioDaysSelected === 'undefined') {
             window.itinerarioDaysSelected = [];
             // Inicializar con los días que tengan actividades
@@ -425,9 +430,9 @@ window.initMap = async function () {
                     window.itinerarioDaysSelected.push(act.dia_numero);
                 }
             });
-            window.itinerarioDaysSelected.sort((a,b) => a - b);
+            window.itinerarioDaysSelected.sort((a, b) => a - b);
         }
-        
+
         // Trim (borrar) días extras que excedan diffDays y sus actividades
         window.itinerarioDaysSelected = window.itinerarioDaysSelected.filter(d => {
             if (d > diffDays) {
@@ -441,10 +446,10 @@ window.initMap = async function () {
         for (const d of window.itinerarioDaysSelected) {
             const currentDate = new Date(date1.getTime());
             currentDate.setDate(date1.getDate() + (d - 1));
-            
+
             const dayLabel = `${weekdayNames[currentDate.getDay()]} ${currentDate.getDate()} de ${monthNames[currentDate.getMonth()]}`;
             const dayActivities = window.activeActivities.filter(act => act.dia_numero === d);
-            
+
             let activitiesHtml = "";
             dayActivities.forEach((act, actIdx) => {
                 const fotoSrc = act.foto_url || (act.place_id ? 'invalid-image' : 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400');
@@ -465,7 +470,7 @@ window.initMap = async function () {
                     </div>
                 `;
             });
-            
+
             const dayHtml = `
                 <div class="mb-4 pt-2 border-top">
                     <div class="day-row-header d-flex justify-content-between align-items-center mb-2">
@@ -502,23 +507,23 @@ window.initMap = async function () {
                 </div>
             `;
             container.insertAdjacentHTML('beforeend', dayHtml);
-            
+
             const newSearchInput = document.getElementById(`input-itinerario-search-${d}`);
             if (newSearchInput) {
                 setupPlaceAutocomplete(newSearchInput);
             }
         }
-        
+
         if (window.itinerarioDaysSelected.length < diffDays) {
             let optionsHtml = '<option value="">-- Elegir fecha para planificar --</option>';
-            for(let i = 1; i <= diffDays; i++) {
+            for (let i = 1; i <= diffDays; i++) {
                 if (!window.itinerarioDaysSelected.includes(i)) {
                     const tempDate = new Date(date1.getTime());
                     tempDate.setDate(date1.getDate() + (i - 1));
                     optionsHtml += `<option value="${i}">Día ${i} - ${weekdayNames[tempDate.getDay()]} ${tempDate.getDate()} de ${monthNames[tempDate.getMonth()]}</option>`;
                 }
             }
-            
+
             container.insertAdjacentHTML('beforeend', `
                 <div class="mt-4 p-3 bg-light rounded-3 border text-center shadow-sm">
                     <h6 class="fw-bold mb-3 text-dark">Añadir día específico al itinerario</h6>
@@ -534,44 +539,44 @@ window.initMap = async function () {
                 </div>
             `);
         }
-        
+
         window.updateAllItinerarySelects();
     };
 
-    window.updateAllItinerarySelects = function() {
+    window.updateAllItinerarySelects = function () {
         const selects = document.querySelectorAll(".select-saved-place");
         const places = window.activeActivities.filter(act => act.dia_numero === 0);
-        
+
         selects.forEach(select => {
             const currentValue = select.value;
             select.innerHTML = `<option value="">-- Seleccionar lugar guardado --</option>`;
-            
+
             places.forEach((place, index) => {
                 select.innerHTML += `<option value="${index}">${place.nombre}</option>`;
             });
-            
+
             if (currentValue && parseInt(currentValue) < places.length) {
                 select.value = currentValue;
             }
         });
     };
 
-    window.addActivityToDay = function(d) {
+    window.addActivityToDay = function (d) {
         const selectSaved = document.getElementById(`select-saved-place-${d}`);
         const searchInput = document.getElementById(`input-itinerario-search-${d}`);
         const timeInput = document.getElementById(`input-itinerario-time-${d}`);
-        
+
         let nombre = "";
         let place_id = "";
         let foto_url = "";
         let rating = 0;
         let horario = timeInput ? timeInput.value : "";
-        
+
         if (selectSaved && selectSaved.value) {
             const savedIdx = parseInt(selectSaved.value);
             const places = window.activeActivities.filter(act => act.dia_numero === 0);
             const selectedPlace = places[savedIdx];
-            
+
             if (selectedPlace) {
                 nombre = selectedPlace.nombre;
                 place_id = selectedPlace.place_id;
@@ -583,7 +588,7 @@ window.initMap = async function () {
             nombre = place.displayName || place.name;
             place_id = place.id || place.place_id;
             rating = place.rating || 0;
-            
+
             if (place.photos && place.photos.length > 0) {
                 foto_url = place.photos[0].getURI({ maxWidth: 400, maxHeight: 400 });
             }
@@ -594,7 +599,7 @@ window.initMap = async function () {
                 if (innerInput) val = innerInput.value;
             }
             if (!val) val = searchInput.value;
-            
+
             if (val && val.trim() !== "") {
                 nombre = val.trim();
             } else {
@@ -605,7 +610,7 @@ window.initMap = async function () {
             alert("Por favor selecciona un lugar guardado, busca un lugar o escribe una actividad.");
             return;
         }
-        
+
         window.activeActivities.push({
             tipo: "itinerario",
             dia_numero: d,
@@ -617,11 +622,11 @@ window.initMap = async function () {
         });
 
         // Duplicar automáticamente en lugares a visitar (dia_numero === 0) si no existe ya
-        const alreadyExists = window.activeActivities.some(act => 
-            act.dia_numero === 0 && 
+        const alreadyExists = window.activeActivities.some(act =>
+            act.dia_numero === 0 &&
             (place_id ? act.place_id === place_id : act.nombre.toLowerCase() === nombre.toLowerCase())
         );
-        
+
         if (!alreadyExists) {
             window.activeActivities.push({
                 tipo: "lugares",
@@ -633,7 +638,7 @@ window.initMap = async function () {
             });
             window.renderLugares();
         }
-        
+
         // Limpiar inputs
         if (selectSaved) selectSaved.value = "";
         if (searchInput) {
@@ -645,20 +650,20 @@ window.initMap = async function () {
             searchInput.selectedPlace = null;
         }
         if (timeInput) timeInput.value = "";
-        
+
         window.renderItinerario();
     };
 
-    window.addSpecificItineraryDay = function() {
+    window.addSpecificItineraryDay = function () {
         const select = document.getElementById("select-new-itinerary-day");
         if (!select || !select.value) return;
-        
+
         const selectedDay = parseInt(select.value);
         if (selectedDay && !window.itinerarioDaysSelected.includes(selectedDay)) {
             window.itinerarioDaysSelected.push(selectedDay);
-            window.itinerarioDaysSelected.sort((a,b) => a - b);
+            window.itinerarioDaysSelected.sort((a, b) => a - b);
             window.renderItinerario();
-            
+
             // Hacer scroll suave al contenedor del nuevo día
             setTimeout(() => {
                 const container = document.getElementById("itinerario-dias-container");
@@ -672,7 +677,7 @@ window.initMap = async function () {
         }
     };
 
-    window.removeActivity = function(index, tipo) {
+    window.removeActivity = function (index, tipo) {
         if (tipo === 'lugares') {
             const places = window.activeActivities.filter(act => act.dia_numero === 0);
             const placeToRemove = places[index];
@@ -684,7 +689,7 @@ window.initMap = async function () {
         }
     };
 
-    window.removeDayActivity = function(dia, actIdx) {
+    window.removeDayActivity = function (dia, actIdx) {
         const dayActs = window.activeActivities.filter(act => act.dia_numero === dia);
         const actToRemove = dayActs[actIdx];
         const globalIndex = window.activeActivities.indexOf(actToRemove);
@@ -702,12 +707,12 @@ window.initMap = async function () {
                 alert("Por favor busca y selecciona un lugar primero.");
                 return;
             }
-            
+
             let photoUrl = "";
             if (place.photos && place.photos.length > 0) {
                 photoUrl = place.photos[0].getURI({ maxWidth: 400, maxHeight: 400 });
             }
-            
+
             window.activeActivities.push({
                 tipo: "lugares",
                 dia_numero: 0,
@@ -717,13 +722,13 @@ window.initMap = async function () {
                 rating: place.rating || 0,
                 horario: ""
             });
-            
+
             acLugares.inputValue = '';
             acLugares.selectedPlace = null;
-            
+
             const prev = document.getElementById("places-preview-card");
             if (prev) prev.remove();
-            
+
             window.renderLugares();
         });
     }
@@ -779,7 +784,7 @@ function mostrarVistaPreviaLugar(place, photoUrls) {
 
         document.getElementById("btn-add-lugar-confirm").addEventListener("click", () => {
             const mainPhoto = photoUrls.length > 0 ? photoUrls[0] : "";
-            
+
             window.activeActivities.push({
                 tipo: "lugares",
                 dia_numero: 0,
@@ -789,9 +794,9 @@ function mostrarVistaPreviaLugar(place, photoUrls) {
                 rating: place.rating || 0,
                 horario: ""
             });
-            
+
             previewCard.remove();
-            
+
             // Limpiar input si es necesario
             const placesInput = document.getElementById("buscar-lugares");
             if (placesInput) {
@@ -802,7 +807,7 @@ function mostrarVistaPreviaLugar(place, photoUrls) {
                 }
                 placesInput.selectedPlace = null;
             }
-            
+
             window.renderLugares();
         });
     } else if (inputDestinos) {
@@ -817,7 +822,7 @@ function mostrarVistaPreviaLugar(place, photoUrls) {
             setTimeout(() => alertBox.remove(), 3000);
 
             previewCard.remove();
-            
+
             const destInput = document.getElementById("buscar-destinos");
             if (destInput) {
                 destInput.inputValue = "";
@@ -860,11 +865,12 @@ window.changeImage = function (src, element) {
     }
 };
 
-// Initialize dynamic info.html page with Google Places API
+// Initialize dynamic info.html page with Google Places API or Supabase
 window.initInfoPage = async function () {
     const urlParams = new URLSearchParams(window.location.search);
     const placeId = urlParams.get('place_id');
     const nameParam = urlParams.get('name');
+    const idRecomendacion = urlParams.get('id_recomendacion');
 
     if (nameParam) {
         document.title = nameParam + " - Información Detallada";
@@ -872,14 +878,14 @@ window.initInfoPage = async function () {
         if (titleEl) titleEl.textContent = nameParam;
     }
 
-    if (!placeId) {
-        // If there's no place_id, we just leave the default HTML layout
-        console.log("No place_id provided in URL");
+    if (!placeId && !idRecomendacion) {
+        // If there's no place_id or id_recomendacion, we just leave the default HTML layout
+        console.log("No place_id or id_recomendacion provided in URL");
         return;
     }
 
     // Load libraries
-    let Map, PlacesService, AdvancedMarkerElement;
+    let Map, PlacesService, AdvancedMarkerElement, Geocoder;
     try {
         const mapsLib = await google.maps.importLibrary("maps");
         Map = mapsLib.Map;
@@ -887,6 +893,8 @@ window.initInfoPage = async function () {
         PlacesService = placesLib.PlacesService;
         const markerLib = await google.maps.importLibrary("marker");
         AdvancedMarkerElement = markerLib.AdvancedMarkerElement;
+        const geocodingLib = await google.maps.importLibrary("geocoding");
+        Geocoder = geocodingLib.Geocoder;
     } catch (e) {
         console.error("Failed to load Google Maps API for info page", e);
         return;
@@ -909,147 +917,310 @@ window.initInfoPage = async function () {
     // We can pass the map or a dummy div
     const service = new PlacesService(map || document.createElement('div'));
 
-    const request = {
-        placeId: placeId,
-        fields: ['name', 'formatted_address', 'geometry', 'photos', 'rating', 'user_ratings_total', 'types', 'editorial_summary', 'international_phone_number', 'website', 'opening_hours', 'price_level']
-    };
+    if (idRecomendacion) {
+        // --- 1. LÓGICA SUPABASE (Prioridad si existe id_recomendacion) ---
+        try {
+            const { data, error } = await supabase
+                .from('recomendaciones_ciudad')
+                .select('*, detalles_atractivo(*)')
+                .eq('id_recomendacion', idRecomendacion)
+                .single();
 
-    service.getDetails(request, (place, status) => {
-        if (status === google.maps.places.PlacesServiceStatus.OK && place) {
-            
-            // 1. Update Title and Address
-            if (document.getElementById("info-title")) document.getElementById("info-title").textContent = place.name;
-            document.title = place.name + " - Información Detallada";
-            
-            if (document.getElementById("info-address")) {
-                document.getElementById("info-address").innerHTML = `<i class="fa-solid fa-map-marker-alt me-1"></i> ${place.formatted_address || ''}`;
-            }
-            if (document.getElementById("info-sidebar-address")) {
-                document.getElementById("info-sidebar-address").innerHTML = `<i class="fa-solid fa-map-pin text-danger me-1"></i> ${place.formatted_address || ''}`;
-            }
+            if (error) throw error;
+            if (data) {
+                const detalle = Array.isArray(data.detalles_atractivo) ? data.detalles_atractivo[0] : data.detalles_atractivo;
 
-            // 2. Update Badge (Type)
-            const badgeEl = document.getElementById("info-badge");
-            if (badgeEl && place.types && place.types.length > 0) {
-                const type = place.types[0].replace(/_/g, ' ');
-                badgeEl.textContent = type.charAt(0).toUpperCase() + type.slice(1);
-            }
+                // Título y Badge
+                if (document.getElementById("info-title")) document.getElementById("info-title").textContent = data.titulo_atraccion || data.nombre_ciudad;
+                document.title = (data.titulo_atraccion || data.nombre_ciudad) + " - Información Detallada";
 
-            // 3. Update Photos
-            if (place.photos && place.photos.length > 0) {
+                const badgeEl = document.getElementById("info-badge");
+                if (badgeEl) badgeEl.textContent = data.categoria || "Atracción";
+
+                // Imagen principal (Ocultamos thumbnails)
                 const mainImage = document.getElementById("mainImage");
+                if (mainImage && data.url_foto) {
+                    mainImage.src = data.url_foto;
+                }
                 const thumbnailsContainer = document.getElementById("info-thumbnails");
-                
-                if (mainImage) mainImage.src = place.photos[0].getUrl({maxWidth: 800});
-                
-                if (thumbnailsContainer) {
-                    let thumbsHtml = "";
-                    for (let i = 0; i < Math.min(4, place.photos.length); i++) {
-                        const url = place.photos[i].getUrl({maxWidth: 400});
-                        thumbsHtml += `
-                            <div class="col-3">
-                                <img src="${url}" alt="${place.name} Vista ${i+1}" class="tour-thumb-img ${i===0?'active':''} thumbnail-img" style="object-fit:cover; height:80px; width:100%; border-radius: 8px; cursor: pointer;" onclick="changeImage(this.src, this)">
+                if (thumbnailsContainer) thumbnailsContainer.innerHTML = '';
+
+                // Dirección
+                const addrText = `${data.titulo_atraccion}, ${data.nombre_ciudad}`;
+                if (document.getElementById("info-address")) {
+                    document.getElementById("info-address").innerHTML = `<i class="fa-solid fa-map-marker-alt me-1"></i> ${addrText}`;
+                }
+                if (document.getElementById("info-sidebar-address")) {
+                    document.getElementById("info-sidebar-address").innerHTML = `<i class="fa-solid fa-map-pin text-danger me-1"></i> ${addrText}`;
+                }
+
+                // Descripción
+                const descEl = document.getElementById("info-description");
+                if (descEl && data.descripcion) {
+                    descEl.innerHTML = `<p class="fs-5 lh-base">${data.descripcion}</p>`;
+                }
+
+                // Información rápida
+                if (detalle) {
+                    const quickInfoContainer = document.getElementById("info-quick");
+                    if (quickInfoContainer) {
+                        let quickHtml = "";
+                        const quickItems = [
+                            { title: "Duración estimada", value: detalle.duracion_estimada },
+                            { title: "Nivel de esfuerzo", value: detalle.nivel_esfuerzo },
+                            { title: "Mejor horario", value: detalle.mejor_horario },
+                            { title: "Costo estimado", value: detalle.costo_texto },
+                            { title: "Nivel turístico", value: detalle.nivel_turistico },
+                            { title: "Ideal para", value: detalle.ideal_para }
+                        ];
+
+                        quickItems.forEach(item => {
+                            if (item.value) {
+                                quickHtml += `
+                                    <div class="col-md-4 col-6">
+                                        <div class="tour-info-box shadow-sm">
+                                            <div class="tour-info-box-title">${item.title}</div>
+                                            <div class="tour-info-box-value">${item.value}</div>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                        });
+                        quickInfoContainer.innerHTML = quickHtml;
+                    }
+
+                    // Por qué vale la pena
+                    const reasonsContainer = document.getElementById("info-reasons");
+                    if (reasonsContainer && detalle.porque_vale_la_pena) {
+                        const items = detalle.porque_vale_la_pena.split('|');
+                        let html = `<h3 class="fw-bold mb-3"><i class="fa-solid fa-star me-2"></i>Por qué vale la pena</h3>`;
+                        items.forEach((item, idx) => {
+                            const cleanItem = item.trim();
+                            if (cleanItem) {
+                                html += `
+                                    <div class="tour-step-row">
+                                        <div class="tour-step-number">${idx + 1}</div>
+                                        <div class="tour-step-card shadow-sm">
+                                            <p class="mb-0 fs-5">${cleanItem}</p>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                        });
+                        reasonsContainer.innerHTML = html;
+                    }
+
+                    // Cosas a tener en cuenta
+                    const warningsContainer = document.getElementById("info-warnings");
+                    if (warningsContainer && detalle.cosas_a_tener_en_cuenta) {
+                        const items = detalle.cosas_a_tener_en_cuenta.split('|');
+                        let html = `<h3 class="fw-bold mb-3"><i class="fa-solid fa-triangle-exclamation me-2"></i>Cosas a tener en cuenta</h3>`;
+                        html += `<div class="tour-card shadow-sm small d-flex flex-column gap-2">`;
+                        items.forEach(item => {
+                            const cleanItem = item.trim();
+                            if (cleanItem) {
+                                html += `
+                                    <div class="d-flex align-items-start gap-2 border-bottom border-dark pb-2 mb-1">
+                                        <i class="fa-solid fa-triangle-exclamation text-warning mt-1"></i>
+                                        <span class="fs-6">${cleanItem}</span>
+                                    </div>
+                                `;
+                            }
+                        });
+                        html += `</div>`;
+                        warningsContainer.innerHTML = html;
+                    }
+
+                    // Lugares cercanos
+                    const nearbyContainer = document.getElementById("info-nearby");
+                    if (nearbyContainer && detalle.lugares_cercanos) {
+                        const items = detalle.lugares_cercanos.split('|');
+                        let html = `<h3 class="fw-bold mb-3"><i class="fa-solid fa-location-arrow me-2"></i>Lugares cercanos</h3>`;
+                        items.forEach(item => {
+                            const cleanItem = item.trim();
+                            if (cleanItem) {
+                                // Extract text between parentheses
+                                const match = cleanItem.match(/(.*?)\s*\((.*?)\)/);
+                                let name = cleanItem;
+                                let distance = "";
+                                if (match) {
+                                    name = match[1].trim();
+                                    distance = match[2].trim();
+                                }
+                                html += `
+                                    <div class="tour-nearby-item shadow-sm">
+                                        <span class="fs-6">${name}</span>
+                                        ${distance ? `<span class="badge bg-white text-dark border border-dark">${distance}</span>` : ''}
+                                    </div>
+                                `;
+                            }
+                        });
+                        nearbyContainer.innerHTML = html;
+                    }
+                }
+
+                // Sincronización del mapa con Geocoder (o textSearch)
+                if (map) {
+                    const geocoder = new Geocoder();
+                    geocoder.geocode({ address: addrText }, (results, status) => {
+                        if (status === 'OK' && results[0]) {
+                            map.setCenter(results[0].geometry.location);
+                            new AdvancedMarkerElement({
+                                map: map,
+                                position: results[0].geometry.location,
+                                title: addrText
+                            });
+                        }
+                    });
+                }
+            }
+        } catch (err) {
+            console.error("Error al cargar detalles desde Supabase:", err);
+        }
+    } else if (placeId) {
+        // --- 2. LÓGICA GOOGLE PLACES (Fallback automático) ---
+        const request = {
+            placeId: placeId,
+            fields: ['name', 'formatted_address', 'geometry', 'photos', 'rating', 'user_ratings_total', 'types', 'editorial_summary', 'international_phone_number', 'website', 'opening_hours', 'price_level']
+        };
+
+        service.getDetails(request, (place, status) => {
+            if (status === google.maps.places.PlacesServiceStatus.OK && place) {
+
+                // 1. Update Title and Address
+                if (document.getElementById("info-title")) document.getElementById("info-title").textContent = place.name;
+                document.title = place.name + " - Información Detallada";
+
+                if (document.getElementById("info-address")) {
+                    document.getElementById("info-address").innerHTML = `<i class="fa-solid fa-map-marker-alt me-1"></i> ${place.formatted_address || ''}`;
+                }
+                if (document.getElementById("info-sidebar-address")) {
+                    document.getElementById("info-sidebar-address").innerHTML = `<i class="fa-solid fa-map-pin text-danger me-1"></i> ${place.formatted_address || ''}`;
+                }
+
+                // 2. Update Badge (Type)
+                const badgeEl = document.getElementById("info-badge");
+                if (badgeEl && place.types && place.types.length > 0) {
+                    const type = place.types[0].replace(/_/g, ' ');
+                    badgeEl.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+                }
+
+                // 3. Update Photos
+                if (place.photos && place.photos.length > 0) {
+                    const mainImage = document.getElementById("mainImage");
+                    const thumbnailsContainer = document.getElementById("info-thumbnails");
+
+                    if (mainImage) mainImage.src = place.photos[0].getUrl({ maxWidth: 800 });
+
+                    if (thumbnailsContainer) {
+                        let thumbsHtml = "";
+                        for (let i = 0; i < Math.min(4, place.photos.length); i++) {
+                            const url = place.photos[i].getUrl({ maxWidth: 400 });
+                            thumbsHtml += `
+                                <div class="col-3">
+                                    <img src="${url}" alt="${place.name} Vista ${i + 1}" class="tour-thumb-img ${i === 0 ? 'active' : ''} thumbnail-img" style="object-fit:cover; height:80px; width:100%; border-radius: 8px; cursor: pointer;" onclick="changeImage(this.src, this)">
+                                </div>
+                            `;
+                        }
+                        thumbnailsContainer.innerHTML = thumbsHtml;
+                    }
+                }
+
+                // 4. Update Description
+                const descEl = document.getElementById("info-description");
+                if (descEl) {
+                    if (place.editorial_summary && place.editorial_summary.overview) {
+                        descEl.innerHTML = `<p class="fs-5 lh-base">${place.editorial_summary.overview}</p>`;
+                    } else {
+                        descEl.innerHTML = `<p class="fs-5 lh-base">Descubre <strong>${place.name}</strong>, un lugar increíble para visitar durante tu viaje. ${place.formatted_address ? 'Ubicado en ' + place.formatted_address + '.' : ''}</p>`;
+                    }
+                }
+
+                // 5. Update Quick Info
+                const quickInfoContainer = document.getElementById("info-quick");
+                if (quickInfoContainer) {
+                    let quickHtml = "";
+
+                    // Rating
+                    if (place.rating) {
+                        quickHtml += `
+                            <div class="col-md-4 col-6">
+                                <div class="tour-info-box shadow-sm">
+                                    <div class="tour-info-box-title">Puntuación</div>
+                                    <div class="tour-info-box-value"><i class="fa fa-star text-warning"></i> ${place.rating} (${place.user_ratings_total || 0} res.)</div>
+                                </div>
                             </div>
                         `;
                     }
-                    thumbnailsContainer.innerHTML = thumbsHtml;
+
+                    // Status / Opening Hours
+                    if (place.opening_hours) {
+                        const isOpen = place.opening_hours.isOpen ? place.opening_hours.isOpen() : false;
+                        quickHtml += `
+                            <div class="col-md-4 col-6">
+                                <div class="tour-info-box shadow-sm">
+                                    <div class="tour-info-box-title">Estado</div>
+                                    <div class="tour-info-box-value ${isOpen ? 'text-success' : 'text-danger'} fw-bold">${isOpen ? 'Abierto ahora' : 'Cerrado ahora'}</div>
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    // Price Level
+                    if (place.price_level !== undefined) {
+                        const priceStr = "$$$$$".substring(0, place.price_level + 1);
+                        quickHtml += `
+                            <div class="col-md-4 col-6">
+                                <div class="tour-info-box shadow-sm">
+                                    <div class="tour-info-box-title">Nivel de Precio</div>
+                                    <div class="tour-info-box-value">${priceStr}</div>
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    // Phone
+                    if (place.international_phone_number) {
+                        quickHtml += `
+                            <div class="col-md-4 col-6">
+                                <div class="tour-info-box shadow-sm text-truncate">
+                                    <div class="tour-info-box-title">Teléfono</div>
+                                    <div class="tour-info-box-value">${place.international_phone_number}</div>
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    // Website
+                    if (place.website) {
+                        quickHtml += `
+                            <div class="col-md-4 col-6">
+                                <div class="tour-info-box shadow-sm">
+                                    <div class="tour-info-box-title">Sitio Web</div>
+                                    <div class="tour-info-box-value text-truncate"><a href="${place.website}" target="_blank" class="text-dark text-decoration-none">Visitar Web <i class="fa-solid fa-external-link-alt ms-1"></i></a></div>
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    quickInfoContainer.innerHTML = quickHtml;
                 }
+
+                // 6. Update Map position and add marker
+                if (map && place.geometry && place.geometry.location) {
+                    map.setCenter(place.geometry.location);
+                    new AdvancedMarkerElement({
+                        map: map,
+                        position: place.geometry.location,
+                        title: place.name
+                    });
+                }
+
+            } else {
+                console.error("Error fetching place details:", status);
             }
-
-            // 4. Update Description
-            const descEl = document.getElementById("info-description");
-            if (descEl) {
-                if (place.editorial_summary && place.editorial_summary.overview) {
-                    descEl.innerHTML = `<p class="fs-5 lh-base">${place.editorial_summary.overview}</p>`;
-                } else {
-                    descEl.innerHTML = `<p class="fs-5 lh-base">Descubre <strong>${place.name}</strong>, un lugar increíble para visitar durante tu viaje. ${place.formatted_address ? 'Ubicado en ' + place.formatted_address + '.' : ''}</p>`;
-                }
-            }
-
-            // 5. Update Quick Info
-            const quickInfoContainer = document.getElementById("info-quick");
-            if (quickInfoContainer) {
-                let quickHtml = "";
-                
-                // Rating
-                if (place.rating) {
-                    quickHtml += `
-                        <div class="col-md-4 col-6">
-                            <div class="tour-info-box shadow-sm">
-                                <div class="tour-info-box-title">Puntuación</div>
-                                <div class="tour-info-box-value"><i class="fa fa-star text-warning"></i> ${place.rating} (${place.user_ratings_total || 0} res.)</div>
-                            </div>
-                        </div>
-                    `;
-                }
-                
-                // Status / Opening Hours
-                if (place.opening_hours) {
-                    const isOpen = place.opening_hours.isOpen ? place.opening_hours.isOpen() : false;
-                    quickHtml += `
-                        <div class="col-md-4 col-6">
-                            <div class="tour-info-box shadow-sm">
-                                <div class="tour-info-box-title">Estado</div>
-                                <div class="tour-info-box-value ${isOpen ? 'text-success' : 'text-danger'} fw-bold">${isOpen ? 'Abierto ahora' : 'Cerrado ahora'}</div>
-                            </div>
-                        </div>
-                    `;
-                }
-
-                // Price Level
-                if (place.price_level !== undefined) {
-                    const priceStr = "$$$$$".substring(0, place.price_level + 1);
-                    quickHtml += `
-                        <div class="col-md-4 col-6">
-                            <div class="tour-info-box shadow-sm">
-                                <div class="tour-info-box-title">Nivel de Precio</div>
-                                <div class="tour-info-box-value">${priceStr}</div>
-                            </div>
-                        </div>
-                    `;
-                }
-
-                // Phone
-                if (place.international_phone_number) {
-                    quickHtml += `
-                        <div class="col-md-4 col-6">
-                            <div class="tour-info-box shadow-sm text-truncate">
-                                <div class="tour-info-box-title">Teléfono</div>
-                                <div class="tour-info-box-value">${place.international_phone_number}</div>
-                            </div>
-                        </div>
-                    `;
-                }
-
-                // Website
-                if (place.website) {
-                    quickHtml += `
-                        <div class="col-md-4 col-6">
-                            <div class="tour-info-box shadow-sm">
-                                <div class="tour-info-box-title">Sitio Web</div>
-                                <div class="tour-info-box-value text-truncate"><a href="${place.website}" target="_blank" class="text-dark text-decoration-none">Visitar Web <i class="fa-solid fa-external-link-alt ms-1"></i></a></div>
-                            </div>
-                        </div>
-                    `;
-                }
-
-                quickInfoContainer.innerHTML = quickHtml;
-            }
-
-            // 6. Update Map position and add marker
-            if (map && place.geometry && place.geometry.location) {
-                map.setCenter(place.geometry.location);
-                new AdvancedMarkerElement({
-                    map: map,
-                    position: place.geometry.location,
-                    title: place.name
-                });
-            }
-            
-        } else {
-            console.error("Error fetching place details:", status);
-        }
-    });
+        });
+    }
 };
 
 // --- Autenticación Supabase (Registro e Inicio de Sesión) ---
@@ -1062,13 +1233,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if (signupForm) {
         signupForm.addEventListener("submit", async (e) => {
             e.preventDefault();
-            
+
             const name = document.getElementById("signup-name").value;
             const email = document.getElementById("signup-email").value;
             const password = document.getElementById("signup-password").value;
             const confirmPassword = document.getElementById("signup-confirm-password").value;
             const messageContainer = document.getElementById("signup-message");
-            
+
             // Limpiar mensajes previos
             messageContainer.innerHTML = "";
 
@@ -1090,7 +1261,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (error) {
                 let errorMsg = error.message;
-                if (errorMsg.toLowerCase().includes("already registered") || 
+                if (errorMsg.toLowerCase().includes("already registered") ||
                     errorMsg.toLowerCase().includes("already in use") ||
                     errorMsg.toLowerCase().includes("exists")) {
                     errorMsg = `Esta cuenta ya está registrada. ¿Quieres <a href="log_in.html" class="alert-link">iniciar sesión aquí</a>?`;
@@ -1102,10 +1273,10 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 messageContainer.innerHTML = `<div class="alert alert-success">¡Registro exitoso! Iniciando sesión y redirigiendo...</div>`;
                 signupForm.reset();
-                
+
                 // Guardar mensaje de bienvenida
                 localStorage.setItem("loginSuccessMessage", "¡Cuenta creada con éxito! Se ha iniciado sesión.");
-                
+
                 // Redirigir al inicio después de 1.5 segundos
                 setTimeout(() => {
                     window.location.href = "../index.html";
@@ -1118,11 +1289,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (loginForm) {
         loginForm.addEventListener("submit", async (e) => {
             e.preventDefault();
-            
+
             const email = document.getElementById("login-email").value;
             const password = document.getElementById("login-password").value;
             const messageContainer = document.getElementById("login-message");
-            
+
             // Limpiar mensajes previos
             messageContainer.innerHTML = "";
 
@@ -1134,17 +1305,17 @@ document.addEventListener("DOMContentLoaded", () => {
             if (error) {
                 let errorMsg = error.message;
                 // Si la credencial no es válida o el usuario no existe
-                if (errorMsg.toLowerCase().includes("invalid login credentials") || 
+                if (errorMsg.toLowerCase().includes("invalid login credentials") ||
                     errorMsg.toLowerCase().includes("not found")) {
                     errorMsg = `La cuenta no existe o las credenciales son incorrectas. ¿No tienes cuenta? <a href="sing_up.html" class="alert-link">Regístrate aquí</a>.`;
                 }
                 messageContainer.innerHTML = `<div class="alert alert-danger">${errorMsg}</div>`;
             } else {
                 messageContainer.innerHTML = `<div class="alert alert-success">¡Inicio de sesión exitoso! Redirigiendo...</div>`;
-                
+
                 // Guardar mensaje de éxito
                 localStorage.setItem("loginSuccessMessage", "¡Sesión iniciada con éxito! Bienvenido.");
-                
+
                 // Redirigir al index 
                 setTimeout(() => {
                     window.location.href = "../index.html";
@@ -1257,7 +1428,7 @@ async function cargarViajes() {
         }
 
         const token = sessionData.session.access_token;
-        
+
         // Llamada a nuestro backend de FastAPI
         const response = await fetch("http://localhost:8000/api/viajes", {
             headers: {
@@ -1271,19 +1442,28 @@ async function cargarViajes() {
 
         const viajes = await response.json();
 
+        // Filtrar por los viajes que aún no se han realizado y que no estén en revisión
+        const viajesNoRealizados = viajes.filter(viaje => viaje.estado !== 'realizado' && viaje.estado !== 'En revision');
+
+        // Ordenar por id_viaje descendente (los más recientes primero)
+        viajesNoRealizados.sort((a, b) => (b.id_viaje || 0) - (a.id_viaje || 0));
+
+        // Tomar los últimos 4
+        const ultimosViajes = viajesNoRealizados.slice(0, 4);
+
         // Si la cuenta no tiene nada para mostrar, decir "Debes subir contenido para poder verlo"
-        if (!viajes || viajes.length === 0) {
+        if (ultimosViajes.length === 0) {
             viajesGrid.innerHTML = '<div class="col-12 text-center mt-5"><h4>Debes subir contenido para poder verlo</h4></div>';
             return;
         }
 
         // Si hay viajes, renderizarlos dinámicamente
         let htmlContent = "";
-        viajes.forEach(viaje => {
+        ultimosViajes.forEach(viaje => {
             const lugaresCount = viaje.cantidad_lugares || 0;
             const lugaresTxt = lugaresCount === 1 ? 'lugar' : 'lugares';
             const initial = viaje.destino_principal ? viaje.destino_principal.charAt(0).toUpperCase() : 'V';
-            
+
             let imageHtml = "";
             if (viaje.imagen_url) {
                 imageHtml = `<img src="${viaje.imagen_url}" class="w-100 h-100 object-fit-cover rounded-4" alt="${viaje.nombre_viaje}">`;
@@ -1353,10 +1533,17 @@ async function cargarRecuerdos() {
 
         let htmlContent = "";
         recuerdos.forEach(recuerdo => {
+            // Si la descripción guardada incluye la fecha "(Fecha: ...)", se la limpiamos visualmente 
+            let tituloLimpio = recuerdo.descripcion || 'Recuerdo';
+            tituloLimpio = tituloLimpio.replace(/\(Fecha: .*?\)$/, '').trim();
+
             htmlContent += `
                 <div class="col-3">
-                    <div class="ratio ratio-1x1 memory-card">
-                        <img src="${recuerdo.Url || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400'}" class="img-fluid object-fit-cover rounded-3" alt="${recuerdo.Descripcion || 'Recuerdo'}">
+                    <div class="ratio ratio-1x1 memory-card" style="cursor: pointer;">
+                        <img src="${recuerdo.url}" 
+                            class="img-fluid object-fit-cover rounded-3 h-100 w-100" 
+                            alt="${tituloLimpio}" 
+                            onerror="this.src='../Imagenes/Cities/paris.jpeg'">
                     </div>
                 </div>
             `;
@@ -1371,6 +1558,133 @@ async function cargarRecuerdos() {
         } else {
             recuerdosGrid.innerHTML = '<div class="col-12 text-center mt-3 text-danger"><h4>Ocurrió un error al cargar tus recuerdos.</h4></div>';
         }
+    }
+}
+
+// Variables globales para la paginación de viajes realizados
+let viajesRealizados = [];
+let paginaActualViajesRealizados = 1;
+const VIAJES_POR_PAGINA = 4;
+
+// Función para mostrar una página específica de viajes realizados
+function mostrarPaginaViajesRealizados(page) {
+    const mainGrid = document.getElementById("viajes-realizados-grid");
+    if (!mainGrid) return;
+
+    paginaActualViajesRealizados = page;
+    const totalPaginas = Math.ceil(viajesRealizados.length / VIAJES_POR_PAGINA);
+
+    // Obtener la porción de viajes correspondientes a la página
+    const inicio = (page - 1) * VIAJES_POR_PAGINA;
+    const fin = inicio + VIAJES_POR_PAGINA;
+    const viajesPagina = viajesRealizados.slice(inicio, fin);
+
+    if (viajesPagina.length === 0) {
+        mainGrid.innerHTML = '<div class="col-12 text-center mt-3"><h4>No hay viajes realizados para mostrar</h4></div>';
+        actualizarPaginacion(totalPaginas);
+        return;
+    }
+
+    let htmlContent = "";
+    viajesPagina.forEach(viaje => {
+        const initial = viaje.destino_principal ? viaje.destino_principal.charAt(0).toUpperCase() : 'V';
+        const year = viaje.fecha_inicio ? new Date(viaje.fecha_inicio).getFullYear() : '2026';
+        const fecha = (viaje.fecha_inicio && viaje.fecha_fin)
+            ? `${new Date(viaje.fecha_inicio).toLocaleDateString()} - ${new Date(viaje.fecha_fin).toLocaleDateString()}`
+            : 'Fechas no definidas';
+
+        let imageHtml = "";
+        if (viaje.imagen_url) {
+            imageHtml = `<img src="${viaje.imagen_url}" class="w-100 h-100 object-fit-cover rounded-3" alt="${viaje.nombre_viaje}">`;
+        } else {
+            imageHtml = `
+                <div class="w-100 bg-dark text-white d-flex align-items-center justify-content-center fw-bold display-3 rounded-3" style="height: 200px;">
+                    ${initial}
+                </div>
+            `;
+        }
+
+        htmlContent += `
+            <div class="col-12 col-md-6">
+                <a href="itinerario.html?id=${viaje.id_viaje}" class="text-decoration-none text-dark d-block">
+                    <div class="dest-card ratio-card rounded-3 overflow-hidden border">
+                        <div class="img-wrapper position-relative" style="height: 200px;">
+                            ${imageHtml}
+                            <span class="year-badge badge rounded-pill bg-warning text-dark">${year}</span>
+                        </div>
+                        <div class="p-3">
+                            <h3 class="fw-bold fs-6 mb-2">${viaje.nombre_viaje || 'Viaje Sin Nombre'}</h3>
+                            <div class="d-flex align-items-center gap-2 mb-2 small text-secondary">
+                                <i class="fa-regular fa-calendar"></i>
+                                <span>${fecha}</span>
+                                <span>${viaje.duracion_dias || 0} Días</span>
+                            </div>
+                            <span class="tag-pill badge rounded-pill">${viaje.destino_principal || 'Destino'}</span>
+                            <div class="btn-ver-link d-flex justify-content-end align-items-center gap-2 mt-2 pt-2 small fw-medium">
+                                <span>Ver Detalles <i class="fa fa-arrow-right"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        `;
+    });
+    mainGrid.innerHTML = htmlContent;
+    actualizarPaginacion(totalPaginas);
+}
+
+// Función para actualizar los controles de paginación
+function actualizarPaginacion(totalPaginas) {
+    const pagNumeros = document.getElementById("pag-numeros");
+    const pagPrev = document.getElementById("pag-prev");
+    const pagNext = document.getElementById("pag-next");
+
+    if (!pagNumeros) return;
+
+    pagNumeros.innerHTML = "";
+
+    // Si no hay más de una página, podemos ocultar las flechas de navegación o desactivarlas
+    if (totalPaginas <= 1) {
+        if (pagPrev) pagPrev.style.display = "none";
+        if (pagNext) pagNext.style.display = "none";
+        // Generar un único botón si es que hay 1 página
+        if (totalPaginas === 1) {
+            const btn = document.createElement("button");
+            btn.className = "pag-btn pag-btn-active btn rounded-circle border-0";
+            btn.textContent = "1";
+            pagNumeros.appendChild(btn);
+        }
+        return;
+    } else {
+        if (pagPrev) pagPrev.style.display = "inline-flex";
+        if (pagNext) pagNext.style.display = "inline-flex";
+    }
+
+    // Crear los botones para cada página
+    for (let i = 1; i <= totalPaginas; i++) {
+        const btn = document.createElement("button");
+        if (i === paginaActualViajesRealizados) {
+            btn.className = "pag-btn pag-btn-active btn rounded-circle border-0";
+        } else {
+            btn.className = "pag-btn btn rounded-circle border";
+        }
+        btn.textContent = i;
+        btn.addEventListener("click", () => {
+            mostrarPaginaViajesRealizados(i);
+        });
+        pagNumeros.appendChild(btn);
+    }
+
+    // Configurar estados de habilitación de prev y next
+    if (pagPrev) {
+        pagPrev.disabled = (paginaActualViajesRealizados === 1);
+        pagPrev.style.opacity = pagPrev.disabled ? "0.5" : "1";
+        pagPrev.style.cursor = pagPrev.disabled ? "not-allowed" : "pointer";
+    }
+    if (pagNext) {
+        pagNext.disabled = (paginaActualViajesRealizados === totalPaginas);
+        pagNext.style.opacity = pagNext.disabled ? "0.5" : "1";
+        pagNext.style.cursor = pagNext.disabled ? "not-allowed" : "pointer";
     }
 }
 
@@ -1404,18 +1718,59 @@ async function cargarViajesRealizados() {
 
         const viajes = await response.json();
 
+        // Elementos de estadísticas en finished_travels.html
+        const statsViajes = document.getElementById("stats-viajes");
+        const statsPaises = document.getElementById("stats-paises");
+        const statsLugares = document.getElementById("stats-lugares");
+        const statsDias = document.getElementById("stats-dias");
+
         // Si la cuenta no tiene nada para mostrar, decir "Debes subir contenido para poder verlo"
         if (!viajes || viajes.length === 0) {
             const noViajesMsg = '<div class="col-12 text-center mt-3"><h4>Debes subir contenido para poder verlo</h4></div>';
             if (sectionGrid) sectionGrid.innerHTML = noViajesMsg;
             if (mainGrid) mainGrid.innerHTML = noViajesMsg;
+
+            // Resetear estadísticas a 0
+            if (statsViajes) statsViajes.textContent = "0";
+            if (statsPaises) statsPaises.textContent = "0";
+            if (statsLugares) statsLugares.textContent = "0";
+            if (statsDias) statsDias.textContent = "0";
             return;
+        }
+
+        // Actualizar estadísticas de viajes realizados
+        if (statsViajes || statsPaises || statsLugares || statsDias) {
+            const totalViajes = viajes.length;
+
+            const paisesSet = new Set();
+            viajes.forEach(v => {
+                if (v.destino_principal) {
+                    const parts = v.destino_principal.split(",");
+                    const pais = parts[parts.length - 1].trim();
+                    if (pais) {
+                        paisesSet.add(pais.toLowerCase());
+                    }
+                }
+            });
+            const totalPaises = paisesSet.size;
+
+            const totalLugares = viajes.reduce((sum, v) => sum + (v.cantidad_lugares || 0), 0);
+            const totalDias = viajes.reduce((sum, v) => sum + (v.duracion_dias || 0), 0);
+
+            if (statsViajes) statsViajes.textContent = totalViajes;
+            if (statsPaises) statsPaises.textContent = totalPaises;
+            if (statsLugares) statsLugares.textContent = totalLugares;
+            if (statsDias) statsDias.textContent = totalDias;
         }
 
         // Renderizar en la sección de travels.html
         if (sectionGrid) {
             let htmlContent = "";
-            viajes.forEach(viaje => {
+            // Ordenar por id_viaje de forma descendente (los más recientes primero) y tomar solo los primeros 4
+            const viajesOrdenados = [...viajes].sort((a, b) => (b.id_viaje || 0) - (a.id_viaje || 0));
+            const ultimosViajes = viajesOrdenados.slice(0, 4);
+
+            ultimosViajes.forEach(viaje => {
                 const initial = viaje.destino_principal ? viaje.destino_principal.charAt(0).toUpperCase() : 'V';
                 let imageHtml = "";
                 if (viaje.imagen_url) {
@@ -1427,14 +1782,14 @@ async function cargarViajesRealizados() {
                         </div>
                     `;
                 }
-                
+
                 htmlContent += `
-                    <div class="col-3">
+                    <a href="itinerario.html?id=${viaje.id_viaje}" class="col-3 text-decoration-none text-dark d-block">
                         <div class="ratio ratio-1x1 memory-card mb-2">
                             ${imageHtml}
                         </div>
                         <p class="fw-bold text-center fs-4 mb-1">${viaje.nombre_viaje || 'Viaje Sin Nombre'}</p>
-                    </div>
+                    </a>
                 `;
             });
             sectionGrid.innerHTML = htmlContent;
@@ -1442,63 +1797,59 @@ async function cargarViajesRealizados() {
 
         // Renderizar en la página finished_travels.html
         if (mainGrid) {
-            let htmlContent = "";
-            viajes.forEach(viaje => {
-                const initial = viaje.destino_principal ? viaje.destino_principal.charAt(0).toUpperCase() : 'V';
-                const year = viaje.fecha_inicio ? new Date(viaje.fecha_inicio).getFullYear() : '2026';
-                const fecha = (viaje.fecha_inicio && viaje.fecha_fin) 
-                    ? `${new Date(viaje.fecha_inicio).toLocaleDateString()} - ${new Date(viaje.fecha_fin).toLocaleDateString()}`
-                    : 'Fechas no definidas';
+            // Ordenar por id_viaje de forma descendente (los más recientes primero)
+            viajes.sort((a, b) => (b.id_viaje || 0) - (a.id_viaje || 0));
+            viajesRealizados = viajes;
+            paginaActualViajesRealizados = 1;
 
-                let imageHtml = "";
-                if (viaje.imagen_url) {
-                    imageHtml = `<img src="${viaje.imagen_url}" class="w-100 h-100 object-fit-cover rounded-3" alt="${viaje.nombre_viaje}">`;
-                } else {
-                    imageHtml = `
-                        <div class="w-100 bg-dark text-white d-flex align-items-center justify-content-center fw-bold display-3 rounded-3" style="height: 200px;">
-                            ${initial}
-                        </div>
-                    `;
-                }
+            // Configurar los manejadores de prev/next si no se han configurado antes
+            const pagPrev = document.getElementById("pag-prev");
+            const pagNext = document.getElementById("pag-next");
 
-                htmlContent += `
-                    <div class="col-12 col-md-6">
-                        <div class="dest-card ratio-card rounded-3 overflow-hidden border">
-                            <div class="img-wrapper position-relative" style="height: 200px;">
-                                ${imageHtml}
-                                <span class="year-badge badge rounded-pill bg-warning text-dark">${year}</span>
-                            </div>
-                            <div class="p-3">
-                                <h3 class="fw-bold fs-6 mb-2">${viaje.nombre_viaje || 'Viaje Sin Nombre'}</h3>
-                                <div class="d-flex align-items-center gap-2 mb-2 small text-secondary">
-                                    <i class="fa-regular fa-calendar"></i>
-                                    <span>${fecha}</span>
-                                    <span>${viaje.duracion_dias || 0} Días</span>
-                                </div>
-                                <span class="tag-pill badge rounded-pill">${viaje.destino_principal || 'Destino'}</span>
-                                <div class="btn-ver-link d-flex justify-content-end align-items-center gap-2 mt-2 pt-2 small fw-medium">
-                                    <a href="itinerario.html?id=${viaje.id_viaje}">Ver Detalles <i class="fa fa-arrow-right"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            mainGrid.innerHTML = htmlContent;
+            if (pagPrev && !pagPrev.dataset.listenerAdded) {
+                pagPrev.addEventListener("click", () => {
+                    if (paginaActualViajesRealizados > 1) {
+                        mostrarPaginaViajesRealizados(paginaActualViajesRealizados - 1);
+                    }
+                });
+                pagPrev.dataset.listenerAdded = "true";
+            }
+
+            if (pagNext && !pagNext.dataset.listenerAdded) {
+                pagNext.addEventListener("click", () => {
+                    const totalPaginas = Math.ceil(viajesRealizados.length / VIAJES_POR_PAGINA);
+                    if (paginaActualViajesRealizados < totalPaginas) {
+                        mostrarPaginaViajesRealizados(paginaActualViajesRealizados + 1);
+                    }
+                });
+                pagNext.dataset.listenerAdded = "true";
+            }
+
+            mostrarPaginaViajesRealizados(1);
         }
 
     } catch (err) {
         console.error("Error al cargar viajes realizados:", err);
         const isOnline = await verificarServidorFastAPI();
-        const errMsg = !isOnline 
+        const errMsg = !isOnline
             ? '<div class="col-12 text-center mt-3 text-danger"><h4>El servidor de FastAPI no se está ejecutando</h4></div>'
             : '<div class="col-12 text-center mt-3 text-danger"><h4>Ocurrió un error al cargar tus viajes realizados.</h4></div>';
         if (sectionGrid) sectionGrid.innerHTML = errMsg;
         if (mainGrid) mainGrid.innerHTML = errMsg;
+
+        // Resetear estadísticas a 0 en caso de error
+        const statsViajes = document.getElementById("stats-viajes");
+        const statsPaises = document.getElementById("stats-paises");
+        const statsLugares = document.getElementById("stats-lugares");
+        const statsDias = document.getElementById("stats-dias");
+        if (statsViajes) statsViajes.textContent = "0";
+        if (statsPaises) statsPaises.textContent = "0";
+        if (statsLugares) statsLugares.textContent = "0";
+        if (statsDias) statsDias.textContent = "0";
     }
 }
 
-window.renderPresupuesto = function() {
+window.renderPresupuesto = function () {
     const display = document.getElementById("budget-amount-display");
     if (!display) return;
     const amount = window.viajePresupuesto || 0;
@@ -1538,7 +1889,7 @@ async function initMakeTravel() {
             const { data: sessionData } = await supabase.auth.getSession();
             if (sessionData && sessionData.session) {
                 const token = sessionData.session.access_token;
-                
+
                 // 1. Cargar metadatos del viaje
                 const response = await fetch(`http://localhost:8000/api/viajes/${idViaje}`, {
                     headers: { "Authorization": `Bearer ${token}` }
@@ -1549,7 +1900,7 @@ async function initMakeTravel() {
                     inputDestino.value = viaje.destino_principal || "";
                     if (viaje.fecha_inicio) inputInicio.value = viaje.fecha_inicio.split('T')[0];
                     if (viaje.fecha_fin) inputFin.value = viaje.fecha_fin.split('T')[0];
-                    
+
                     window.viajePresupuesto = viaje.presupuesto || 0;
                     window.viajeMoneda = viaje.moneda || "ARS";
                     window.renderPresupuesto();
@@ -1584,7 +1935,7 @@ async function initMakeTravel() {
     // Dibujar datos iniciales
     window.renderLugares();
     window.renderItinerario();
-    
+
     // Inicializar sección Explora (SPA)
     window.initExplora(inputDestino.value, window.viajeImagenUrl);
     window.setupExploraEvents();
@@ -1617,7 +1968,7 @@ async function initMakeTravel() {
                 window.viajePresupuesto = isNaN(amount) ? 0 : amount;
                 window.viajeMoneda = selectBudgetCurrency.value || "ARS";
                 window.renderPresupuesto();
-                
+
                 // Guardado automático del viaje al definir presupuesto
                 try {
                     if (window.guardarViajeCompleto) {
@@ -1646,12 +1997,12 @@ async function initMakeTravel() {
             if (inputTravelImage) {
                 const url = inputTravelImage.value.trim();
                 window.viajeImagenUrl = url;
-                
+
                 const headerImg = document.querySelector(".trip-header-img");
                 if (headerImg) {
                     headerImg.src = url || "../Imagenes/Cities/paris.jpeg";
                 }
-                
+
                 // Guardado automático al actualizar portada
                 try {
                     if (window.guardarViajeCompleto) {
@@ -1681,18 +2032,18 @@ async function initMakeTravel() {
         const updateActiveSidebar = () => {
             let activeId = "";
             const containerTop = scrollContainer.getBoundingClientRect().top;
-            
+
             // Evaluamos la distancia de cada sección respecto a la parte superior del contenedor scrollable
             for (const section of sections) {
                 const rect = section.getBoundingClientRect();
                 const relativeTop = rect.top - containerTop;
-                
+
                 // Si la sección ya pasó la parte superior del contenedor o está por entrar
                 if (relativeTop <= 120) {
                     activeId = section.id;
                 }
             }
-            
+
             if (activeId) {
                 sidebarBtns.forEach(btn => {
                     const href = btn.getAttribute("href");
@@ -1741,7 +2092,7 @@ async function initMakeTravel() {
     window.renderPresupuesto();
 
     // Función global para guardar silenciosamente
-    window.guardarViajeSilencioso = async function() {
+    window.guardarViajeSilencioso = async function () {
         if (!window.supabase) {
             console.warn("window.supabase no está definido. Esperando 500ms para inicialización...");
             await new Promise(resolve => setTimeout(resolve, 500));
@@ -1754,7 +2105,7 @@ async function initMakeTravel() {
             throw new Error("No has iniciado sesión");
         }
         const token = sessionData.session.access_token;
-        
+
         // Calcular duración
         const date1 = new Date(inputInicio.value);
         const date2 = new Date(inputFin.value);
@@ -1783,7 +2134,7 @@ async function initMakeTravel() {
 
         const response = await fetch(`http://localhost:8000/api/viajes`, {
             method: "POST",
-            headers: { 
+            headers: {
                 "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json"
             },
@@ -1801,32 +2152,52 @@ async function initMakeTravel() {
         }
     };
 
+    window.isSaving = false;
+
     // Función global para guardar metadatos + actividades
-    window.guardarViajeCompleto = async function() {
+    window.guardarViajeCompleto = async function () {
+        if (window.isSaving) return null;
         if (!window.guardarViajeSilencioso) return null;
-        
-        // 1. Guardar metadatos del viaje
-        const savedId = await window.guardarViajeSilencioso();
-        
-        // 2. Sincronizar actividades
-        const { data: sessionData } = await window.supabase.auth.getSession();
-        if (!sessionData || !sessionData.session) throw new Error("No has iniciado sesión");
-        const token = sessionData.session.access_token;
 
-        const responseSync = await fetch(`http://localhost:8000/api/viajes/${savedId}/sync_actividades`, {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(window.activeActivities)
-        });
+        window.isSaving = true;
+        try {
+            // 1. Guardar metadatos del viaje
+            const savedId = await window.guardarViajeSilencioso();
 
-        if (!responseSync.ok) {
-            throw new Error(await responseSync.text());
+            // 2. Sincronizar actividades
+            const { data: sessionData } = await window.supabase.auth.getSession();
+            if (!sessionData || !sessionData.session) throw new Error("No has iniciado sesión");
+            const token = sessionData.session.access_token;
+
+            const responseSync = await fetch(`http://localhost:8000/api/viajes/${savedId}/sync_actividades`, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(window.activeActivities)
+            });
+
+            if (!responseSync.ok) {
+                throw new Error(await responseSync.text());
+            }
+
+            // Fetch limpio de lo que se guardó en el backend para actualizar el estado sin duplicados.
+            const responseActs = await fetch(`http://localhost:8000/api/viajes/${savedId}/actividades`, {
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            if (responseActs.ok) {
+                window.activeActivities = await responseActs.json();
+            }
+
+            // Volvemos a pintar las grillas limpias con la data real de la base de datos
+            window.renderLugares();
+            window.renderItinerario();
+
+            return savedId;
+        } finally {
+            window.isSaving = false;
         }
-        
-        return savedId;
     };
 
     if (btnGuardar) {
@@ -1835,11 +2206,10 @@ async function initMakeTravel() {
                 btnGuardar.disabled = true;
                 btnGuardar.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i> Guardando...';
 
+                // 1. Guardamos todo en la base de datos
                 await window.guardarViajeCompleto();
                 alert("¡Viaje y planificación guardados exitosamente!");
-                
-                // Recargar listados locales por si acaso
-                window.location.reload();
+
             } catch (error) {
                 console.error("Error al guardar el viaje y las actividades:", error);
                 alert("Ocurrió un error al guardar: " + error.message);
@@ -1857,9 +2227,9 @@ async function initMakeTravel() {
             const href = link.getAttribute('href');
             // Ignorar links internos (anclas) o javascript
             if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
-            
+
             e.preventDefault();
-            
+
             // Mostrar UI de carga
             const overlay = document.createElement("div");
             overlay.innerHTML = `
@@ -1876,8 +2246,13 @@ async function initMakeTravel() {
                 }
             } catch (err) {
                 console.error("Error en autoguardado:", err);
+            } finally {
+                // Remover el overlay de carga para evitar que la ventana se congele en caso de error
+                if (overlay.parentNode) {
+                    overlay.parentNode.removeChild(overlay);
+                }
             }
-            
+
             window.location.href = href;
         });
     });
@@ -1885,23 +2260,61 @@ async function initMakeTravel() {
 
 // Ejecutar comprobaciones al cargar el DOM
 document.addEventListener("DOMContentLoaded", async () => {
-    checkSession();
-    await verificarServidorFastAPI();
-    cargarViajes();
-    cargarRecuerdos();
-    cargarViajesRealizados();
-    
-    // Inicializar Google Maps y Places primero si la función existe
-    if (typeof window.initMap === "function") {
-        await window.initMap();
+    try {
+        checkSession();
+    } catch (e) {
+        console.error("Error en checkSession:", e);
     }
     
-    await initMakeTravel();
+    try {
+        await verificarServidorFastAPI();
+    } catch (e) {
+        console.error("Error en verificarServidorFastAPI:", e);
+    }
+    
+    try {
+        await cargarViajes();
+    } catch (e) {
+        console.error("Error en cargarViajes:", e);
+    }
+    
+    try {
+        await cargarRecuerdos();
+    } catch (e) {
+        console.error("Error en cargarRecuerdos:", e);
+    }
+    
+    try {
+        await cargarViajesRealizados();
+    } catch (e) {
+        console.error("Error en cargarViajesRealizados:", e);
+    }
+
+    // Inicializar Google Maps y Places primero si la función existe y google está cargado
+    if (typeof window.initMap === "function") {
+        try {
+            await window.initMap();
+        } catch (e) {
+            console.error("Error en initMap:", e);
+        }
+    }
+
+    try {
+        await initMakeTravel();
+    } catch (e) {
+        console.error("Error en initMakeTravel:", e);
+    }
+
+    try {
+        await initTripDetails();
+    } catch (e) {
+        console.error("Error en initTripDetails:", e);
+    }
 });
 // ==========================================
 // Lógica para la sección Explora (SPA)
 // ==========================================
-window.initExplora = async function(destino, imageUrl) {
+window.initExplora = async function (destino, imageUrl) {
     if (!destino) return;
 
     try {
@@ -1916,13 +2329,13 @@ window.initExplora = async function(destino, imageUrl) {
             const container = document.getElementById("explora-preview-container");
             const emptyState = document.getElementById("explora-empty-state");
             const btnExplorarTodo = document.getElementById("btn-explorar-todo");
-            
+
             if (error) throw error;
 
             if (recomendaciones && recomendaciones.length > 0) {
                 if (emptyState) emptyState.style.display = "none";
                 if (btnExplorarTodo) btnExplorarTodo.style.display = "inline-block";
-                
+
                 // Agrupar recomendaciones por categoría para obtener fotos representativas
                 const categories = [
                     { key: 'Cafés', label: 'Cafés', defaultImg: '../Imagenes/Sites/bar.jpeg' },
@@ -1937,7 +2350,7 @@ window.initExplora = async function(destino, imageUrl) {
 
                 if (container) {
                     container.innerHTML = "";
-                    
+
                     // Renderizar los 3 explore-item cliqueables
                     categories.forEach(cat => {
                         const div = document.createElement("div");
@@ -1979,7 +2392,7 @@ window.initExplora = async function(destino, imageUrl) {
     }
 };
 
-window.openExploraDetail = async function(destino, filterCategory = null) {
+window.openExploraDetail = async function (destino, filterCategory = null) {
     const btnExplorarTodo = document.getElementById("btn-explorar-todo");
     const exploraPanel = document.getElementById("explorar-detalle-panel");
     const content = document.getElementById("explora-panel-content");
@@ -2002,7 +2415,7 @@ window.openExploraDetail = async function(destino, filterCategory = null) {
             .from("recomendaciones_ciudad")
             .select("*")
             .ilike("nombre_ciudad", `%${destino}%`);
-            
+
         if (filterCategory) {
             query = query.ilike("categoria", filterCategory);
         }
@@ -2014,15 +2427,15 @@ window.openExploraDetail = async function(destino, filterCategory = null) {
 
         if (recomendaciones && recomendaciones.length > 0) {
             // Párrafo introductorio
-            const introText = filterCategory 
+            const introText = filterCategory
                 ? `Descubre la selección de nuestros expertos sobre los mejores ${filterCategory.toLowerCase()} en ${destino}. Lugares que no puedes dejar de visitar para vivir la ciudad como un local.`
                 : `Una guía seleccionada a mano con lo mejor de ${destino}. Desde gastronomía local hasta rincones escondidos, aquí tienes la lista definitiva para tu viaje.`;
-            
+
             content.innerHTML += `<p class="mb-4 text-muted" style="font-size: 0.95rem; line-height: 1.6;">${introText}</p>`;
 
             const list = document.createElement("div");
             list.className = "explora-article-list";
-            
+
             // Generadores de datos simulados para metadata
             const queueTimes = ["Sin cola", "5-10 min", "15-30 min", "30+ min"];
             const efforts = ["Bajo", "Moderado", "Alto"];
@@ -2054,7 +2467,7 @@ window.openExploraDetail = async function(destino, filterCategory = null) {
                         </div>
                     </div>
                 `;
-                
+
                 // Interactividad: Centrar el mapa
                 article.addEventListener("click", async () => {
                     // Usar global window.mainMap si está disponible
@@ -2066,12 +2479,12 @@ window.openExploraDetail = async function(destino, filterCategory = null) {
                                 textQuery: searchQuery,
                                 maxResultCount: 1
                             });
-                            
+
                             if (places && places.length > 0) {
                                 window.mainMap.setCenter(places[0].location);
                                 window.mainMap.setZoom(16);
                             }
-                        } catch(e) {
+                        } catch (e) {
                             console.error("Error centrando el mapa:", e);
                         }
                     }
@@ -2079,7 +2492,7 @@ window.openExploraDetail = async function(destino, filterCategory = null) {
 
                 list.appendChild(article);
             });
-            
+
             content.appendChild(list);
         } else {
             content.innerHTML = `<p class="text-muted text-center mt-5">No hay recomendaciones disponibles para ${destino}.</p>`;
@@ -2090,7 +2503,7 @@ window.openExploraDetail = async function(destino, filterCategory = null) {
     }
 };
 
-window.setupExploraEvents = function() {
+window.setupExploraEvents = function () {
     const btnExplorarTodo = document.getElementById("btn-explorar-todo");
     const btnCerrarExplora = document.getElementById("btn-cerrar-explora");
     const exploraPanel = document.getElementById("explorar-detalle-panel");
@@ -2109,7 +2522,7 @@ window.setupExploraEvents = function() {
             e.preventDefault();
             if (exploraPanel) exploraPanel.style.display = "none";
             if (window.showSidebar) window.showSidebar();
-            
+
             // Asegurarnos de que el botón se oculta correctamente
             const showSidebarBtn = document.getElementById("show-sidebar-btn");
             if (showSidebarBtn) showSidebarBtn.style.display = "none";
@@ -2117,7 +2530,1137 @@ window.setupExploraEvents = function() {
     }
 };
 
+// ==========================================
+// Lógica para páginas de detalles del viaje (Itinerario, Lugares, Presupuesto)
+// ==========================================
+window.initTripDetails = async function () {
+    const isDetailsPage = window.location.pathname.includes('itinerario.html') ||
+        window.location.pathname.includes('lugares.html') ||
+        window.location.pathname.includes('presupuesto.html') ||
+        window.location.pathname.includes('memories_details.html');
 
+    // Si estás en memories.html o memories_details.html, también es una página de detalles
+    const isMemoriesPage = window.location.pathname.includes('memories.html') ||
+        window.location.pathname.includes('memories_details.html');
 
+    // memories.html (sin _details) es la vista global de recuerdos
+    const isGlobalMemories = window.location.pathname.includes('memories.html') && 
+        !window.location.pathname.includes('memories_details.html');
 
+    if (!isDetailsPage && !isMemoriesPage) return;
 
+    const urlParams = new URLSearchParams(window.location.search);
+    let idViaje = urlParams.get('id') || urlParams.get('id_viaje');
+
+    // Fallback de ID usando sessionStorage si no viene en la URL y no estamos en la galería global
+    if (!idViaje && !isGlobalMemories) {
+        idViaje = sessionStorage.getItem('activeTripId');
+    } else if (idViaje) {
+        sessionStorage.setItem('activeTripId', idViaje);
+    }
+
+    if (!idViaje) {
+        if (isGlobalMemories) {
+            return; // Cortamos acá limpiamente ya que initMemoriesPage() renderizará la galería global
+        }
+        console.error("No se proporcionó ID de viaje.");
+        return;
+    }
+
+    try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        if (!sessionData || !sessionData.session) {
+            console.error("Debes iniciar sesión para ver los detalles.");
+            return;
+        }
+
+        const token = sessionData.session.access_token;
+
+        // Cargar metadatos
+        const resViaje = await fetch(`http://localhost:8000/api/viajes/${idViaje}`, {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+        if (!resViaje.ok) throw new Error("Error cargando viaje");
+        const viaje = await resViaje.json();
+        window.viaje = viaje;
+
+        // Cargar actividades
+        const resActs = await fetch(`http://localhost:8000/api/viajes/${idViaje}/actividades`, {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+        if (!resActs.ok) throw new Error("Error cargando actividades");
+        const actividades = await resActs.json();
+        window.activeActivities = actividades;
+
+        // Habilitar botones de edición y compartir cuando termina de cargar
+        const btnEditItin = document.getElementById("btn-editar-itinerario");
+        if (btnEditItin) btnEditItin.disabled = false;
+
+        const btnEditLug = document.getElementById("btn-editar-lugares");
+        if (btnEditLug) btnEditLug.disabled = false;
+
+        const btnEditPres = document.getElementById("btn-editar-presupuesto");
+        if (btnEditPres) btnEditPres.disabled = false;
+
+        const btnShare = document.getElementById("detalles-viaje-btn-compartir");
+        if (btnShare) {
+            btnShare.classList.remove("disabled");
+        }
+
+        // Actualizar UI Header
+        const imgEl = document.getElementById("detalles-viaje-img");
+        if (imgEl) {
+            imgEl.style.opacity = 1;
+            if (viaje.imagen_url) imgEl.src = viaje.imagen_url;
+        }
+
+        const titleEl = document.getElementById("detalles-viaje-titulo");
+        if (titleEl) titleEl.textContent = viaje.nombre_viaje || "Viaje";
+
+        const fechasEl = document.getElementById("detalles-viaje-fechas");
+        if (fechasEl) {
+            const fi = viaje.fecha_inicio ? new Date(viaje.fecha_inicio).toLocaleDateString() : '?';
+            const ff = viaje.fecha_fin ? new Date(viaje.fecha_fin).toLocaleDateString() : '?';
+            fechasEl.innerHTML = `<i class="fa fa-calendar-alt me-2"></i>${fi} - ${ff} &nbsp;|&nbsp; ${viaje.duracion_dias || 0} Días`;
+        }
+
+        const tagsEl = document.getElementById("detalles-viaje-tags");
+        if (tagsEl) {
+            tagsEl.innerHTML = `<span class="tag-pill bg-dark text-white">${viaje.destino_principal || "Destino"}</span>`;
+        }
+
+        // Enlaces de navegación tabs
+        const tabItin = document.getElementById("tab-itinerario");
+        if (tabItin) tabItin.href = `itinerario.html?id_viaje=${idViaje}`;
+        const tabLug = document.getElementById("tab-lugares");
+        if (tabLug) tabLug.href = `lugares.html?id_viaje=${idViaje}`;
+        const tabPres = document.getElementById("tab-presupuesto");
+        if (tabPres) tabPres.href = `presupuesto.html?id_viaje=${idViaje}`;
+        const tabRec = document.getElementById("tab-recuerdos");
+        if (tabRec) {
+            const destPage = tabRec.getAttribute('href') && tabRec.getAttribute('href').includes('memories_details.html') 
+                ? 'memories_details.html' 
+                : 'memories.html';
+            tabRec.href = `${destPage}?id_viaje=${idViaje}`;
+        }
+
+        // Cargar Google Places si está disponible y definir autocompletes auxiliares
+        let PlaceAutocompleteElement;
+        try {
+            if (typeof google !== 'undefined' && google.maps) {
+                const placesLib = await google.maps.importLibrary("places");
+                PlaceAutocompleteElement = placesLib.PlaceAutocompleteElement;
+            }
+        } catch (e) {
+            console.error("No se pudo cargar la librería de places", e);
+        }
+
+        function setupPlaceAutocompleteDetail(inputElement, onSelectCallback) {
+            if (!inputElement) return null;
+            if (typeof google === 'undefined' || !google.maps || !PlaceAutocompleteElement) {
+                console.warn("Google Maps Places no inicializado.");
+                return null;
+            }
+
+            const autocomplete = new PlaceAutocompleteElement();
+            autocomplete.id = inputElement.id || '';
+            autocomplete.className = inputElement.className;
+            autocomplete.setAttribute("placeholder", inputElement.placeholder || "Buscar...");
+            if (inputElement.dataset.diaNumero) {
+                autocomplete.dataset.diaNumero = inputElement.dataset.diaNumero;
+            }
+
+            inputElement.parentNode.replaceChild(autocomplete, inputElement);
+
+            const handleSelection = async (event) => {
+                let place = event.place;
+                if (!place && event.placePrediction && typeof event.placePrediction.toPlace === 'function') {
+                    place = event.placePrediction.toPlace();
+                }
+                if (!place) return;
+
+                await place.fetchFields({ fields: ['id', 'photos', 'displayName', 'rating'] });
+                autocomplete.selectedPlaceData = place;
+                if (onSelectCallback) onSelectCallback(place, autocomplete);
+            };
+
+            autocomplete.addEventListener('gmp-placeselect', handleSelection);
+            autocomplete.addEventListener('gmp-select', handleSelection);
+
+            return autocomplete;
+        }
+
+        // --- DEFINICIONES DE RENDERIZACIÓN ---
+
+        window.renderItinerarioDetail = function (editMode) {
+            const timeline = document.getElementById("itinerario-timeline");
+            if (!timeline) return;
+
+            let html = "";
+            const actItinerario = window.activeActivities.filter(a => a.tipo === 'itinerario');
+
+            if (actItinerario.length === 0 && !editMode) {
+                html = '<p class="text-muted">No hay actividades planificadas en el itinerario.</p>';
+                timeline.innerHTML = html;
+                return;
+            }
+
+            const diasMap = {};
+            const totalDias = window.viaje.duracion_dias || 0;
+            if (editMode) {
+                for (let d = 1; d <= totalDias; d++) {
+                    diasMap[d] = [];
+                }
+            }
+
+            actItinerario.forEach(act => {
+                if (!diasMap[act.dia_numero]) diasMap[act.dia_numero] = [];
+                diasMap[act.dia_numero].push(act);
+            });
+
+            Object.keys(diasMap).sort((a, b) => parseInt(a) - parseInt(b)).forEach(dia => {
+                let evtsHtml = "";
+                diasMap[dia].forEach((act, idx) => {
+                    const deleteBtn = editMode
+                        ? `<button class="btn btn-sm btn-outline-danger border-0 py-0 px-1" onclick="window.removeItineraryActivityDetail(${dia}, ${idx})"><i class="fa fa-trash"></i></button>`
+                        : '';
+                    evtsHtml += `
+                        <li class="mb-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>${act.horario || 'Por definir'}</strong> - ${act.nombre}
+                                    <br><small class="text-muted"><i class="fa fa-star text-warning"></i> ${act.rating || 'N/A'}</small>
+                                </div>
+                                ${deleteBtn}
+                            </div>
+                        </li>
+                    `;
+                });
+
+                let addFormHtml = "";
+                if (editMode) {
+                    addFormHtml = `
+                        <div class="add-btn-row mt-3 p-2 bg-light rounded-3 border text-start">
+                            <div class="row g-2">
+                                <div class="col-12">
+                                    <label class="form-label fw-bold mb-1 text-secondary text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.5px;">Seleccionar lugar guardado (opcional):</label>
+                                    <select class="form-select form-select-sm select-saved-place-detail border-dark rounded-3 shadow-none" id="select-saved-place-detail-${dia}">
+                                        <option value="">-- Seleccionar lugar guardado --</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 mt-2">
+                                    <label class="form-label fw-bold mb-1 text-secondary text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.5px;">O buscar nuevo lugar:</label>
+                                    <input type="text" class="add-input-detail shadow-sm input-itinerario-detail w-100 rounded-3 border p-1" id="input-itinerario-search-detail-${dia}" data-dia-numero="${dia}" placeholder="Buscar nuevo lugar...">
+                                </div>
+                                <div class="col-7 mt-2 d-flex align-items-center">
+                                    <i class="fa fa-clock text-muted me-2"></i>
+                                    <input type="text" class="form-control form-control-sm border-dark rounded-3 shadow-none" id="input-itinerario-time-detail-${dia}" placeholder="Horario (ej: 10:00 - 12:00)">
+                                </div>
+                                <div class="col-5 mt-2 d-flex justify-content-end align-items-center">
+                                    <button class="btn btn-sm btn-dark fw-bold w-100 rounded-3" onclick="window.addActivityToDayDetail(${dia})">
+                                        <i class="fa fa-plus me-1"></i> Añadir
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                html += `
+                    <div class="timeline-day mb-4">
+                        <div class="day-circle bg-dark text-white">${dia}</div>
+                        <h4>Día ${dia}</h4>
+                        <ul class="timeline-events">
+                            ${evtsHtml || (editMode ? '<li class="text-muted small">Sin actividades</li>' : '')}
+                        </ul>
+                        ${addFormHtml}
+                    </div>
+                `;
+            });
+
+            timeline.innerHTML = html;
+
+            if (editMode) {
+                const selectSavedPlaceDropdowns = document.querySelectorAll(".select-saved-place-detail");
+                const savedPlaces = window.activeActivities.filter(a => a.tipo === 'lugares' && a.dia_numero === 0);
+
+                selectSavedPlaceDropdowns.forEach(select => {
+                    select.innerHTML = '<option value="">-- Seleccionar lugar guardado --</option>';
+                    savedPlaces.forEach((place, index) => {
+                        select.innerHTML += `<option value="${index}">${place.nombre}</option>`;
+                    });
+                });
+
+                const searchInputs = document.querySelectorAll(".input-itinerario-detail");
+                searchInputs.forEach(input => {
+                    setupPlaceAutocompleteDetail(input, (place, autocompleteEl) => {
+                        autocompleteEl.selectedPlaceData = place;
+                    });
+                });
+            }
+        };
+
+        window.renderLugaresDetail = function (editMode) {
+            const placesCont = document.getElementById("places-container");
+            if (!placesCont) return;
+
+            let html = "";
+            // Obtener actividades únicas por nombre/place_id para mostrarlas en Lugares
+            const uniqueMap = {};
+            window.activeActivities.forEach(act => {
+                const key = act.place_id || act.nombre.toLowerCase();
+                if (!uniqueMap[key]) {
+                    uniqueMap[key] = act;
+                }
+            });
+            const actLugares = Object.values(uniqueMap);
+
+            if (actLugares.length === 0) {
+                html = '<p class="text-muted">No hay lugares guardados para visitar.</p>';
+            } else {
+                actLugares.forEach((act, index) => {
+                    const foto = act.foto_url || "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400";
+                    const deleteBtn = editMode
+                        ? `<button class="btn btn-sm btn-outline-danger border-0 position-absolute end-0 top-0 m-3" onclick="window.removeLugarDetail(${index})"><i class="fa fa-trash"></i></button>`
+                        : '';
+
+                    html += `
+                        <div class="place-item position-relative mb-3">
+                            <img src="${foto}" alt="${act.nombre}" class="place-img">
+                            <div class="place-body">
+                                <div class="place-title">
+                                    <div>
+                                        <h4>${act.nombre}</h4>
+                                    </div>
+                                    <div class="rating">
+                                        <i class="fa fa-star text-warning"></i> ${act.rating || 'N/A'}
+                                    </div>
+                                </div>
+                                <div class="place-icons mt-3">
+                                    <a href="info.html?place_id=${act.place_id}&name=${encodeURIComponent(act.nombre)}" class="btn btn-sm btn-dark text-white">Ver Información</a>
+                                </div>
+                            </div>
+                            ${deleteBtn}
+                        </div>
+                    `;
+                });
+            }
+            placesCont.innerHTML = html;
+
+            const editContainer = document.getElementById("lugar-edicion-container");
+            if (editContainer) {
+                if (editMode) {
+                    editContainer.classList.remove("d-none");
+                    const searchInput = document.getElementById("buscar-lugares");
+                    if (searchInput && !searchInput.dataset.autocompleteInitialized) {
+                        setupPlaceAutocompleteDetail(searchInput, (place, autocompleteEl) => {
+                            autocompleteEl.selectedPlaceData = place;
+                        });
+                        searchInput.dataset.autocompleteInitialized = "true";
+                    }
+                } else {
+                    editContainer.classList.add("d-none");
+                }
+            }
+        };
+
+        // --- MANEJADORES DE EVENTOS Y ACCIONES ---
+
+        window.addActivityToDayDetail = function (d) {
+            const selectSaved = document.getElementById(`select-saved-place-detail-${d}`);
+            const searchInputEl = document.getElementById(`input-itinerario-search-detail-${d}`);
+            const timeInput = document.getElementById(`input-itinerario-time-detail-${d}`);
+
+            let nombre = "";
+            let place_id = "";
+            let foto_url = "";
+            let rating = 0;
+            let horario = timeInput ? timeInput.value : "";
+
+            if (selectSaved && selectSaved.value) {
+                const savedIdx = parseInt(selectSaved.value);
+                const savedPlaces = window.activeActivities.filter(a => a.tipo === 'lugares' && a.dia_numero === 0);
+                const selectedPlace = savedPlaces[savedIdx];
+
+                if (selectedPlace) {
+                    nombre = selectedPlace.nombre;
+                    place_id = selectedPlace.place_id;
+                    foto_url = selectedPlace.foto_url;
+                    rating = selectedPlace.rating;
+                }
+            } else if (searchInputEl) {
+                const targetAutocomplete = document.getElementById(`input-itinerario-search-detail-${d}`);
+                if (targetAutocomplete && targetAutocomplete.selectedPlaceData) {
+                    const place = targetAutocomplete.selectedPlaceData;
+                    nombre = place.displayName || place.name;
+                    place_id = place.id || place.place_id;
+                    rating = place.rating || 0;
+
+                    if (place.photos && place.photos.length > 0) {
+                        foto_url = place.photos[0].getURI({ maxWidth: 400, maxHeight: 400 });
+                    }
+                } else {
+                    let val = targetAutocomplete ? targetAutocomplete.inputValue : "";
+                    if (!val && targetAutocomplete && targetAutocomplete.shadowRoot) {
+                        const innerInput = targetAutocomplete.shadowRoot.querySelector('input');
+                        if (innerInput) val = innerInput.value;
+                    }
+                    if (!val && targetAutocomplete) val = targetAutocomplete.value;
+
+                    if (val && val.trim() !== "") {
+                        nombre = val.trim();
+                    } else {
+                        alert("Por favor selecciona un lugar guardado, busca un lugar o escribe una actividad.");
+                        return;
+                    }
+                }
+            }
+
+            window.activeActivities.push({
+                tipo: "itinerario",
+                dia_numero: d,
+                nombre: nombre,
+                place_id: place_id,
+                foto_url: foto_url,
+                rating: rating,
+                horario: horario
+            });
+
+            const alreadyExists = window.activeActivities.some(act =>
+                act.dia_numero === 0 &&
+                act.tipo === "lugares" &&
+                (place_id ? act.place_id === place_id : act.nombre.toLowerCase() === nombre.toLowerCase())
+            );
+
+            if (!alreadyExists) {
+                window.activeActivities.push({
+                    tipo: "lugares",
+                    dia_numero: 0,
+                    nombre: nombre,
+                    place_id: place_id,
+                    foto_url: foto_url,
+                    rating: rating
+                });
+            }
+
+            window.renderItinerarioDetail(true);
+        };
+
+        window.removeItineraryActivityDetail = function (d, idx) {
+            const dayActs = window.activeActivities.filter(a => a.tipo === 'itinerario' && a.dia_numero === d);
+            const actToRemove = dayActs[idx];
+            const globalIdx = window.activeActivities.indexOf(actToRemove);
+            if (globalIdx > -1) {
+                window.activeActivities.splice(globalIdx, 1);
+            }
+            window.renderItinerarioDetail(true);
+        };
+
+        window.addLugarDetail = function () {
+            const searchInputEl = document.getElementById("buscar-lugares");
+            if (!searchInputEl) return;
+
+            let nombre = "";
+            let place_id = "";
+            let foto_url = "";
+            let rating = 0;
+
+            if (searchInputEl.selectedPlaceData) {
+                const place = searchInputEl.selectedPlaceData;
+                nombre = place.displayName || place.name;
+                place_id = place.id || place.place_id;
+                rating = place.rating || 0;
+
+                if (place.photos && place.photos.length > 0) {
+                    foto_url = place.photos[0].getURI({ maxWidth: 400, maxHeight: 400 });
+                }
+            } else {
+                let val = searchInputEl.inputValue;
+                if (!val && searchInputEl.shadowRoot) {
+                    const innerInput = searchInputEl.shadowRoot.querySelector('input');
+                    if (innerInput) val = innerInput.value;
+                }
+                if (!val) val = searchInputEl.value;
+
+                if (val && val.trim() !== "") {
+                    nombre = val.trim();
+                } else {
+                    alert("Por favor busca o escribe un lugar.");
+                    return;
+                }
+            }
+
+            window.activeActivities.push({
+                tipo: "lugares",
+                dia_numero: 0,
+                nombre: nombre,
+                place_id: place_id,
+                foto_url: foto_url,
+                rating: rating
+            });
+
+            searchInputEl.inputValue = "";
+            if (searchInputEl.shadowRoot) {
+                const innerInput = searchInputEl.shadowRoot.querySelector('input');
+                if (innerInput) innerInput.value = "";
+            }
+            searchInputEl.selectedPlaceData = null;
+
+            window.renderLugaresDetail(true);
+        };
+
+        window.removeLugarDetail = function (idx) {
+            const uniqueMap = {};
+            window.activeActivities.forEach(act => {
+                const key = act.place_id || act.nombre.toLowerCase();
+                if (!uniqueMap[key]) {
+                    uniqueMap[key] = act;
+                }
+            });
+            const actLugares = Object.values(uniqueMap);
+            const actToRemove = actLugares[idx];
+
+            if (actToRemove) {
+                // Eliminar todas las copias de esta actividad (itinerario y lugares)
+                window.activeActivities = window.activeActivities.filter(act => {
+                    const matchPlace = actToRemove.place_id && act.place_id === actToRemove.place_id;
+                    const matchName = act.nombre.toLowerCase() === actToRemove.nombre.toLowerCase();
+                    return !(matchPlace || matchName);
+                });
+            }
+            window.renderLugaresDetail(true);
+        };
+
+        window.syncActivitiesDetail = async function () {
+            try {
+                const { data: sessionData } = await supabase.auth.getSession();
+                if (!sessionData || !sessionData.session) {
+                    alert("Debes iniciar sesión para guardar cambios.");
+                    return false;
+                }
+                const token = sessionData.session.access_token;
+                const res = await fetch(`http://localhost:8000/api/viajes/${window.viaje.id_viaje}/sync_actividades`, {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(window.activeActivities)
+                });
+                if (!res.ok) {
+                    throw new Error(await res.text());
+                }
+                return true;
+            } catch (e) {
+                console.error("Error sincronizando actividades:", e);
+                alert("Ocurrió un error al guardar: " + e.message);
+                return false;
+            }
+        };
+
+        // --- INICIALIZACIÓN ---
+
+        if (window.location.pathname.includes('itinerario.html')) {
+            window.renderItinerarioDetail(false);
+
+            const btnEditarItinerario = document.getElementById("btn-editar-itinerario");
+            if (btnEditarItinerario) {
+                window.itineraryEditMode = false;
+                btnEditarItinerario.addEventListener("click", async () => {
+                    window.itineraryEditMode = !window.itineraryEditMode;
+                    if (window.itineraryEditMode) {
+                        btnEditarItinerario.textContent = "Guardar";
+                        btnEditarItinerario.classList.add("btn-success");
+                        window.renderItinerarioDetail(true);
+                    } else {
+                        btnEditarItinerario.disabled = true;
+                        btnEditarItinerario.textContent = "Guardando...";
+                        const success = await window.syncActivitiesDetail();
+                        btnEditarItinerario.disabled = false;
+                        btnEditarItinerario.textContent = "Editar";
+                        btnEditarItinerario.classList.remove("btn-success");
+                        if (success) {
+                            window.renderItinerarioDetail(false);
+                        }
+                    }
+                });
+            }
+        }
+
+        if (window.location.pathname.includes('lugares.html')) {
+            window.renderLugaresDetail(false);
+
+            const btnEditarLugares = document.getElementById("btn-editar-lugares");
+            if (btnEditarLugares) {
+                window.lugaresEditMode = false;
+                btnEditarLugares.addEventListener("click", async () => {
+                    window.lugaresEditMode = !window.lugaresEditMode;
+                    if (window.lugaresEditMode) {
+                        btnEditarLugares.textContent = "Guardar";
+                        btnEditarLugares.classList.add("btn-success");
+                        window.renderLugaresDetail(true);
+                    } else {
+                        btnEditarLugares.disabled = true;
+                        btnEditarLugares.textContent = "Guardando...";
+                        const success = await window.syncActivitiesDetail();
+                        btnEditarLugares.disabled = false;
+                        btnEditarLugares.textContent = "Editar";
+                        btnEditarLugares.classList.remove("btn-success");
+                        if (success) {
+                            window.renderLugaresDetail(false);
+                        }
+                    }
+                });
+
+                const btnAddLugar = document.getElementById("btn-add-lugar");
+                if (btnAddLugar) {
+                    btnAddLugar.addEventListener("click", () => {
+                        window.addLugarDetail();
+                    });
+                }
+            }
+        }
+
+        if (window.location.pathname.includes('presupuesto.html')) {
+            const presTotal = document.getElementById("presupuesto-total-valores");
+            if (presTotal) {
+                const formatter = new Intl.NumberFormat('es-AR', { style: 'currency', currency: viaje.moneda || 'ARS' });
+                presTotal.textContent = formatter.format(viaje.presupuesto || 0);
+            }
+
+            const presLista = document.getElementById("presupuesto-lista");
+            if (presLista) {
+                presLista.innerHTML = `
+                    <div class="budget-item">
+                        <div class="budget-item-header">
+                            <span>Presupuesto Planificado</span>
+                            <span class="text-muted fs-6">${viaje.moneda || 'ARS'} ${viaje.presupuesto || 0}</span>
+                        </div>
+                        <div class="budget-progress">
+                            <div class="budget-progress-bar bg-success" style="width: 100%;"></div>
+                        </div>
+                        <p class="small text-muted mt-2 mb-0">Total asignado al viaje general.</p>
+                    </div>
+                `;
+            }
+
+            const budgetModal = document.getElementById("budgetModal");
+            const inputBudgetAmount = document.getElementById("budget-amount-input");
+            const selectBudgetCurrency = document.getElementById("budget-currency-select");
+            const btnSaveBudget = document.getElementById("btn-save-budget");
+
+            if (budgetModal) {
+                budgetModal.addEventListener("show.bs.modal", () => {
+                    if (inputBudgetAmount) inputBudgetAmount.value = viaje.presupuesto || "";
+                    if (selectBudgetCurrency) selectBudgetCurrency.value = viaje.moneda || "ARS";
+                });
+            }
+
+            if (btnSaveBudget) {
+                btnSaveBudget.addEventListener("click", async () => {
+                    if (inputBudgetAmount && selectBudgetCurrency) {
+                        const amount = parseFloat(inputBudgetAmount.value);
+                        const newPresupuesto = isNaN(amount) ? 0 : amount;
+                        const newMoneda = selectBudgetCurrency.value || "ARS";
+
+                        const payload = {
+                            id_viaje: parseInt(idViaje),
+                            nombre_viaje: viaje.nombre_viaje,
+                            destino_principal: viaje.destino_principal,
+                            fecha_inicio: viaje.fecha_inicio,
+                            fecha_fin: viaje.fecha_fin,
+                            duracion_dias: viaje.duracion_dias,
+                            imagen_url: viaje.imagen_url,
+                            estado: viaje.estado,
+                            presupuesto: newPresupuesto,
+                            moneda: newMoneda
+                        };
+
+                        try {
+                            const res = await fetch(`http://localhost:8000/api/viajes`, {
+                                method: "POST",
+                                headers: {
+                                    "Authorization": `Bearer ${token}`,
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify(payload)
+                            });
+
+                            if (res.ok) {
+                                window.location.reload();
+                            } else {
+                                throw new Error(await res.text());
+                            }
+                        } catch (e) {
+                            console.error("Error al guardar presupuesto:", e);
+                            alert("Error al guardar presupuesto: " + e.message);
+                        }
+                    }
+                });
+            }
+        }
+
+    } catch (e) {
+        console.error("Error en initTripDetails:", e);
+    }
+};
+window.initMemoriesPage = async function () {
+    try {
+        // 1. Obtener la sesión activa de Supabase de forma asíncrona para extraer el token real
+        const { data: sessionData } = await supabase.auth.getSession();
+        if (!sessionData || !sessionData.session) {
+            console.error("No hay una sesión activa para cargar los recuerdos.");
+            return;
+        }
+        const token = sessionData.session.access_token; // Token de portador real
+
+        const urlParams = new URLSearchParams(window.location.search);
+        let idViaje = urlParams.get('id');
+
+        if (!idViaje && window.location.pathname.includes('memories_details.html')) {
+            idViaje = sessionStorage.getItem('activeTripId');
+        }
+
+        const selectTrip = document.getElementById("memoryTrip");
+        const tripSelectContainer = document.getElementById("tripSelectContainer");
+        const selectAct = document.getElementById("memoryActivity");
+        const inputDate = document.getElementById("memoryDate");
+
+        // Helper para cargar actividades de un viaje
+        const loadActivitiesForTrip = async (tripId) => {
+            if (!selectAct) return;
+            selectAct.innerHTML = '<option value="">Selecciona una actividad...</option>';
+            try {
+                const resActs = await fetch(`http://localhost:8000/api/viajes/${tripId}/actividades`, {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                if (resActs.ok) {
+                    const actividades = await resActs.json();
+                    actividades.forEach(act => {
+                        const option = document.createElement("option");
+                        option.value = act.id_actividad;
+                        option.textContent = act.nombre;
+                        selectAct.appendChild(option);
+                    });
+                }
+            } catch (e) {
+                console.error("Error al cargar actividades para el select:", e);
+            }
+        };
+
+        // Helper para restringir fechas según el viaje
+        const restrictDatesForTrip = (trip) => {
+            if (!inputDate || !trip) return;
+            if (trip.fecha_inicio) inputDate.min = trip.fecha_inicio;
+            if (trip.fecha_fin) inputDate.max = trip.fecha_fin;
+        };
+
+        // Fetch todos los viajes para el select
+        let userTrips = [];
+        try {
+            const resTrips = await fetch("http://localhost:8000/api/viajes", {
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            if (resTrips.ok) {
+                userTrips = await resTrips.json();
+                if (selectTrip) {
+                    selectTrip.innerHTML = '<option value="">Selecciona un viaje...</option>';
+                    userTrips.forEach(trip => {
+                        const option = document.createElement("option");
+                        option.value = trip.id_viaje;
+                        option.textContent = trip.nombre_viaje || trip.destino_principal;
+                        selectTrip.appendChild(option);
+                    });
+                }
+            }
+        } catch (e) {
+            console.error("Error al cargar viajes:", e);
+        }
+
+        // Lógica si se entra con id de viaje o de manera global
+        if (idViaje) {
+            if (tripSelectContainer) {
+                tripSelectContainer.style.display = 'none';
+            }
+            if (selectTrip) {
+                selectTrip.value = idViaje;
+                selectTrip.removeAttribute('required');
+            }
+            await loadActivitiesForTrip(idViaje);
+            const activeTrip = userTrips.find(t => t.id_viaje == idViaje);
+            if (activeTrip) restrictDatesForTrip(activeTrip);
+        } else {
+            if (tripSelectContainer) {
+                tripSelectContainer.style.display = 'block';
+            }
+            if (selectTrip) {
+                selectTrip.setAttribute('required', 'true');
+                selectTrip.addEventListener('change', async (e) => {
+                    const selectedTripId = e.target.value;
+                    if (selectedTripId) {
+                        await loadActivitiesForTrip(selectedTripId);
+                        const activeTrip = userTrips.find(t => t.id_viaje == selectedTripId);
+                        if (activeTrip) restrictDatesForTrip(activeTrip);
+                    } else {
+                        if (selectAct) selectAct.innerHTML = '<option value="">Selecciona una actividad...</option>';
+                        if (inputDate) {
+                            inputDate.removeAttribute('min');
+                            inputDate.removeAttribute('max');
+                        }
+                    }
+                });
+            }
+        }
+
+        // Función para renderizar los recuerdos
+        const renderMemories = async () => {
+            const gallery = document.getElementById("memory-gallery");
+            const loading = document.getElementById("memory-loading");
+            if (!gallery || !loading) return;
+
+            // Limpiar galería (excepto el spinner)
+            Array.from(gallery.children).forEach(child => {
+                if (child.id !== 'memory-loading') child.remove();
+            });
+            loading.classList.remove("d-none");
+
+            try {
+                const urlFetch = idViaje
+                    ? `http://localhost:8000/api/recuerdos?id_viaje=${idViaje}`
+                    : `http://localhost:8000/api/recuerdos`;
+
+                const res = await fetch(urlFetch, {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+
+                loading.classList.add("d-none");
+
+                if (res.ok) {
+                    const recuerdos = await res.json();
+
+                    if (recuerdos.length === 0) {
+                        const empty = document.createElement('p');
+                        empty.className = "text-muted text-center w-100 mt-5 fs-5";
+                        empty.textContent = idViaje
+                            ? "Aún no has subido recuerdos para este viaje."
+                            : "Aún no has subido recuerdos.";
+                        gallery.appendChild(empty);
+                        return;
+                    }
+
+                    recuerdos.forEach(rec => {
+                        const div = document.createElement('div');
+                        div.className = "memory-item";
+                        // El formato es "Titulo (Fecha: DD/MM/YYYY)"
+                        let title = rec.descripcion || "";
+                        let dateText = "Sin fecha";
+
+                        // Parsear la fecha del texto si existe
+                        const match = title.match(/\(Fecha: (.*?)\)$/);
+                        if (match) {
+                            dateText = match[1];
+                            title = title.replace(/\(Fecha: .*?\)$/, '').trim();
+                        }
+
+                        div.innerHTML = `
+                            <img src="${rec.url}" alt="${title}" onerror="this.src='../Imagenes/Cities/paris.jpeg'">
+                            <div class="memory-overlay">
+                                <p class="memory-title">${title}</p>
+                                <p class="memory-date"><i class="fa-regular fa-calendar-alt me-1"></i> ${dateText}</p>
+                            </div>
+                        `;
+
+                        div.addEventListener('click', () => {
+                            document.getElementById('modalImage').src = rec.url;
+                            document.getElementById('modalTitle').textContent = title;
+                            document.getElementById('modalDate').textContent = dateText;
+                            new bootstrap.Modal(document.getElementById('imageModal')).show();
+                        });
+
+                        gallery.appendChild(div);
+                    });
+                }
+            } catch (e) {
+                loading.classList.add("d-none");
+                console.error("Error cargando recuerdos:", e);
+                alert("Error al cargar los recuerdos.");
+            }
+        };
+
+        // Render inicial
+        await renderMemories();
+
+        // Submit form
+        const form = document.getElementById("uploadMemoryForm");
+        const btnSave = document.getElementById("btnSaveMemory");
+        const alertBox = document.getElementById("memoryAlert");
+
+        if (form) {
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                btnSave.disabled = true;
+                btnSave.textContent = "Subiendo imagen...";
+                alertBox.classList.add("d-none");
+
+                const fileInput = document.getElementById("memoryFile");
+                const file = fileInput ? fileInput.files[0] : null;
+
+                if (!file) {
+                    alertBox.className = "alert alert-danger d-block";
+                    alertBox.textContent = "Por favor selecciona un archivo de imagen.";
+                    btnSave.disabled = false;
+                    btnSave.textContent = "Guardar Recuerdo";
+                    return;
+                }
+
+                const finalIdViaje = idViaje || (selectTrip ? selectTrip.value : null);
+                if (!finalIdViaje) {
+                    alertBox.className = "alert alert-danger d-block";
+                    alertBox.textContent = "Por favor selecciona un viaje.";
+                    btnSave.disabled = false;
+                    btnSave.textContent = "Guardar Recuerdo";
+                    return;
+                }
+
+                // Generar nombre de archivo único
+                const fileExt = file.name.split('.').pop();
+                const fileName = `recuerdo_${finalIdViaje}_${Date.now()}.${fileExt}`;
+
+                try {
+                    // Subir a Supabase Storage
+                    const { data: uploadData, error: uploadError } = await window.supabase.storage
+                        .from('imagenes-viajes')
+                        .upload(fileName, file);
+
+                    if (uploadError) {
+                        throw new Error("Error en Storage: " + uploadError.message);
+                    }
+
+                    // Obtener URL Pública
+                    const { data: urlData } = window.supabase.storage
+                        .from('imagenes-viajes')
+                        .getPublicUrl(fileName);
+
+                    const publicUrl = urlData.publicUrl;
+
+                    btnSave.textContent = "Guardando recuerdo...";
+
+                    const title = document.getElementById("memoryTitle").value;
+                    const date = document.getElementById("memoryDate").value;
+                    const actId = document.getElementById("memoryActivity").value;
+
+                    // Formatear la descripción
+                    const [yyyy, mm, dd] = date.split("-");
+                    const formattedDate = `${dd}/${mm}/${yyyy}`;
+                    const finalDescription = `${title} (Fecha: ${formattedDate})`;
+
+                    const payload = {
+                        id_viaje: parseInt(finalIdViaje),
+                        url: publicUrl,
+                        descripcion: finalDescription
+                    };
+
+                    if (actId) {
+                        payload.id_actividad = parseInt(actId);
+                    }
+
+                    const res = await fetch(`http://localhost:8000/api/recuerdos`, {
+                        method: "POST",
+                        headers: {
+                            "Authorization": `Bearer ${token}`,
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (res.ok) {
+                        const modalEl = document.getElementById("uploadMemoryModal");
+                        const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                        modal.hide();
+                        form.reset();
+                        await renderMemories();
+                    } else {
+                        throw new Error(await res.text());
+                    }
+                } catch (err) {
+                    console.error("Error subiendo recuerdo:", err);
+                    alertBox.className = "alert alert-danger d-block";
+                    alertBox.textContent = "Error: " + err.message;
+                } finally {
+                    btnSave.disabled = false;
+                    btnSave.textContent = "Guardar Recuerdo";
+                }
+            });
+        }
+    } catch (error) {
+        console.error("Error en initMemoriesPage:", error);
+    }
+};
+
+// ---- Lógica de final_settings.html ----
+window.renderFinalSettings = function() {
+    if (!window.activeTrip) return;
+
+    // Actualizar Header
+    const tripTitle = document.getElementById("fs-trip-title");
+    const tripDates = document.getElementById("fs-trip-dates");
+    if (tripTitle) tripTitle.textContent = `Viaje a ${window.activeTrip.destino_principal || "Destino Desconocido"}`;
+    if (tripDates) {
+        const fi = window.activeTrip.fecha_inicio ? new Date(window.activeTrip.fecha_inicio).toLocaleDateString() : '??';
+        const ff = window.activeTrip.fecha_fin ? new Date(window.activeTrip.fecha_fin).toLocaleDateString() : '??';
+        tripDates.textContent = `${fi} - ${ff}`;
+    }
+
+    // Configurar botones de toggle estáticos
+    const btnGroups = document.querySelectorAll(".settings-btn-group");
+    btnGroups.forEach(group => {
+        const btns = group.querySelectorAll(".settings-btn");
+        btns.forEach(btn => {
+            btn.addEventListener("click", () => {
+                btns.forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+            });
+        });
+    });
+
+    // Generar días en el acordeón
+    const accordion = document.getElementById("daysAccordion");
+    if (accordion) {
+        accordion.innerHTML = "";
+        const duracion = window.activeTrip.duracion_dias || 1;
+        const dateStr = window.activeTrip.fecha_inicio;
+        let baseDate = dateStr ? new Date(dateStr) : new Date();
+        baseDate = new Date(baseDate.getTime() + baseDate.getTimezoneOffset() * 60000); // Fix timezone
+
+        for (let d = 1; d <= duracion; d++) {
+            const current = new Date(baseDate.getTime());
+            current.setDate(current.getDate() + (d - 1));
+            const formattedDate = current.toLocaleDateString("es-ES", { day: 'numeric', month: 'long' });
+            
+            const isFirst = d === 1;
+            
+            const itemHTML = `
+                <div class="accordion-item" data-day="${d}">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button ${isFirst ? '' : 'collapsed'}" type="button" data-bs-toggle="collapse" data-bs-target="#fs-collapse-${d}" aria-expanded="${isFirst ? 'true' : 'false'}" aria-controls="fs-collapse-${d}">
+                            <div class="d-flex align-items-center">
+                                <div class="day-circle">${d}</div>
+                                <div>
+                                    <h5 class="mb-0">Día ${d}</h5>
+                                    <small class="text-dark">${formattedDate}</small>
+                                </div>
+                            </div>
+                        </button>
+                    </h2>
+                    <div id="fs-collapse-${d}" class="accordion-collapse collapse ${isFirst ? 'show' : ''}" data-bs-parent="#daysAccordion">
+                        <div class="accordion-body pt-0 pb-4 px-4">
+                            <p class="mb-2 mt-2">Notas específicas del día</p>
+                            <textarea class="textarea-custom mb-4 fs-day-note" rows="3"></textarea>
+
+                            <p class="mb-2">Prioridad del Día</p>
+                            <div class="settings-btn-group mb-4 fs-day-priority">
+                                <button class="settings-btn" data-val="Baja">Baja</button>
+                                <button class="settings-btn active" data-val="Media">Media</button>
+                                <button class="settings-btn" data-val="Alta">Alta</button>
+                            </div>
+
+                            <p class="mb-2">Nivel de esfuerzo esperado</p>
+                            <div class="settings-btn-group mb-0 fs-day-effort">
+                                <button class="settings-btn active" data-val="Relajado">Relajado</button>
+                                <button class="settings-btn" data-val="Moderado">Moderado</button>
+                                <button class="settings-btn" data-val="Intenso">Intenso</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            accordion.insertAdjacentHTML("beforeend", itemHTML);
+        }
+
+        // Add listeners to new dynamic buttons
+        accordion.querySelectorAll(".settings-btn-group").forEach(group => {
+            const btns = group.querySelectorAll(".settings-btn");
+            btns.forEach(btn => {
+                btn.addEventListener("click", () => {
+                    btns.forEach(b => b.classList.remove("active"));
+                    btn.classList.add("active");
+                });
+            });
+        });
+    }
+
+    // Configurar Finalizar Viaje
+    const btnFinalizar = document.getElementById("btn-finalizar-viaje");
+    if (btnFinalizar) {
+        btnFinalizar.addEventListener("click", async () => {
+            try {
+                btnFinalizar.disabled = true;
+                btnFinalizar.textContent = "Finalizando...";
+
+                const { data: sessionData } = await window.supabase.auth.getSession();
+                if (!sessionData || !sessionData.session) throw new Error("No has iniciado sesión");
+                const token = sessionData.session.access_token;
+
+                // Construir objeto de ajustes
+                const esfuerzoGeneral = document.querySelector("#fs-group-esfuerzo .active")?.getAttribute("data-val") || "Moderado";
+                const expGeneral = document.querySelector("#fs-group-experiencia .active")?.getAttribute("data-val") || "Exploración";
+                const flex = document.getElementById("fs-flexibilidad")?.value || 70;
+                const notas = document.getElementById("fs-notas-generales")?.value || "";
+
+                const daysData = [];
+                document.querySelectorAll("#daysAccordion .accordion-item").forEach(item => {
+                    const dia = item.getAttribute("data-day");
+                    const notaDia = item.querySelector(".fs-day-note").value;
+                    const prioridad = item.querySelector(".fs-day-priority .active").getAttribute("data-val");
+                    const esfuerzo = item.querySelector(".fs-day-effort .active").getAttribute("data-val");
+                    daysData.push({ dia: parseInt(dia), notas: notaDia, prioridad, esfuerzo });
+                });
+
+                const ajustes = {
+                    esfuerzo_general: esfuerzoGeneral,
+                    experiencia: expGeneral,
+                    flexibilidad: parseInt(flex),
+                    notas_generales: notas,
+                    dias: daysData
+                };
+
+                const payload = {
+                    id_viaje: window.activeTrip.id_viaje,
+                    estado: "En revision",
+                    ajustes_finales: ajustes
+                };
+
+                const res = await fetch(`http://localhost:8000/api/viajes`, {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!res.ok) throw new Error(await res.text());
+
+                // Mostrar Modal de Exito
+                const modalEl = document.getElementById("successModal");
+                const modal = new bootstrap.Modal(modalEl);
+                
+                document.getElementById("btn-modal-ok").addEventListener("click", () => {
+                    window.location.href = "travels.html";
+                });
+
+                modalEl.addEventListener("hidden.bs.modal", () => {
+                    window.location.href = "travels.html";
+                });
+
+                modal.show();
+
+            } catch (err) {
+                console.error(err);
+                alert("Error finalizando el viaje: " + err.message);
+                btnFinalizar.disabled = false;
+                btnFinalizar.textContent = "Finalizar Viaje";
+            }
+        });
+    }
+};

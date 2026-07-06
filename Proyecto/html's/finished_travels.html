@@ -51,31 +51,39 @@
                             <h1 class="mb-1 hero-title">Viajes Realizados</h1>
                             <p class="mt-1 mb-0">Tu historial de aventuras</p>
                         </div>
-                        <button class="btn btns hero-btn mt-3 mt-sm-0">+ Planificar nuevo viaje</button>
+                        <a href="make_travel.html" class="btn btns hero-btn mt-3 mt-sm-0 text-decoration-none">+ Planificar nuevo viaje</a>
                     </div>
-                    <div class="row g-3 text-center">
+                    <div class="row g-3 text-center justify-content-center">
                         <div class="col-6 col-sm-3">
-                            <div class="card2 rounded-3 py-3 border border-dark ratio ratio-1x1">
-                                <span class="d-block fw-bold fs-1">8</span>
-                                <span class="small fs-3">Viajes</span>
+                            <div class="card2 rounded-3 border border-dark ratio ratio-1x1 shadow-sm">
+                                <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center">
+                                    <span id="stats-viajes" class="d-block fw-bold fs-1 text-dark">0</span>
+                                    <span class="text-muted fw-bold small uppercase" style="letter-spacing: 0.5px;">Viajes</span>
+                                </div>
                             </div>
                         </div>
                         <div class="col-6 col-sm-3">
-                            <div class="card2 rounded-3 py-3 border border-dark ratio ratio-1x1">
-                                <span class="d-block fw-bold fs-1">14</span>
-                                <span class="small fs-3">Países</span>
+                            <div class="card2 rounded-3 border border-dark ratio ratio-1x1 shadow-sm">
+                                <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center">
+                                    <span id="stats-paises" class="d-block fw-bold fs-1 text-dark">0</span>
+                                    <span class="text-muted fw-bold small uppercase" style="letter-spacing: 0.5px;">Países</span>
+                                </div>
                             </div>
                         </div>
                         <div class="col-6 col-sm-3">
-                            <div class="card2 rounded-3 py-3 border border-dark ratio ratio-1x1">
-                                <span class="d-block fw-bold fs-1">63</span>
-                                <span class="small fs-3">Lugares</span>
+                            <div class="card2 rounded-3 border border-dark ratio ratio-1x1 shadow-sm">
+                                <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center">
+                                    <span id="stats-lugares" class="d-block fw-bold fs-1 text-dark">0</span>
+                                    <span class="text-muted fw-bold small uppercase" style="letter-spacing: 0.5px;">Lugares</span>
+                                </div>
                             </div>
                         </div>
                         <div class="col-6 col-sm-3">
-                            <div class="card2 rounded-3 py-3 border border-dark ratio ratio-1x1">
-                                <span class="d-block fw-bold fs-1">192</span>
-                                <span class="small fs-3">Días</span>
+                            <div class="card2 rounded-3 border border-dark ratio ratio-1x1 shadow-sm">
+                                <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center">
+                                    <span id="stats-dias" class="d-block fw-bold fs-1 text-dark">0</span>
+                                    <span class="text-muted fw-bold small uppercase" style="letter-spacing: 0.5px;">Días</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -95,12 +103,12 @@
         <div id="viajes-realizados-grid" class="row g-3 mb-3">
             <!-- Los viajes realizados se inyectarán aquí desde el backend -->
         </div>
-        <div class="d-flex justify-content-center gap-2">
-            <button class="pag-btn pag-arrow btn rounded-circle border-0"><i class="fa fa-chevron-left"></i></button>
-            <button class="pag-btn pag-btn-active btn rounded-circle border-0">1</button>
-            <button class="pag-btn btn rounded-circle border">2</button>
-            <button class="pag-btn btn rounded-circle border">3</button>
-            <button class="pag-btn pag-arrow btn rounded-circle border-0"><i class="fa fa-chevron-right"></i></button>
+        <div id="paginacion-container" class="d-flex justify-content-center gap-2">
+            <button id="pag-prev" class="pag-btn pag-arrow btn rounded-circle border-0"><i class="fa fa-chevron-left"></i></button>
+            <div id="pag-numeros" class="d-flex gap-2">
+                <!-- Se inyectarán dinámicamente -->
+            </div>
+            <button id="pag-next" class="pag-btn pag-arrow btn rounded-circle border-0"><i class="fa fa-chevron-right"></i></button>
         </div>
     </main>
 

@@ -47,16 +47,16 @@
         <div class="hero-box p-4 p-md-5 mb-4 mt-4 shadow-sm mx-auto">
             <div class="d-flex justify-content-between align-items-start mb-4">
                 <div>
-                    <h2 class="mb-2 hero-title">Ajustes Finales del Viaje</h2>
-                    <p class="mb-0 fw-semibold text-dark">Viaje a París &nbsp;&nbsp;<span class="fw-normal">8/4 - 17/4</span></p>
+                    <h2 class="mb-2 hero-title" id="fs-trip-title">Cargando Viaje...</h2>
+                    <p class="mb-0 fw-semibold text-dark" id="fs-trip-dates"><span class="spinner-border spinner-border-sm"></span></p>
                 </div>
-                <a href="itinerario.html" class="btn btns border border-dark fw-bold px-4 py-2">Finalizar Viaje</a>
+                <button id="btn-finalizar-viaje" class="btn btns border border-dark fw-bold px-4 py-2">Finalizar Viaje</button>
             </div>
 
             <div class="card rounded-3 border border-dark mt-4">
                 <div class="card-body p-4">
                     <h5 class="mb-3">Notas Generales del Viaje</h5>
-                    <textarea class="textarea-custom mb-2" rows="4"></textarea>
+                    <textarea id="fs-notas-generales" class="textarea-custom mb-2" rows="4"></textarea>
                     <small class="text-dark d-block mt-2">Estas notas nos ayudaran a preparar un viaje unico e inolvidable</small>
                 </div>
             </div>
@@ -69,23 +69,23 @@
             <h4 class="mb-4">Preferencias del Viaje</h4>
             
             <p class="mb-2">Nivel de esfuerzo esperado</p>
-            <div class="settings-btn-group">
-                <button class="settings-btn">Relajado</button>
-                <button class="settings-btn active">Moderado</button>
-                <button class="settings-btn">Intenso</button>
+            <div class="settings-btn-group" id="fs-group-esfuerzo">
+                <button class="settings-btn active" data-val="Relajado">Relajado</button>
+                <button class="settings-btn" data-val="Moderado">Moderado</button>
+                <button class="settings-btn" data-val="Intenso">Intenso</button>
             </div>
 
             <p class="mb-2">Tipo de Experiencia</p>
-            <div class="settings-btn-group">
-                <button class="settings-btn active">Exploración</button>
-                <button class="settings-btn">Descanso</button>
-                <button class="settings-btn">Mixto</button>
+            <div class="settings-btn-group" id="fs-group-experiencia">
+                <button class="settings-btn active" data-val="Exploración">Exploración</button>
+                <button class="settings-btn" data-val="Descanso">Descanso</button>
+                <button class="settings-btn" data-val="Mixto">Mixto</button>
             </div>
 
             <p class="mb-2">Flexibilidad del itinerario</p>
             <div class="flex-slider-container">
                 <span>Rigido</span>
-                <input type="range" class="custom-range" min="1" max="100" value="70">
+                <input type="range" class="custom-range" id="fs-flexibilidad" min="1" max="100" value="70">
                 <span>Flexible</span>
             </div>
         </div>
@@ -93,119 +93,51 @@
         <!-- Ajuste por Dia -->
         <div class="section-card shadow-sm mx-auto mb-5">
             <h4 class="mb-4">Ajuste por Día</h4>
-
             <div class="accordion" id="daysAccordion">
-                <!-- Dia 1 -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                            <div class="d-flex align-items-center">
-                                <div class="day-circle">1</div>
-                                <div>
-                                    <h5 class="mb-0">Día 1</h5>
-                                    <small class="text-dark">15 de Junio</small>
-                                </div>
-                            </div>
-                        </button>
-                    </h2>
-                    <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#daysAccordion">
-                        <div class="accordion-body pt-0 pb-4 px-4">
-                            <p class="mb-2 mt-2">Notas específicas del día</p>
-                            <textarea class="textarea-custom mb-4" rows="3"></textarea>
-
-                            <p class="mb-2">Prioridad del Día</p>
-                            <div class="settings-btn-group mb-4">
-                                <button class="settings-btn">Baja</button>
-                                <button class="settings-btn active">Media</button>
-                                <button class="settings-btn">Alta</button>
-                            </div>
-
-                            <p class="mb-2">Nivel de esfuerzo esperado</p>
-                            <div class="settings-btn-group mb-0">
-                                <button class="settings-btn active">Relajado</button>
-                                <button class="settings-btn">Moderado</button>
-                                <button class="settings-btn">Intenso</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Dia 2 -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                            <div class="d-flex align-items-center">
-                                <div class="day-circle">2</div>
-                                <div>
-                                    <h5 class="mb-0">Día 2</h5>
-                                    <small class="text-dark">16 de Junio</small>
-                                </div>
-                            </div>
-                        </button>
-                    </h2>
-                    <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#daysAccordion">
-                        <div class="accordion-body pt-0 pb-4 px-4">
-                            <p class="mb-2 mt-2">Notas específicas del día</p>
-                            <textarea class="textarea-custom mb-4" rows="3"></textarea>
-
-                            <p class="mb-2">Prioridad del Día</p>
-                            <div class="settings-btn-group mb-4">
-                                <button class="settings-btn">Baja</button>
-                                <button class="settings-btn active">Media</button>
-                                <button class="settings-btn">Alta</button>
-                            </div>
-
-                            <p class="mb-2">Nivel de esfuerzo esperado</p>
-                            <div class="settings-btn-group mb-0">
-                                <button class="settings-btn active">Relajado</button>
-                                <button class="settings-btn">Moderado</button>
-                                <button class="settings-btn">Intenso</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Dia 3 -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                            <div class="d-flex align-items-center">
-                                <div class="day-circle">3</div>
-                                <div>
-                                    <h5 class="mb-0">Día 3</h5>
-                                    <small class="text-dark">17 de Junio</small>
-                                </div>
-                            </div>
-                        </button>
-                    </h2>
-                    <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#daysAccordion">
-                        <div class="accordion-body pt-0 pb-4 px-4">
-                            <p class="mb-2 mt-2">Notas específicas del día</p>
-                            <textarea class="textarea-custom mb-4" rows="3"></textarea>
-
-                            <p class="mb-2">Prioridad del Día</p>
-                            <div class="settings-btn-group mb-4">
-                                <button class="settings-btn">Baja</button>
-                                <button class="settings-btn active">Media</button>
-                                <button class="settings-btn">Alta</button>
-                            </div>
-
-                            <p class="mb-2">Nivel de esfuerzo esperado</p>
-                            <div class="settings-btn-group mb-0">
-                                <button class="settings-btn active">Relajado</button>
-                                <button class="settings-btn">Moderado</button>
-                                <button class="settings-btn">Intenso</button>
-                            </div>
-                        </div>
+                <!-- Se inyecta dinámicamente desde script.js -->
+                <div class="text-center my-4">
+                    <div class="spinner-border text-dark" role="status">
+                        <span class="visually-hidden">Cargando días...</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Modal de Éxito -->
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+          <div class="modal-header border-0 pb-0">
+            <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center pt-0 pb-5 px-4">
+            <i class="fa fa-check-circle text-success mb-3" style="font-size: 4rem;"></i>
+            <h3 class="fw-bold mb-3">¡Viaje Finalizado!</h3>
+            <p class="fs-5 text-muted">Recibirás pronto tu plan de viaje finalizado.</p>
+            <p class="mb-4">En ese momento se podrá ver en tus viajes realizados. Por ahora se encuentra en revisión a la espera de ser validado.</p>
+            <button type="button" class="btn btns px-5 py-2 fw-bold" id="btn-modal-ok">Entendido</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/script.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            if (window.initTripDetails) {
+                window.initTripDetails().then(() => {
+                    if (window.renderFinalSettings) {
+                        window.renderFinalSettings();
+                    }
+                });
+            }
+        });
+    </script>
 </body>
-
 </html>

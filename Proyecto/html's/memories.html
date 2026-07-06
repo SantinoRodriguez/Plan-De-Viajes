@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuerdos - Plan de Viajes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        .memory-gallery {
+            column-count: 1;
+            column-gap: 1.5rem;
+        }
+        @media (min-width: 576px) {
+            .memory-gallery {
+                column-count: 2;
+            }
+        }
+        @media (min-width: 992px) {
+            .memory-gallery {
+                column-count: 3;
+            }
+        }
+        .memory-item {
+            break-inside: avoid;
+            margin-bottom: 1.5rem;
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        .memory-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+        .memory-item img {
+            width: 100%;
+            display: block;
+            border-radius: 12px;
+        }
+        .memory-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            color: white;
+            padding: 1.5rem 1rem 1rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .memory-item:hover .memory-overlay {
+            opacity: 1;
+        }
+        .memory-title {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #ffffff !important;
+            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 2px 4px rgba(0,0,0,0.8);
+        }
+        .memory-date {
+            font-size: 0.85rem;
+            opacity: 1 !important;
+            color: #ffffff !important;
+            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 2px 4px rgba(0,0,0,0.8);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg mt-2">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="../index.html">Plan de Viajes</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-end " id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="explore.html">Explorar</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="travels.html">Mis Viajes</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active fw-bold" href="memories.html">Recuerdos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="prices.html">Precio</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="log_in.html"><span class="login-link"><i
+                                        class="fa fa-user-circle"></i> Iniciar Sesión</span></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <section class="hero-section container-fluid py-1">
+        <div class="hero-box">
+            <div class="col-lg-7 mx-auto">
+                <div class="d-flex flex-row justify-content-between mt-5 mx-sm-5 mx-md-0 align-items-center">
+                    <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-2">
+                        <h1 class="hero-title mb-0">
+                            Mis Recuerdos
+                        </h1>
+                    </div>
+                    <button class="btn btns fw-bold my-auto" style="border-radius: 20px;" data-bs-toggle="modal" data-bs-target="#uploadMemoryModal">
+                        <i class="fa-solid fa-cloud-arrow-up me-2"></i>Subir Recuerdo
+                    </button>
+                </div>
+                <p class="text-muted mt-3 mb-5 mx-sm-5 mx-md-0 fs-5">Revive tus mejores momentos y aventuras alrededor del mundo.</p>
+            </div>
+        </div>
+    </section>
+
+    <main class="container my-5">
+        <!-- Memory Gallery (Masonry Layout) -->
+        <div class="memory-gallery" id="memory-gallery">
+            <div class="w-100 text-center py-5 d-none" id="memory-loading">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando recuerdos...</span>
+                </div>
+            </div>
+            <!-- Dynamic memories will be injected here -->
+        </div>
+    </main>
+
+    <!-- Modal for Image Viewing -->
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content bg-transparent border-0">
+                <div class="modal-header border-0 pb-0">
+                    <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center pt-0">
+                    <img src="" id="modalImage" class="img-fluid rounded-3 shadow" alt="Vista en detalle">
+                    <h4 id="modalTitle" class="text-white mt-3 mb-1"></h4>
+                    <p id="modalDate" class="text-white-50"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 Plan de Viajes. Todos los derechos reservados.</p>
+    </footer>
+
+    <!-- Modal for Uploading Memory -->
+    <div class="modal fade" id="uploadMemoryModal" tabindex="-1" aria-labelledby="uploadMemoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-bottom-0">
+                    <h5 class="modal-title fw-bold" id="uploadMemoryModalLabel"><i class="fa-solid fa-cloud-arrow-up text-primary me-2"></i>Subir Recuerdo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body pb-0">
+                    <form id="uploadMemoryForm">
+                        <div class="mb-3" id="tripSelectContainer">
+                            <label for="memoryTrip" class="form-label fw-semibold">Viaje</label>
+                            <select class="form-select bg-light border-0" id="memoryTrip" required>
+                                <option value="">Selecciona un viaje...</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="memoryFile" class="form-label fw-semibold">Seleccionar Imagen</label>
+                            <input type="file" class="form-control bg-light border-0" id="memoryFile" accept="image/*" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="memoryTitle" class="form-label fw-semibold">Título / Descripción corta</label>
+                            <input type="text" class="form-control bg-light border-0" id="memoryTitle" placeholder="Ej: Atardecer en la Torre Eiffel" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="memoryDate" class="form-label fw-semibold">Fecha del recuerdo</label>
+                            <input type="date" class="form-control bg-light border-0" id="memoryDate" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="memoryActivity" class="form-label fw-semibold">Actividad vinculada (Opcional)</label>
+                            <select class="form-select bg-light border-0" id="memoryActivity">
+                                <option value="">Selecciona una actividad...</option>
+                                <!-- Se llenará dinámicamente -->
+                            </select>
+                        </div>
+                        <div id="memoryAlert" class="alert d-none"></div>
+                        <div class="modal-footer border-top-0 px-0">
+                            <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm" id="btnSaveMemory">Guardar Recuerdo</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof window.initMemoriesPage === 'function') {
+                window.initMemoriesPage();
+            }
+        });
+    </script>
+</body>
+</html>

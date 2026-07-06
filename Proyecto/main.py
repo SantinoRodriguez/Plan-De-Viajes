@@ -1,3 +1,4 @@
+from fastapi import applications
 from fastapi import FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from supabase import create_client, Client
@@ -33,6 +34,7 @@ class ViajeBase(BaseModel):
     presupuesto: Optional[float] = None
     moneda: Optional[str] = 'ARS'
     imagen_url: Optional[str] = None
+    ajustes_finales: Optional[dict] = None
 
 class ActividadPayload(BaseModel):
     tipo: str  # "lugares" o "itinerario"
@@ -48,8 +50,16 @@ class ActividadSync(BaseModel):
     nombre: str
     place_id: Optional[str] = None
     foto_url: Optional[str] = None
+    url_foto: Optional[str] = None
     rating: Optional[float] = None
     horario: Optional[str] = None
+    orden: Optional[int] = None
+
+class RecuerdoPayload(BaseModel):
+    id_viaje: int
+    id_actividad: Optional[int] = None
+    url: str
+    descripcion: str
 
 
 app = FastAPI()
@@ -136,9 +146,10 @@ async def get_viajes(estado: Optional[str] = None, authorization: str = Header(N
         raise HTTPException(status_code=400, detail=str(e))
 
 @app.get("/api/recuerdos")
-async def get_recuerdos(authorization: str = Header(None)):
+async def get_recuerdos(id_viaje: Optional[int] = None, authorization: str = Header(None)):
     """
     Endpoint para obtener los recursos multimedia (recuerdos) asociados a los viajes del usuario.
+    Si se provee id_viaje, filtra por ese viaje.
     """
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Token no proporcionado o inválido")
@@ -149,18 +160,51 @@ async def get_recuerdos(authorization: str = Header(None)):
         temp_supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
         temp_supabase.postgrest.auth(token)
         
-        # 1. Obtener los IDs de los viajes del usuario
-        viajes_resp = temp_supabase.table("viajes").select("id_viaje").execute()
+        if id_viaje is not None:
+            # Filtrar por id_viaje específico
+            media_resp = temp_supabase.table("multimedia_viaje").select("*").eq("id_viaje", id_viaje).execute()
+        else:
+            # 1. Obtener los IDs de todos los viajes del usuario
+            viajes_resp = temp_supabase.table("viajes").select("id_viaje").execute()
+            viaje_ids = [v["id_viaje"] for v in viajes_resp.data]
             
-        viaje_ids = [v["id_viaje"] for v in viajes_resp.data]
-        
-        if not viaje_ids:
-            return []
-            
-        # 2. Obtener la multimedia relacionada a esos viajes
-        media_resp = temp_supabase.table("multimedia_viaje").select("*").in_("id_viaje", viaje_ids).execute()
+            if not viaje_ids:
+                return []
+                
+            # 2. Obtener la multimedia relacionada a esos viajes
+            media_resp = temp_supabase.table("multimedia_viaje").select("*").in_("id_viaje", viaje_ids).execute()
             
         return media_resp.data
+        
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/recuerdos")
+async def create_recuerdo(payload: RecuerdoPayload, authorization: str = Header(None)):
+    """
+    Endpoint para crear un nuevo recuerdo multimedia.
+    """
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Token no proporcionado o inválido")
+    
+    token = authorization.split(" ")[1]
+    
+    try:
+        temp_supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+        temp_supabase.postgrest.auth(token)
+        
+        data_to_insert = {
+            "id_viaje": payload.id_viaje,
+            "url": payload.url,
+            "descripcion": payload.descripcion,
+            "tipo": "imagen"
+        }
+        
+        if payload.id_actividad is not None:
+            data_to_insert["id_actividad"] = payload.id_actividad
+            
+        resp = temp_supabase.table("multimedia_viaje").insert(data_to_insert).execute()
+        return resp.data
         
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -325,12 +369,13 @@ async def get_actividades(id_viaje: int, authorization: str = Header(None)):
                 except Exception:
                     pass
             
+            # REEMPLAZO CRÍTICO: Asegurar mapear las propiedades exactas que requiere script.js
             result.append({
                 "nombre": act["nombre"],
                 "tipo": "lugares" if dia_num == 0 else "itinerario",
                 "dia_numero": dia_num,
                 "place_id": desc_data.get("place_id", ""),
-                "foto_url": desc_data.get("foto_url", ""),
+                "foto_url": desc_data.get("foto_url", ""),  # <-- Aquí se envía la imagen real
                 "rating": desc_data.get("rating", 0),
                 "horario": desc_data.get("horario", "")
             })
@@ -386,25 +431,31 @@ async def sync_actividades(id_viaje: int, payload: list[ActividadSync], authoriz
             new_it_id = resp_new_it.data[0]["id_itinerario"]
             
             # Preparar e insertar actividades
+            # Preparar e insertar actividades
             acts_to_insert = []
             for idx, act in enumerate(acts):
-                foto_url = act.foto_url
-                if not foto_url or "placeholder" in foto_url.lower():
+                # Convertimos el modelo Pydantic a un diccionario de Python para leerlo de forma segura
+                act_dict = act.dict()
+                
+                # Buscamos la foto bajo cualquiera de sus posibles nombres en el JSON
+                foto_url = act_dict.get("foto_url") or act_dict.get("url_foto")
+                
+                if not foto_url or "placeholder" in str(foto_url).lower():
                     foto_url = get_fallback_image(act.nombre)
                     
                 desc_data = {
-                    "place_id": act.place_id,
+                    "place_id": act_dict.get("place_id"),
                     "foto_url": foto_url,
-                    "rating": act.rating,
-                    "horario": act.horario or ""
+                    "rating": act_dict.get("rating", 0),
+                    "horario": act_dict.get("horario") or ""
                 }
                 acts_to_insert.append({
                     "id_itinerario": new_it_id,
-                    "nombre": act.nombre,
+                    "nombre": act_dict.get("nombre"),
                     "descripcion": json.dumps(desc_data),
                     "orden": idx + 1
                 })
-                
+
             if acts_to_insert:
                 temp_supabase.table("actividades").insert(acts_to_insert).execute()
                 
