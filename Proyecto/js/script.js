@@ -2537,7 +2537,8 @@ window.initTripDetails = async function () {
     const isDetailsPage = window.location.pathname.includes('itinerario.html') ||
         window.location.pathname.includes('lugares.html') ||
         window.location.pathname.includes('presupuesto.html') ||
-        window.location.pathname.includes('memories_details.html');
+        window.location.pathname.includes('memories_details.html') ||
+        window.location.pathname.includes('final_settings.html');
 
     // Si estás en memories.html o memories_details.html, también es una página de detalles
     const isMemoriesPage = window.location.pathname.includes('memories.html') ||
@@ -3499,6 +3500,7 @@ window.initMemoriesPage = async function () {
 
 // ---- Lógica de final_settings.html ----
 window.renderFinalSettings = function() {
+    window.activeTrip = window.viaje;
     if (!window.activeTrip) return;
 
     // Actualizar Header
