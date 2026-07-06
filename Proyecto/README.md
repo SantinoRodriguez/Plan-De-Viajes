@@ -209,9 +209,13 @@ Para que las secciones de **Mis Viajes**, **Viajes Realizados** y **Recuerdos** 
    ```bash
    pip install -r requirements.txt
    ```
-3. Inicia el servidor de desarrollo de FastAPI con:
+   *Nota: Si no posees el archivo `requirements.txt`, puedes instalar las librerías manualmente con:*
    ```bash
-   uvicorn main:app --reload
+   pip install fastapi "uvicorn[standard]" pydantic supabase
+   ```
+3. Inicia el servidor de desarrollo de FastAPI con el siguiente comando:
+   ```bash
+   python -m uvicorn main:app --reload
    ```
    *El servidor backend se ejecutará en `http://localhost:8000` y está configurado con CORS para interactuar con tu frontend.*
 
